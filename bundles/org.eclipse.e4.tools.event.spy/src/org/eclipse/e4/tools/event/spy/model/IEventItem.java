@@ -8,13 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.tools.event.spy.util;
+package org.eclipse.e4.tools.event.spy.model;
 
-import org.eclipse.e4.tools.event.spy.model.Parameter;
+public interface IEventItem {
+	String getName();
 
-public class ParameterFormatter {
-	//TODO: Add some parameter formatting and break to long strings into multiple lines
-	public static String toString(Parameter parameter) {
-		return String.format("%s = %s", parameter.getName(), parameter.getValue());
-	}
+	String getParam1();
+
+	String getParam2();
 }

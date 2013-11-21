@@ -35,6 +35,10 @@ import org.eclipse.ui.PartInitException;
 public class PDEUtils {
 	private final static Pattern CLASS_NAME_PATTERN = Pattern.compile("(([a-zA-Z_]+[0-9]*\\.)+[a-zA-Z_]+[a-z0-9]*)");
 
+	public static boolean containsClassName(String name) {
+		return CLASS_NAME_PATTERN.matcher(name).find();
+	}
+
 	public static void openClass(String clsName) throws ClassNotFoundException {
 		Matcher matcher = CLASS_NAME_PATTERN.matcher(clsName);
 		if (matcher.find()) {

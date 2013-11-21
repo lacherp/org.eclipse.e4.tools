@@ -17,6 +17,7 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.tools.event.spy.Constants;
 
+@SuppressWarnings("restriction")
 @Creatable
 public class LoggerWrapper extends Logger {
 	@Optional

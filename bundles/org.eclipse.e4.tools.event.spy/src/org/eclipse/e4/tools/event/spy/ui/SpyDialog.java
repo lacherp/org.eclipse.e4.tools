@@ -179,17 +179,10 @@ public class SpyDialog extends Dialog implements EventMonitor.NewEventListener {
 		capturedEventTree.addEvent(event);
 	}
 
+	@SuppressWarnings("restriction")
 	private void openResource(CapturedEventTreeSelection selection) {
-		String name = selection.getSelection();
-		if (selection.isParameter()) {
-			String[] splitted = selection.getSelection().split("=");
-			if (splitted.length == 2) {
-				name = splitted[1];
-			}
-		}
-
 		try {
-			PDEUtils.openClass(name);
+			PDEUtils.openClass(selection.getSelection());
 		} catch(ClassNotFoundException exc) {
 			logger.warn(exc.getMessage());
 		}
@@ -219,20 +212,4 @@ public class SpyDialog extends Dialog implements EventMonitor.NewEventListener {
 		gridData.grabExcessHorizontalSpace = true;
 		return gridData;
 	}
-
-	/** for testing/modifying dialog UI
-	public static void main(String... args) {
-		Display display = new Display ();
-		Shell shell = new Shell (display);
-		shell.open ();
-
-		SpyDialog dialog = new SpyDialog(shell);
-
-		dialog.open();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch ()) display.sleep ();
-		}
-		display.dispose ();
-	}
-	*/
 }

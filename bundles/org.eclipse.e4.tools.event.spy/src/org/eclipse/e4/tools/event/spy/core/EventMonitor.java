@@ -24,6 +24,7 @@ import org.eclipse.e4.ui.workbench.UIEvents;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
+@SuppressWarnings("restriction")
 public class EventMonitor {
 
 	public interface NewEventListener {
@@ -32,7 +33,7 @@ public class EventMonitor {
 
 	private final static String TOPIC = UIEvents.UITopicBase + UIEvents.TOPIC_SEP + UIEvents.ALL_SUB_TOPICS;
 
-	@SuppressWarnings({"serial", "restriction"})
+	@SuppressWarnings({"serial"})
 	private static Set<Integer> EVENT_HELPER_CLASSES = new HashSet<Integer>() {{
 		add(UIEvents.class.getName().hashCode());
 		add(UIEventPublisher.class.getName().hashCode());
@@ -40,13 +41,13 @@ public class EventMonitor {
 
 	private Collection<CapturedEventFilter> filters;
 
-	private IEventBroker eventBroker;
+	private final IEventBroker eventBroker;
 
 	private NewEventListener listener;
 
 	private CapturedEventFilterMatcher eventFilterMatcher;
 
-	private EventHandler eventHandler = new EventHandler() {
+	private final EventHandler eventHandler = new EventHandler() {
 		public void handleEvent(Event event) {
 			if (listener == null) {
 				return;

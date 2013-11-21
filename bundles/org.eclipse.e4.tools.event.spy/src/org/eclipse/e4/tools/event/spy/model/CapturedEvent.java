@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class CapturedEvent {
+public class CapturedEvent implements IEventItem {
 	private String topic;
 
 	private String publisherClassName = "";
@@ -66,5 +66,17 @@ public class CapturedEvent {
 	@Override
 	public String toString() {
 		return topic;
+	}
+
+	public String getName() {
+		return getTopic();
+	}
+
+	public String getParam1() {
+		return getPublisherClassName();
+	}
+
+	public String getParam2() {
+		return getChangedElementClassName();
 	}
 }

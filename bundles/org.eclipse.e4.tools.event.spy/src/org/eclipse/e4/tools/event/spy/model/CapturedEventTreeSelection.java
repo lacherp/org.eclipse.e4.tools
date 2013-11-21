@@ -11,20 +11,13 @@
 package org.eclipse.e4.tools.event.spy.model;
 
 public class CapturedEventTreeSelection {
-	private String selection;
+	private final String selection;
 
-	private boolean parameter;
-
-	public CapturedEventTreeSelection(String selection, boolean parameter) {
+	public CapturedEventTreeSelection(String selection) {
 		this.selection = selection;
-		this.parameter = parameter;
 	}
 
 	public String getSelection() {
 		return selection;
-	}
-
-	public boolean isParameter() {
-		return parameter;
 	}
 }
