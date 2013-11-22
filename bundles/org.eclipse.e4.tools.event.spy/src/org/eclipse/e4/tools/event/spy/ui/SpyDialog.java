@@ -10,12 +10,17 @@
  *******************************************************************************/
 package org.eclipse.e4.tools.event.spy.ui;
 
+import java.util.Collection;
+
 import javax.inject.Inject;
 
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.tools.event.spy.core.EventMonitor;
 import org.eclipse.e4.tools.event.spy.model.CapturedEvent;
+import org.eclipse.e4.tools.event.spy.model.CapturedEventFilter;
 import org.eclipse.e4.tools.event.spy.model.CapturedEventTreeSelection;
+import org.eclipse.e4.tools.event.spy.model.SpyDialogMemento;
 import org.eclipse.e4.tools.event.spy.util.LoggerWrapper;
 import org.eclipse.e4.tools.event.spy.util.PDEUtils;
 import org.eclipse.jface.dialogs.Dialog;
@@ -51,6 +56,9 @@ public class SpyDialog extends Dialog implements EventMonitor.NewEventListener {
 	private IEventBroker eventBroker;
 
 	@Inject
+	private IEclipseContext context;
+	
+	@Inject
 	public SpyDialog(Shell shell) {
 		super(shell);
 		setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE);
@@ -82,20 +90,46 @@ public class SpyDialog extends Dialog implements EventMonitor.NewEventListener {
 
 	@Override
 	protected Point getInitialSize() {
-		return new Point(600, 400);
+		return new Point(608, 450);
 	}
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		outer = (Composite) super.createDialogArea(parent);
-
+		SpyDialogMemento memento = (SpyDialogMemento) context.get(SpyDialogMemento.class.getName()); 
+				
 		createActionBar(outer);
-		createFilters(outer);
+		createFilters(outer, memento);
 		createCapturedEventTree(outer);
-
 		return outer;
 	}
+	
+	@Override
+	public boolean close() {
+		saveDialogMemento();
+		return super.close();
+	}
 
+	private void saveDialogMemento() {
+		SpyDialogMemento memento = null;
+		String baseTopic = capturedEventFilters.getBaseTopic();
+		Collection<CapturedEventFilter> filters = capturedEventFilters.getFilters();
+		
+		if (!CapturedEventFilters.BASE_EVENT_TOPIC.equals(baseTopic)) {
+			memento = new SpyDialogMemento();
+			memento.setBaseTopic(baseTopic);
+		}
+		if (!filters.isEmpty()) {
+			if (memento == null) {
+				memento = new SpyDialogMemento();
+			}
+			memento.setFilters(filters);
+		}
+		if (memento != null) {
+			context.set(SpyDialogMemento.class.getName(), memento);
+		}
+	}
+	
 	private void createActionBar(Composite parent) {
 		Composite actionBar = new Composite(parent, SWT.NONE);
 		GridData gridData = createDefaultGridData();
@@ -128,13 +162,19 @@ public class SpyDialog extends Dialog implements EventMonitor.NewEventListener {
 		});
 	}
 
-	private void createFilters(Composite parent) {
+	private void createFilters(Composite parent, SpyDialogMemento memento) {
 		capturedEventFilters = new CapturedEventFilters(outer);
 		capturedEventFilters.getControl().setVisible(false);
 		GridData gridData = createDefaultGridData();
 		gridData.grabExcessVerticalSpace = false;
 		gridData.exclude = true;
 		capturedEventFilters.getControl().setLayoutData(gridData);
+		
+		if (memento != null) {
+			capturedEventFilters.setBaseTopic(memento.getBaseTopic());
+			capturedEventFilters.setFilters(memento.getFilters());
+		}
+		showFilters(false);
 	}
 
 	private void createCapturedEventTree(Composite parent) {
@@ -164,7 +204,7 @@ public class SpyDialog extends Dialog implements EventMonitor.NewEventListener {
 			eventMonitor = new EventMonitor(eventBroker);
 			eventMonitor.setNewEventListener(this);
 		}
-		eventMonitor.start(capturedEventFilters.getFilters());
+		eventMonitor.start(capturedEventFilters.getBaseTopic(), capturedEventFilters.getFilters());
 		getShell().setText(DIALOG_TITLE + " - capturing...");
 	}
 
@@ -201,7 +241,7 @@ public class SpyDialog extends Dialog implements EventMonitor.NewEventListener {
 		}
 
 		outer.layout(false);
-	}
+	}	
 
 	private GridData createDefaultGridData() {
 		GridData gridData = new GridData();

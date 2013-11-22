@@ -13,11 +13,11 @@ package org.eclipse.e4.tools.event.spy.model;
 public class CapturedEventFilter {
 	private final static String FILTER_AS_STRING_PATTERN = "Capture event when '%s' %s '%s'";
 
-	private final ItemToFilter itemToFilter;
+	private ItemToFilter itemToFilter;
 
-	private final Operator operator;
+	private Operator operator;
 
-	private final String value;
+	private String value;
 
 	public CapturedEventFilter(ItemToFilter itemToFilter, Operator operator, String value) {
 		this.itemToFilter = itemToFilter;
@@ -28,15 +28,27 @@ public class CapturedEventFilter {
 	public ItemToFilter getItemToFilter() {
 		return itemToFilter;
 	}
+	
+	public void setItemToFilter(ItemToFilter itemToFilter) {
+		this.itemToFilter = itemToFilter;
+	}
 
 	public Operator getOperator() {
 		return operator;
+	}
+	
+	public void setOperator(Operator operator) {
+		this.operator = operator;
 	}
 
 	public String getValue() {
 		return value;
 	}
 
+	public void setValue(String value) {
+		this.value = value;
+	}
+	
 	private String normalize(ItemToFilter itemToFilter, String value) {
 		if (ItemToFilter.ParameterNameAndValue.equals(itemToFilter)) {
 			String[] splitted = value.split("=");
@@ -52,5 +64,15 @@ public class CapturedEventFilter {
 	@Override
 	public String toString() {
 		return String.format(FILTER_AS_STRING_PATTERN, itemToFilter, operator, value);
+	}
+	
+	@Override
+	public int hashCode() {
+		return (value + itemToFilter + operator).hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof CapturedEventFilter && obj.hashCode() == hashCode();
 	}
 }

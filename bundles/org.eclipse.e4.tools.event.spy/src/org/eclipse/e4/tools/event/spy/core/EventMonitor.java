@@ -31,8 +31,6 @@ public class EventMonitor {
 		void newEvent(CapturedEvent event);
 	}
 
-	private final static String TOPIC = UIEvents.UITopicBase + UIEvents.TOPIC_SEP + UIEvents.ALL_SUB_TOPICS;
-
 	@SuppressWarnings({"serial"})
 	private static Set<Integer> EVENT_HELPER_CLASSES = new HashSet<Integer>() {{
 		add(UIEvents.class.getName().hashCode());
@@ -75,9 +73,9 @@ public class EventMonitor {
 		this.eventBroker = eventBroker;
 	}
 
-	public void start(Collection<CapturedEventFilter> filters) {
+	public void start(String baseTopic, Collection<CapturedEventFilter> filters) {
 		this.filters = filters;
-		eventBroker.subscribe(TOPIC, eventHandler);
+		eventBroker.subscribe(baseTopic, eventHandler);
 	}
 
 	public void stop() {
