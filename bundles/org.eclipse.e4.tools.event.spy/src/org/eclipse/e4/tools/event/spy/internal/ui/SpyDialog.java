@@ -24,7 +24,6 @@ import org.eclipse.e4.tools.event.spy.internal.model.SpyDialogMemento;
 import org.eclipse.e4.tools.event.spy.internal.util.JDTUtils;
 import org.eclipse.e4.tools.event.spy.internal.util.LoggerWrapper;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -195,7 +194,7 @@ public class SpyDialog extends Dialog implements EventMonitor.NewEventListener {
 
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, IDialogConstants.OK_ID, "Close", false);
+		//do nothing
 	}
 
 	public void captureEvents() {
