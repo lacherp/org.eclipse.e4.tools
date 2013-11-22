@@ -337,19 +337,19 @@ public class CapturedEventFilters {
 	
 	private void addFilterAt(int index) {
 		CapturedEventFilter eventFilter = createFilter();
+		if (eventFilter == null) {
+			return;
+		}
 		String filterAsString = eventFilter.toString();
 
 		if (index  > -1 && index < rawFilters.size()) {
 			filters.add(filterAsString, index);
-			rawFilters.add(index, eventFilter);			
+			rawFilters.add(index, eventFilter);		
 		} else {
 			filters.add(filterAsString);
 			rawFilters.add(eventFilter);
 		}
-
-		itemToFilterCombo.select(0);
-		operatorCombo.select(0);
-		valueText.setText(NOT_SELECTED_VALUE);
+		clearFilterDefinition();
 	}
 
 	private void removeFilterAt(int index) {
@@ -361,6 +361,7 @@ public class CapturedEventFilters {
 
 		filters.remove(index);
 		rawFilters.remove(index);
+		clearFilterDefinition();
 	}
 
 	private void selectFilterAt(int index) {
@@ -371,14 +372,20 @@ public class CapturedEventFilters {
 	}
 	
 	private void updateFilterAt(int index) {
+		if (index < 0) {
+			getTooltip().setText("Filter to update is not selected");
+			getTooltip().setVisible(true);
+			return;
+		}
 		CapturedEventFilter newFilter = createFilter();
+		if (newFilter != null) {
+			CapturedEventFilter filter = rawFilters.get(index);
+			filter.setItemToFilter(newFilter.getItemToFilter());
+			filter.setOperator(newFilter.getOperator());
+			filter.setValue(newFilter.getValue());
 		
-		CapturedEventFilter filter = rawFilters.get(index);
-		filter.setItemToFilter(newFilter.getItemToFilter());
-		filter.setOperator(newFilter.getOperator());
-		filter.setValue(newFilter.getValue());
-		
-		filters.setItem(index, newFilter.toString());
+			filters.setItem(index, newFilter.toString());
+		}
 	}
 	
 	private void copyFilterAt(int index) {
@@ -406,10 +413,17 @@ public class CapturedEventFilters {
 		}
 		filters.removeAll();
 		rawFilters.clear();
+		clearFilterDefinition();
 	}
 
 	private String getFieldName(Object notSelectedName) {
 		String fieldName = notSelectedName.toString().replaceAll("-", "").trim();
 		return Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
+	}
+	
+	private void clearFilterDefinition() {
+		itemToFilterCombo.select(0);
+		operatorCombo.select(0);
+		valueText.setText(NOT_SELECTED_VALUE);
 	}
 }
