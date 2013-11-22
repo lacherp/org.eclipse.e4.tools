@@ -126,6 +126,8 @@ public class SpyDialog extends Dialog implements EventMonitor.NewEventListener {
 		}
 		if (memento != null) {
 			context.set(SpyDialogMemento.class.getName(), memento);
+		} else if (context.containsKey(SpyDialogMemento.class.getName())) {
+			context.remove(SpyDialogMemento.class.getName());
 		}
 	}
 	
