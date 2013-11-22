@@ -12,7 +12,8 @@ package org.eclipse.e4.tools.event.spy.ui;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.eclipse.e4.tools.event.spy.model.CapturedEventFilter;
 import org.eclipse.e4.tools.event.spy.model.ItemToFilter;
@@ -266,7 +267,7 @@ public class CapturedEventFilters {
 	}
 	
 	public Collection<CapturedEventFilter> getFilters() {
-		HashMap<Integer, CapturedEventFilter> result = new HashMap<Integer, CapturedEventFilter>();
+		Map<Integer, CapturedEventFilter> result = new LinkedHashMap<Integer, CapturedEventFilter>();
 		for (CapturedEventFilter filter: rawFilters) {
 			result.put(filter.hashCode(), filter);
 		}
