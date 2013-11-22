@@ -22,7 +22,7 @@ import org.eclipse.e4.tools.event.spy.model.CapturedEventFilter;
 import org.eclipse.e4.tools.event.spy.model.CapturedEventTreeSelection;
 import org.eclipse.e4.tools.event.spy.model.SpyDialogMemento;
 import org.eclipse.e4.tools.event.spy.util.LoggerWrapper;
-import org.eclipse.e4.tools.event.spy.util.PDEUtils;
+import org.eclipse.e4.tools.event.spy.util.JDTUtils;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -222,7 +222,7 @@ public class SpyDialog extends Dialog implements EventMonitor.NewEventListener {
 	@SuppressWarnings("restriction")
 	private void openResource(CapturedEventTreeSelection selection) {
 		try {
-			PDEUtils.openClass(selection.getSelection());
+			JDTUtils.openClass(selection.getSelection());
 		} catch(ClassNotFoundException exc) {
 			logger.warn(exc.getMessage());
 		}

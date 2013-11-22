@@ -22,7 +22,7 @@ import org.eclipse.e4.tools.event.spy.model.CapturedEvent;
 import org.eclipse.e4.tools.event.spy.model.CapturedEventTreeSelection;
 import org.eclipse.e4.tools.event.spy.model.IEventItem;
 import org.eclipse.e4.tools.event.spy.model.ItemToFilter;
-import org.eclipse.e4.tools.event.spy.util.PDEUtils;
+import org.eclipse.e4.tools.event.spy.util.JDTUtils;
 import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
@@ -182,7 +182,7 @@ public class CapturedEventTree extends TreeViewer {
 				if (selectedItemIndex > 0 /*we check the 2nd and 3rd column only*/ &&
 						item.getParentItem() == null /*we don't check parameters at this moment*/) {
 					String text = item.getText(selectedItemIndex);
-					if (PDEUtils.containsClassName(text)) {
+					if (JDTUtils.containsClassName(text)) {
 						selectedClassItem.setClassName(text);
 						selectedClassItem.setColumnIndex(selectedItemIndex);
 						selectedClassItem.setTreeItem(item);
