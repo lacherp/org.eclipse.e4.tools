@@ -8,11 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.tools.event.spy.util;
+package org.eclipse.e4.tools.event.spy.internal.util;
 
-import org.eclipse.e4.tools.event.spy.model.CapturedEventFilter;
-import org.eclipse.e4.tools.event.spy.model.ItemToFilter;
-import org.eclipse.e4.tools.event.spy.model.Operator;
+import org.eclipse.e4.tools.event.spy.internal.model.CapturedEventFilter;
+import org.eclipse.e4.tools.event.spy.internal.model.ItemToFilter;
+import org.eclipse.e4.tools.event.spy.internal.model.Operator;
 
 public class CapturedEventFilterSerializer {
 	private final static String FILTER_PARAM_SEPARATOR = ",";

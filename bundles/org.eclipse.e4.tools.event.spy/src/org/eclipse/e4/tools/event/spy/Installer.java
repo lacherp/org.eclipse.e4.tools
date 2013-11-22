@@ -15,8 +15,8 @@ import javax.inject.Inject;
 
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.tools.event.spy.handlers.OpenSpyDialogHandler;
-import org.eclipse.e4.tools.event.spy.util.LoggerWrapper;
-import org.eclipse.e4.tools.event.spy.util.PluginUtils;
+import org.eclipse.e4.tools.event.spy.internal.util.LoggerWrapper;
+import org.eclipse.e4.tools.event.spy.internal.util.PluginUtils;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
 import org.eclipse.e4.ui.model.application.commands.MCommand;

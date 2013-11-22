@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.tools.event.spy.ui;
+package org.eclipse.e4.tools.event.spy.internal.ui;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;

@@ -8,9 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.tools.event.spy.model;
+package org.eclipse.e4.tools.event.spy.internal.model;
 
-import org.eclipse.e4.tools.event.spy.util.MultilineFormatter;
+import org.eclipse.e4.tools.event.spy.internal.util.MultilineFormatter;
 
 public class Parameter implements IEventItem {
 	private static final String EMPTY_VALUE = "";

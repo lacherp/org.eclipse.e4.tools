@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.tools.event.spy.core;
+package org.eclipse.e4.tools.event.spy.internal.core;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -16,8 +16,8 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.e4.core.services.events.IEventBroker;
-import org.eclipse.e4.tools.event.spy.model.CapturedEvent;
-import org.eclipse.e4.tools.event.spy.model.CapturedEventFilter;
+import org.eclipse.e4.tools.event.spy.internal.model.CapturedEvent;
+import org.eclipse.e4.tools.event.spy.internal.model.CapturedEventFilter;
 import org.eclipse.e4.ui.internal.workbench.UIEventPublisher;
 import org.eclipse.e4.ui.services.internal.events.EventBroker;
 import org.eclipse.e4.ui.workbench.UIEvents;

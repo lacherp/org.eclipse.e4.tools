@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.tools.event.spy.model;
+package org.eclipse.e4.tools.event.spy.internal.model;
 
 public class CapturedEventFilter {
 	private final static String FILTER_AS_STRING_PATTERN = "Capture event when '%s' %s '%s'";

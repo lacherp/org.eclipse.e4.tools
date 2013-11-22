@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.tools.event.spy;
 
-import org.eclipse.e4.tools.event.spy.util.PluginUtils;
+import org.eclipse.e4.tools.event.spy.internal.util.PluginUtils;
 import org.eclipse.e4.ui.bindings.EBindingService;
 
 @SuppressWarnings("restriction")

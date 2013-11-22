@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.tools.event.spy.ui;
+package org.eclipse.e4.tools.event.spy.internal.ui;
 
 import java.util.Collection;
 
@@ -16,13 +16,13 @@ import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
-import org.eclipse.e4.tools.event.spy.core.EventMonitor;
-import org.eclipse.e4.tools.event.spy.model.CapturedEvent;
-import org.eclipse.e4.tools.event.spy.model.CapturedEventFilter;
-import org.eclipse.e4.tools.event.spy.model.CapturedEventTreeSelection;
-import org.eclipse.e4.tools.event.spy.model.SpyDialogMemento;
-import org.eclipse.e4.tools.event.spy.util.LoggerWrapper;
-import org.eclipse.e4.tools.event.spy.util.JDTUtils;
+import org.eclipse.e4.tools.event.spy.internal.core.EventMonitor;
+import org.eclipse.e4.tools.event.spy.internal.model.CapturedEvent;
+import org.eclipse.e4.tools.event.spy.internal.model.CapturedEventFilter;
+import org.eclipse.e4.tools.event.spy.internal.model.CapturedEventTreeSelection;
+import org.eclipse.e4.tools.event.spy.internal.model.SpyDialogMemento;
+import org.eclipse.e4.tools.event.spy.internal.util.JDTUtils;
+import org.eclipse.e4.tools.event.spy.internal.util.LoggerWrapper;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;

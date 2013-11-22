@@ -8,36 +8,21 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.tools.event.spy.model;
+package org.eclipse.e4.tools.event.spy.internal.model;
 
-
-public enum ItemToFilter {
-	NotSelected("-- item to filter --"),
-	Topic("Topic"),
-	ParameterName("Parameter name"),
-	ParameterNameAndValue("Parameter name and value"),
-	ParameterValue("Some parameter value"),
-	Publisher("Event publisher"),
-	ChangedElement("Changed element");
+public enum SpecialValue {
+	Null("null"),
+	EmptyString("empty"),
+	NameAndValue("%s=%s");
 
 	private String text;
 
-	private ItemToFilter(String text) {
+	private SpecialValue(String text) {
 		this.text = text;
 	}
 
 	@Override
 	public String toString() {
 		return text;
-	}
-
-	public static ItemToFilter toItem(String text) {
-		for (ItemToFilter item: values()) {
-			if (item.text.equals(text)) {
-				return item;
-			}
-		}
-		throw new IllegalArgumentException(String.format("%s not found for: %s",
-			ItemToFilter.class.getSimpleName(), text));
 	}
 }

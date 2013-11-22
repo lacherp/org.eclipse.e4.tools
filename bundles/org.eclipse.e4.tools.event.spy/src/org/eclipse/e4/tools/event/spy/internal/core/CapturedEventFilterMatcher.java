@@ -8,17 +8,17 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.tools.event.spy.core;
+package org.eclipse.e4.tools.event.spy.internal.core;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.e4.tools.event.spy.model.CapturedEvent;
-import org.eclipse.e4.tools.event.spy.model.CapturedEventFilter;
-import org.eclipse.e4.tools.event.spy.model.ItemToFilter;
-import org.eclipse.e4.tools.event.spy.model.Operator;
-import org.eclipse.e4.tools.event.spy.model.Parameter;
-import org.eclipse.e4.tools.event.spy.model.SpecialValue;
+import org.eclipse.e4.tools.event.spy.internal.model.CapturedEvent;
+import org.eclipse.e4.tools.event.spy.internal.model.CapturedEventFilter;
+import org.eclipse.e4.tools.event.spy.internal.model.ItemToFilter;
+import org.eclipse.e4.tools.event.spy.internal.model.Operator;
+import org.eclipse.e4.tools.event.spy.internal.model.Parameter;
+import org.eclipse.e4.tools.event.spy.internal.model.SpecialValue;
 
 public class CapturedEventFilterMatcher {
 	public boolean matches(CapturedEvent event, CapturedEventFilter filter) {

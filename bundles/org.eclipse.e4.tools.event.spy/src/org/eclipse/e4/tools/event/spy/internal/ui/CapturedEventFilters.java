@@ -8,17 +8,17 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.tools.event.spy.ui;
+package org.eclipse.e4.tools.event.spy.internal.ui;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.eclipse.e4.tools.event.spy.model.CapturedEventFilter;
-import org.eclipse.e4.tools.event.spy.model.ItemToFilter;
-import org.eclipse.e4.tools.event.spy.model.Operator;
-import org.eclipse.e4.tools.event.spy.util.CapturedEventFilterSerializer;
+import org.eclipse.e4.tools.event.spy.internal.model.CapturedEventFilter;
+import org.eclipse.e4.tools.event.spy.internal.model.ItemToFilter;
+import org.eclipse.e4.tools.event.spy.internal.model.Operator;
+import org.eclipse.e4.tools.event.spy.internal.util.CapturedEventFilterSerializer;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;

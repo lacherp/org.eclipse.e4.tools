@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.tools.event.spy.ui;
+package org.eclipse.e4.tools.event.spy.internal.ui;
 
 import java.util.ArrayList;
 
@@ -18,11 +18,11 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
-import org.eclipse.e4.tools.event.spy.model.CapturedEvent;
-import org.eclipse.e4.tools.event.spy.model.CapturedEventTreeSelection;
-import org.eclipse.e4.tools.event.spy.model.IEventItem;
-import org.eclipse.e4.tools.event.spy.model.ItemToFilter;
-import org.eclipse.e4.tools.event.spy.util.JDTUtils;
+import org.eclipse.e4.tools.event.spy.internal.model.CapturedEvent;
+import org.eclipse.e4.tools.event.spy.internal.model.CapturedEventTreeSelection;
+import org.eclipse.e4.tools.event.spy.internal.model.IEventItem;
+import org.eclipse.e4.tools.event.spy.internal.model.ItemToFilter;
+import org.eclipse.e4.tools.event.spy.internal.util.JDTUtils;
 import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;

@@ -9,7 +9,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.tools.event.spy.util;
+package org.eclipse.e4.tools.event.spy.internal.util;
 
 import java.util.HashSet;
 import java.util.Set;
