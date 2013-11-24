@@ -19,8 +19,6 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.tools.event.spy.internal.core.EventMonitor;
 import org.eclipse.e4.tools.event.spy.internal.model.CapturedEvent;
 import org.eclipse.e4.tools.event.spy.internal.model.CapturedEventFilter;
-import org.eclipse.e4.tools.event.spy.internal.model.CapturedEventTreeSelection;
-import org.eclipse.e4.tools.event.spy.internal.model.SpyDialogMemento;
 import org.eclipse.e4.tools.event.spy.internal.util.JDTUtils;
 import org.eclipse.e4.tools.event.spy.internal.util.LoggerWrapper;
 import org.eclipse.jface.dialogs.Dialog;
@@ -181,9 +179,9 @@ public class SpyDialog extends Dialog implements EventMonitor.NewEventListener {
 	private void createCapturedEventTree(Composite parent) {
 		capturedEventTree = new CapturedEventTree(outer);
 		capturedEventTree.getControl().setLayoutData(createDefaultGridData());
-		capturedEventTree.setSelectionListener(new CapturedEventTree.SelectionListener() {
-			public void selectionChanged(CapturedEventTreeSelection selection) {
-				openResource(selection);
+		capturedEventTree.setListener(new ICapturedEventTreeListener() {
+			public void treeItemWithClassNameClicked(String text) {
+				openResource(text);
 			}
 		});
 	}
@@ -221,9 +219,9 @@ public class SpyDialog extends Dialog implements EventMonitor.NewEventListener {
 	}
 
 	@SuppressWarnings("restriction")
-	private void openResource(CapturedEventTreeSelection selection) {
+	private void openResource(String text) {
 		try {
-			JDTUtils.openClass(selection.getSelection());
+			JDTUtils.openClass(text);
 		} catch(ClassNotFoundException exc) {
 			logger.warn(exc.getMessage());
 		}

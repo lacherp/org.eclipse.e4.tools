@@ -8,9 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.tools.event.spy.internal.model;
+package org.eclipse.e4.tools.event.spy.internal.ui;
 
 import java.util.Collection;
+
+import org.eclipse.e4.tools.event.spy.internal.model.CapturedEventFilter;
 
 public class SpyDialogMemento {
 	private String baseTopic;
