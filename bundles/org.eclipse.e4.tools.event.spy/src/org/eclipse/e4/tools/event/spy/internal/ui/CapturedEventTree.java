@@ -220,12 +220,12 @@ public class CapturedEventTree extends TreeViewer {
 		getTree().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
+				TreeItem item = getTree().getItem(new Point(e.x, e.y));		
+				updateSelectedTreeItem(item, getSelectedColumnIndex(item, e.x, e.y));
+				
 				if (listener != null && (e.stateMask & SWT.CTRL) == SWT.CTRL && 
 						selectedClassNameTreeItem.getText() != null) {
 					listener.treeItemWithClassNameClicked(selectedClassNameTreeItem.getText());
-				} else {
-					TreeItem item = getTree().getItem(new Point(e.x, e.y));		
-					updateSelectedTreeItem(item, getSelectedColumnIndex(item, e.x, e.y));
 				}
 			}
 		});
@@ -282,13 +282,8 @@ public class CapturedEventTree extends TreeViewer {
 			public void widgetSelected(SelectionEvent e) {
 				if ((e.stateMask & SWT.BUTTON1) != SWT.BUTTON1) {
 					updateSelectedTreeItem((TreeItem) e.item, 
-						selectedTreeItem.getText() != null? 
-						selectedTreeItem.getColumnIndex(): 0);
-				} else if (e.item != selectedTreeItem.getTreeItem() && 
-						selectedTreeItem.getTreeItem() != null) {
-					//we don't change selected item when user has triggered ICapturedEventTreeListener.treeItemWithClassNameClicked 
-					getTree().setSelection(selectedTreeItem.getTreeItem());
-				}				
+						selectedTreeItem.getText() != null? selectedTreeItem.getColumnIndex(): 0);
+				}			
 			}
 		});
 				
