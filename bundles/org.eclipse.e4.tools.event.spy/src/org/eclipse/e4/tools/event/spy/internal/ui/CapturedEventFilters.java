@@ -365,10 +365,12 @@ public class CapturedEventFilters {
 	}
 
 	private void selectFilterAt(int index) {
-		CapturedEventFilter filter = rawFilters.get(index);
-		itemToFilterCombo.setText(filter.getItemToFilter().toString());
-		operatorCombo.setText(filter.getOperator().toString());
-		valueText.setText(filter.getValue());
+		if (index > -1) {
+			CapturedEventFilter filter = rawFilters.get(index);
+			itemToFilterCombo.setText(filter.getItemToFilter().toString());
+			operatorCombo.setText(filter.getOperator().toString());
+			valueText.setText(filter.getValue());
+		}
 	}
 	
 	private void updateFilterAt(int index) {

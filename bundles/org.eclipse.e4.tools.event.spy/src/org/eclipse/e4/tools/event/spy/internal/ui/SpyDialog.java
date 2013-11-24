@@ -21,6 +21,7 @@ import org.eclipse.e4.tools.event.spy.internal.model.CapturedEvent;
 import org.eclipse.e4.tools.event.spy.internal.model.CapturedEventFilter;
 import org.eclipse.e4.tools.event.spy.internal.util.JDTUtils;
 import org.eclipse.e4.tools.event.spy.internal.util.LoggerWrapper;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -53,7 +54,7 @@ public class SpyDialog extends Dialog implements EventMonitor.NewEventListener {
 	private IEventBroker eventBroker;
 
 	@Inject
-	private IEclipseContext context;
+	private MApplication appplication;
 	
 	@Inject
 	public SpyDialog(Shell shell) {
@@ -93,7 +94,8 @@ public class SpyDialog extends Dialog implements EventMonitor.NewEventListener {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		outer = (Composite) super.createDialogArea(parent);
-		SpyDialogMemento memento = (SpyDialogMemento) context.get(SpyDialogMemento.class.getName()); 
+		SpyDialogMemento memento = (SpyDialogMemento) appplication
+			.getContext().get(SpyDialogMemento.class.getName()); 
 				
 		createActionBar(outer);
 		createFilters(outer, memento);
@@ -111,6 +113,7 @@ public class SpyDialog extends Dialog implements EventMonitor.NewEventListener {
 		SpyDialogMemento memento = null;
 		String baseTopic = capturedEventFilters.getBaseTopic();
 		Collection<CapturedEventFilter> filters = capturedEventFilters.getFilters();
+		IEclipseContext context = appplication.getContext();
 		
 		if (!CapturedEventFilters.BASE_EVENT_TOPIC.equals(baseTopic)) {
 			memento = new SpyDialogMemento();
