@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Lars Vogel <lars.vogel@gmail.com> - Bug 419723
+ *     Lars Vogel <lars.vogel@gmail.com> - Bug 419723, 422644
  *     Markus A. Kuppe <bugs.eclipse.org@lemmster.de> - Bug 421259
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.liveeditor;
@@ -62,33 +62,36 @@ public class ModelProcessor {
 
 		if (application.getBindingTables().size() <= 0) {
 			MBindingContext bc = null;
-			final List<MBindingContext> bindingContexts = application.getBindingContexts();
+			final List<MBindingContext> bindingContexts = application
+					.getBindingContexts();
 			if (bindingContexts.size() == 0) {
 				bc = modelService.createModelElement(MBindingContext.class);
 				bc.setElementId("org.eclipse.ui.contexts.window");
 			} else {
-				// Prefer org.eclipse.ui.contexts.dialogAndWindow but randomly select another one
+				// Prefer org.eclipse.ui.contexts.dialogAndWindow but randomly
+				// select another one
 				// if org.eclipse.ui.contexts.dialogAndWindow cannot be found
 				for (MBindingContext aBindingContext : bindingContexts) {
 					bc = aBindingContext;
-					if ("org.eclipse.ui.contexts.dialogAndWindow".equals(aBindingContext.getElementId())) {
+					if ("org.eclipse.ui.contexts.dialogAndWindow"
+							.equals(aBindingContext.getElementId())) {
 						break;
 					}
 				}
 			}
-			MBindingTable bt = modelService.createModelElement(MBindingTable.class);
+			MBindingTable bt = modelService
+					.createModelElement(MBindingTable.class);
 			bt.setElementId("e4.tooling.livemodel.bindingTable");
 			bt.setBindingContext(bc);
 			application.getBindingTables().add(bt);
 		}
-		List<MKeyBinding> keyBindings = modelService.findElements(
-				application, "e4.tooling.livemodel.binding",
-				MKeyBinding.class, null);
+		List<MKeyBinding> keyBindings = modelService.findElements(application,
+				"e4.tooling.livemodel.binding", MKeyBinding.class, null);
 
 		if (keyBindings.size() == 0) {
 			binding = modelService.createModelElement(MKeyBinding.class);
 			binding.setElementId("e4.tooling.livemodel.binding");
-			binding.setKeySequence("ALT+SHIFT+F9");
+			binding.setKeySequence("M2+M3+F9");
 			if (application.getBindingTables().size() > 0) {
 				application.getBindingTables().get(0).getBindings()
 						.add(binding);
