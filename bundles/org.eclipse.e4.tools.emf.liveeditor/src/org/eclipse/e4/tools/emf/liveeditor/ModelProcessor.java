@@ -26,36 +26,44 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 
 public class ModelProcessor {
 
+	private static final String E4_TOOLING_LIVEMODEL_HANDLER = "e4.tooling.livemodel.handler";
+	private static final String E4_TOOLING_LIVEMODEL = "e4.tooling.livemodel";
+
 	@Execute
 	public void process(MApplication application, EModelService modelService) {
-		List<MCommand> commands = modelService.findElements(application,
-				"e4.tooling.livemodel", MCommand.class, null);
 
 		MCommand command = null;
+		for (MCommand cmd : application.getCommands()) {
+			if (E4_TOOLING_LIVEMODEL.equals(cmd.getElementId())) {
+				command = cmd;
+			}
+		}
+		// List<MCommand> commands = modelService.findElements(application,
+		// E4_TOOLING_LIVEMODEL, MCommand.class, null);
 
-		if (commands.size() == 0) {
+		if (command == null) {
 			command = modelService.createModelElement(MCommand.class);
-			command.setElementId("e4.tooling.livemodel");
+			command.setElementId(E4_TOOLING_LIVEMODEL);
 			command.setCommandName("Show running app model");
 			command.setDescription("Show the running application model");
 			application.getCommands().add(command);
-		} else {
-			command = commands.get(0);
 		}
-
-		List<MHandler> handlers = modelService.findElements(application,
-				"e4.tooling.livemodel.handler", MHandler.class, null);
 
 		MHandler handler = null;
 
-		if (handlers.size() == 0) {
+		for (MHandler hdl : application.getHandlers()) {
+			if (E4_TOOLING_LIVEMODEL_HANDLER.equals(handler.getElementId())) {
+				handler = hdl;
+			}
+		}
+
+		if (handler == null) {
 			handler = modelService.createModelElement(MHandler.class);
-			handler.setElementId("e4.tooling.livemodel.handler");
+			handler.setElementId(E4_TOOLING_LIVEMODEL_HANDLER);
 			handler.setContributionURI("bundleclass://org.eclipse.e4.tools.emf.liveeditor/org.eclipse.e4.tools.emf.liveeditor.OpenLiveDialogHandler");
 			application.getHandlers().add(handler);
-		} else {
-			handler = handlers.get(0);
 		}
+
 		handler.setCommand(command);
 
 		MKeyBinding binding = null;
