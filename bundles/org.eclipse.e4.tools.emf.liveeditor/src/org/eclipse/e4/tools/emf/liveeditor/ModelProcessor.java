@@ -52,7 +52,7 @@ public class ModelProcessor {
 		MHandler handler = null;
 
 		for (MHandler hdl : application.getHandlers()) {
-			if (E4_TOOLING_LIVEMODEL_HANDLER.equals(handler.getElementId())) {
+			if (E4_TOOLING_LIVEMODEL_HANDLER.equals(hdl.getElementId())) {
 				handler = hdl;
 			}
 		}
