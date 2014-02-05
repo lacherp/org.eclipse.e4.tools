@@ -37,6 +37,7 @@ public class CSSScratchPadWindow extends Dialog {
 		// | getDefaultOrientation());
 	}
 
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText("CSS Scratchpad");

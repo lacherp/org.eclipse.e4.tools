@@ -154,7 +154,7 @@ public class CssSpyDialog extends Dialog {
 
 	/**
 	 * Create the dialog.
-	 * 
+	 *
 	 * @param parentShell
 	 */
 	public CssSpyDialog(Shell parentShell) {
@@ -163,6 +163,7 @@ public class CssSpyDialog extends Dialog {
 		setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX);
 	}
 
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText("CSS Spy");
@@ -405,14 +406,14 @@ public class CssSpyDialog extends Dialog {
 			CTabItem item = (CTabItem) widget;
 			Rectangle bounds = item.getBounds();
 			return item.getDisplay().map(item.getParent(), null, bounds);
-		} 
+		}
 		// FIXME: figure out how to map items to a position
 		return null;
 	}
 
 	/**
 	 * Create contents of the dialog.
-	 * 
+	 *
 	 * @param parent
 	 */
 	@Override
@@ -699,6 +700,7 @@ public class CssSpyDialog extends Dialog {
 			});
 		}
 		container.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.character == SWT.ESC) {
 					cancelPressed();
@@ -708,6 +710,7 @@ public class CssSpyDialog extends Dialog {
 			}
 		});
 		showAllShells.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateWidgetTreeInput();
 			}
@@ -814,7 +817,7 @@ public class CssSpyDialog extends Dialog {
 
 	/**
 	 * Create contents of the button bar.
-	 * 
+	 *
 	 * @param parent
 	 */
 	@Override

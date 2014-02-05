@@ -42,7 +42,7 @@ public class SpyInstaller {
 
 	@Inject
 	protected MApplication app;
-	
+
 	@Inject
 	@Optional
 	protected Logger logger;

@@ -35,7 +35,7 @@ public class OpenSpyHandler {
 	@Execute
     public void openSpy() {
         Control control = display.getCursorControl();
-        // it may be that only the shell was selected 
+        // it may be that only the shell was selected
         if (control == null) {
             control = display.getActiveShell();
         }
