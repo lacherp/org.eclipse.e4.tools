@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011,2012 Manumitting Technologies, Inc.
+ * Copyright (c) 2011,2014 Manumitting Technologies, Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Brian de Alwis (MT) - initial API and implementation
+ *     Lars Vogel <lars.vogel@gmail.com> - Bug 427451
  *******************************************************************************/
 package org.eclipse.e4.tools.css.spy;
 
@@ -19,9 +20,9 @@ import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
-import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 
 public class SpyInstaller {
 	private static final String BUNDLE_ID = "org.eclipse.e4.tools.css.spy";
@@ -42,6 +43,9 @@ public class SpyInstaller {
 
 	@Inject
 	protected MApplication app;
+
+	@Inject
+	EModelService modelService;
 
 	@Inject
 	@Optional
@@ -86,7 +90,7 @@ public class SpyInstaller {
 			}
 		}
 
-		MCommand cmd = MCommandsFactory.INSTANCE.createCommand();
+		MCommand cmd = modelService.createModelElement(MCommand.class);
 		cmd.setCommandName(label);
 		cmd.setElementId(commandId);
 		cmd.setContributorURI(CONTRIBUTOR_URI);
@@ -102,7 +106,7 @@ public class SpyInstaller {
 			}
 		}
 
-		MHandler hdlr = MCommandsFactory.INSTANCE.createHandler();
+		MHandler hdlr = modelService.createModelElement(MHandler.class);
 		hdlr.setElementId(handlerId);
 		hdlr.setContributionURI(handlerURI);
 		hdlr.setCommand(cmd);
@@ -152,7 +156,8 @@ public class SpyInstaller {
 			return;
 		}
 
-		MKeyBinding binding = MCommandsFactory.INSTANCE.createKeyBinding();
+		MKeyBinding binding = modelService
+				.createModelElement(MKeyBinding.class);
 		binding.setCommand(cmd);
 		binding.setKeySequence(keySeq);
 		binding.setElementId("kb." + cmd.getElementId());
