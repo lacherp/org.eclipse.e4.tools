@@ -8,7 +8,7 @@
  * Contributors:
  *     Leo Denault <ldena023@uottawa.ca> - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.tools.orion.text.editor;
+package org.eclipse.e4.tools.orion.text.editor.test;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -19,7 +19,7 @@ import org.osgi.framework.BundleContext;
 public class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.e4.tools.orion.text.editor"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.eclipse.e4.tools.orion.text.editor.test"; //$NON-NLS-1$
 
 	// The shared instance
 	private static Activator plugin;
