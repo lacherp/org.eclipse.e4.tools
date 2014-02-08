@@ -10,13 +10,20 @@
  *******************************************************************************/
 package org.eclipse.e4.tools.orion.text.editor.test;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.tests.harness.util.ArrayUtil;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 public class OrionEditorTest extends UITestCase {
+
+	private static final String ORION_EDITOR_ID =
+			"org.eclipse.e4.tools.orion.text.editor"; //$NON-NLS-1$
 
 	private IWorkbenchPage fActivePage;
 
@@ -27,7 +34,6 @@ public class OrionEditorTest extends UITestCase {
 	public OrionEditorTest(String testName) {
 		super(testName);
 	}
-
 
 	@Override
 	protected void doSetUp() throws Exception {
@@ -45,7 +51,19 @@ public class OrionEditorTest extends UITestCase {
 		}
 	}
 
-	public void testOpenEditor() {
+	public void testOpenEditorForCssFile() throws Throwable {
+		proj = FileUtil.createProject("testOpenEditor");
 
+		IFile file = FileUtil.createFile("test.css", proj);
+		// Check that the default editor for CSS files is the Orion Editor
+		assertEquals(ORION_EDITOR_ID, fWorkbench.getEditorRegistry()
+				.getDefaultEditor(file.getName()).getId());
+
+		// Then check if the OrionEditor automatically opens for CSS files.
+		IEditorPart editor = IDE.openEditor(fActivePage, file, true);
+		assertTrue(ArrayUtil.contains(fActivePage.getEditors(), editor));
+		assertEquals(fActivePage.getActiveEditor(), editor);
+		assertEquals(editor.getSite().getId(), fWorkbench.getEditorRegistry()
+				.getDefaultEditor(file.getName()).getId());
 	}
 }
