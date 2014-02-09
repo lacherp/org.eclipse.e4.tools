@@ -10,7 +10,14 @@
  *******************************************************************************/
 package org.eclipse.e4.tools.orion.text.editor;
 
+import java.io.IOException;
+
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.tools.orion.editor.builder.css.CSSBuilder;
+import org.eclipse.e4.tools.orion.editor.swt.OrionEditorControl;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -18,6 +25,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 
 public class OrionEditor extends EditorPart {
+
+	private OrionEditorControl control;
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
@@ -33,12 +42,13 @@ public class OrionEditor extends EditorPart {
 	@Override
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException {
+		setSite(site);
+		setInput(input);
 	}
 
 	@Override
 	public boolean isDirty() {
-		// TODO Auto-generated method stub
-		return false;
+		return control == null ? false : control.isDirty();
 	}
 
 	@Override
@@ -49,13 +59,21 @@ public class OrionEditor extends EditorPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		// TODO Auto-generated method stub
+		try {
+			control = new OrionEditorControl(parent, SWT.NONE, new CSSBuilder(""));
+		} catch (IOException e) {
+			Activator
+			.getDefault()
+			.getLog()
+			.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+					"Failed to load CSS", e));
+		}
 	}
 
 	@Override
 	public void setFocus() {
-		// TODO Auto-generated method stub
-
+		if (control != null) {
+			control.setFocus();
+		}
 	}
-
 }
