@@ -5,7 +5,7 @@
          id="id1"
          point="org.eclipse.e4.workbench.model">
       <processor
-            beforefragment="true"
+            beforefragment="false"
             class="org.eclipse.e4.tools.emf.liveeditor.ModelProcessor">
       </processor>
    </extension>
