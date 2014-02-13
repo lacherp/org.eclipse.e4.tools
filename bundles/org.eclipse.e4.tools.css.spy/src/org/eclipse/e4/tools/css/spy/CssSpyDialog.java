@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -41,6 +42,7 @@ import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.FocusCellOwnerDrawHighlighter;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -87,6 +89,7 @@ import org.w3c.css.sac.CSSParseException;
 import org.w3c.css.sac.SelectorList;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.css.CSSStyleDeclaration;
+import org.w3c.dom.css.CSSValue;
 
 public class CssSpyDialog extends Dialog {
 	/** @return the CSS element corresponding to the argument, or null if none */
@@ -135,6 +138,7 @@ public class CssSpyDialog extends Dialog {
 	private List<Region> highlightRegions = new LinkedList<Region>();
 	private Text cssSearchBox;
 	private Button showUnsetProperties;
+	private Button showCssFragment;
 
 	protected ViewerFilter unsetPropertyFilter = new ViewerFilter() {
 
@@ -648,6 +652,10 @@ public class CssSpyDialog extends Dialog {
 		// / THE CSS PROPERTIES TABLE (again)
 		showUnsetProperties = new Button(container, SWT.CHECK);
 		showUnsetProperties.setText("Show unset properties");
+		showCssFragment = new Button(container, SWT.PUSH);
+		showCssFragment.setText("Show CSS fragment");
+		showCssFragment
+				.setToolTipText("Generates CSS rule block for the selected widget");
 
 		// and for balance
 		new Label(container, SWT.NONE);
@@ -685,6 +693,8 @@ public class CssSpyDialog extends Dialog {
 				.addSelectionChangedListener(new ISelectionChangedListener() {
 					public void selectionChanged(SelectionChangedEvent event) {
 						updateForWidgetSelection(event.getSelection());
+						showCssFragment.setEnabled(!event.getSelection()
+								.isEmpty());
 					}
 				});
 		if (isLive()) {
@@ -739,10 +749,131 @@ public class CssSpyDialog extends Dialog {
 			}
 		});
 
+		showCssFragment.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				showCssFragment();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}
+		});
+
 		update();
 		sashForm.setWeights(new int[] { 50, 50 });
 		widgetTreeViewer.getControl().setFocus();
 		return outer;
+	}
+
+	protected void showCssFragment() {
+		if (!(widgetTreeViewer.getSelection() instanceof IStructuredSelection)
+				|| widgetTreeViewer.getSelection().isEmpty()) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		for (Object o : ((IStructuredSelection) widgetTreeViewer.getSelection())
+				.toArray()) {
+			if (o instanceof Widget) {
+				if (sb.length() > 0) {
+					sb.append('\n');
+				}
+				addCssFragment((Widget) o, sb);
+			}
+		}
+		TextPopupDialog tpd = new TextPopupDialog(widgetTreeViewer.getControl()
+				.getShell(), "CSS", sb.toString(), true,
+				"Escape to dismiss");
+		tpd.open();
+	}
+
+	private void addCssFragment(Widget w, StringBuilder sb) {
+		CSSStylableElement element = getCSSElement(w);
+		if (element == null) {
+			return;
+		}
+
+		sb.append(element.getLocalName());
+		if (element.getCSSId() != null) {
+			sb.append("#").append(element.getCSSId());
+		}
+		sb.append(" {");
+
+		CSSEngine engine = getCSSEngine(element);
+		// we first check the viewCSS and then the property values
+		CSSStyleDeclaration decl = engine.getViewCSS().getComputedStyle(
+				element, null);
+
+		List<String> propertyNames = new ArrayList<String>(
+				engine.getCSSProperties(element));
+		Collections.sort(propertyNames);
+
+		int count = 0;
+
+		// First list the generated properties
+		for (Iterator<String> iter = propertyNames.iterator(); iter.hasNext();) {
+			String propertyName = iter.next();
+			String genValue = trim(engine.retrieveCSSProperty(element,
+					propertyName, ""));
+			String declValue = null;
+
+			if (genValue == null) {
+				continue;
+			}
+
+			if (decl != null) {
+				CSSValue cssValue = decl.getPropertyCSSValue(propertyName);
+				if (cssValue != null) {
+					declValue = trim(cssValue.getCssText());
+				}
+			}
+			if (count == 0) {
+				sb.append("\n  /* actual values */");
+			}
+			sb.append("\n  ").append(propertyName).append(": ")
+					.append(genValue).append(";");
+			if (declValue != null) {
+				sb.append("\t/* declared in CSS: ").append(declValue)
+						.append(" */");
+			}
+			count++;
+			iter.remove(); // remove so we don't re-report below
+		}
+
+		// then list any declared properties; generated properties already
+		// removed
+		if (decl != null) {
+			int declCount = 0;
+			for (String propertyName : propertyNames) {
+				String declValue = null;
+				CSSValue cssValue = decl.getPropertyCSSValue(propertyName);
+				if (cssValue != null) {
+					declValue = trim(cssValue.getCssText());
+				}
+				if (declValue == null) {
+					continue;
+				}
+				if (declCount == 0) {
+					sb.append("\n\n  /* declared in CSS rules */");
+				}
+				sb.append("\n  ").append(propertyName).append(": ")
+						.append(declValue).append(";");
+				count++;
+				declCount++;
+			}
+		}
+		sb.append(count > 0 ? "\n}" : "}");
+	}
+
+	/** Trim the string; return null if empty */
+	private String trim(String s) {
+		if (s == null) {
+			return null;
+		}
+		s = s.trim();
+		return s.length() > 0 ? s : null;
 	}
 
 	protected void performCSSSearch(IProgressMonitor progress) {
@@ -829,8 +960,6 @@ public class CssSpyDialog extends Dialog {
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
 				true);
-		// createButton(parent, IDialogConstants.CANCEL_ID,
-		// IDialogConstants.CANCEL_LABEL, false);
 	}
 
 	/**
