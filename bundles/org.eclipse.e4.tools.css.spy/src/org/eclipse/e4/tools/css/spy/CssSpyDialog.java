@@ -306,9 +306,14 @@ public class CssSpyDialog extends Dialog {
 				element.getClass().getName());
 
 		// this is useful for diagnosing issues
+		if (element.getNativeWidget() instanceof Shell
+				&& ((Shell) element.getNativeWidget()).getParent() != null) {
+			Shell nw = (Shell) element.getNativeWidget();
+			sb.append("\n\nShell parent: ").append(nw.getParent());
+		}
 		if (element.getNativeWidget() instanceof Composite) {
-			sb.append("\n\nSWT Layout: ").append(
-					((Composite) element.getNativeWidget()).getLayout());
+			Composite nw = (Composite) element.getNativeWidget();
+			sb.append("\n\nSWT Layout: ").append(nw.getLayout());
 		}
 		Rectangle bounds = getBounds(selected);
 		if (bounds != null) {
