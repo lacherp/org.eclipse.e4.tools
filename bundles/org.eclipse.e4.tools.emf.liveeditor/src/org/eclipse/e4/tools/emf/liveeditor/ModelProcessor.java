@@ -44,7 +44,7 @@ public class ModelProcessor {
 		if (command == null) {
 			command = modelService.createModelElement(MCommand.class);
 			command.setElementId(E4_TOOLING_LIVEMODEL);
-			command.setCommandName("Show running app model");
+			command.setCommandName("Show Live Application Model");
 			command.setDescription("Show the running application model");
 			application.getCommands().add(command);
 		}
