@@ -116,7 +116,7 @@ public class Installer {
 		for (MBindingTable bindingTable: application.getBindingTables()) {
 			for (MKeyBinding keyBinding : bindingTable.getBindings()) {
 				if (keyBinding.getCommand() == command) {
-					return bindingTable;
+					return keyBinding;
 				}
 			}
 			if (descriptor.getBindingContextId().equals(bindingTable.getBindingContext().getElementId())) {
