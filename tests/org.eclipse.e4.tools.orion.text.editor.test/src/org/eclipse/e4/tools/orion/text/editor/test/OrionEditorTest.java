@@ -10,12 +10,19 @@
  *******************************************************************************/
 package org.eclipse.e4.tools.orion.text.editor.test;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.e4.tools.orion.text.editor.OrionEditor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.ErrorEditorPart;
+import org.eclipse.ui.internal.part.NullEditorInput;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
@@ -51,7 +58,7 @@ public class OrionEditorTest extends UITestCase {
 		}
 	}
 
-	public void testOpenEditorForCssFile() throws Throwable {
+	public void testOpenEditorForEmptyCssFile() throws Throwable {
 		proj = FileUtil.createProject("testOpenEditor");
 
 		IFile file = FileUtil.createFile("test.css", proj);
@@ -65,5 +72,61 @@ public class OrionEditorTest extends UITestCase {
 		assertEquals(fActivePage.getActiveEditor(), editor);
 		assertEquals(editor.getSite().getId(), fWorkbench.getEditorRegistry()
 				.getDefaultEditor(file.getName()).getId());
+	}
+
+	public void testOpenEditorForNonEmptyCssFile() throws Throwable {
+		proj = FileUtil.createProject("testOpenEditor");
+		String fileContents = ".someClass { background: #000000; }";
+
+		// Insert text into the CSS file
+		IFile file = FileUtil.createFile("test.css", proj);
+		InputStream in = new ByteArrayInputStream(fileContents.getBytes("UTF-8"));
+		file.setContents(in, IFile.NONE, null);
+
+		// Make sure that the editor properly opens.
+		IEditorPart editor = IDE.openEditor(fActivePage, file, true);
+		assertTrue(ArrayUtil.contains(fActivePage.getEditors(), editor));
+		assertEquals(fActivePage.getActiveEditor(), editor);
+		assertEquals(editor.getSite().getId(), fWorkbench.getEditorRegistry()
+				.getDefaultEditor(file.getName()).getId());
+
+		// Check that the OrionEditorControl contains the text
+		// that was in the CSS file.
+		OrionEditor orionEditor = (OrionEditor)editor;
+		assertEquals(fileContents, orionEditor.getContents());
+
+		FileUtil.delete(file);
+	}
+
+	public void testIsDirtyReturnsFalseWhenOrionEditorControlIsNull() {
+		OrionEditor editor = new OrionEditor();
+		assertFalse(editor.isDirty());
+	}
+
+	public void testIsDirtyReturnsFalseWhenOrionEditorControlIsDisposed() throws Throwable {
+		proj = FileUtil.createProject("testOpenEditor");
+		IFile file = FileUtil.createFile("test.css", proj);
+
+		// Make sure that the editor properly opens.
+		IEditorPart editor = IDE.openEditor(fActivePage, file, true);
+		assertTrue(ArrayUtil.contains(fActivePage.getEditors(), editor));
+		assertEquals(fActivePage.getActiveEditor(), editor);
+		assertEquals(editor.getSite().getId(), fWorkbench.getEditorRegistry()
+				.getDefaultEditor(file.getName()).getId());
+
+		FileUtil.deleteProject(proj);
+		proj = null;
+
+		assertFalse(editor.isDirty());
+	}
+
+	@SuppressWarnings("restriction")
+	public void testInitThrowsExceptionWithNonFileEditorInput() {
+		try {
+			IEditorPart editor = IDE.openEditor(fActivePage, new NullEditorInput(), ORION_EDITOR_ID);
+			assertTrue(editor instanceof ErrorEditorPart);
+		} catch (PartInitException e) {
+			fail("The PartInitException should be caught internally.");
+		}
 	}
 }
