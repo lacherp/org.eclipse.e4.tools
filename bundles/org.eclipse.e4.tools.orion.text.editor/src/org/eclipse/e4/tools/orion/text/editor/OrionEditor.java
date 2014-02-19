@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.tools.orion.text.editor;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -20,23 +21,47 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.tools.orion.editor.builder.css.CSSBuilder;
+import org.eclipse.e4.tools.orion.editor.swt.IDirtyListener;
 import org.eclipse.e4.tools.orion.editor.swt.OrionEditorControl;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 
-public class OrionEditor extends EditorPart {
+public class OrionEditor extends EditorPart implements IDirtyListener {
 
 	private OrionEditorControl control;
 	private IFile source;
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		// TODO Auto-generated method stub
+		if (isDirty()) {
+			boolean success = true;
+			try {
+				InputStream contentStream = new ByteArrayInputStream(control
+						.getText().getBytes("UTF-8"));
+				source.setContents(contentStream, IFile.KEEP_HISTORY, monitor);
+			} catch (Exception e) {
+				success = false;
+				Activator
+						.getDefault()
+						.getLog()
+						.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+								"Failed to save CSS", e));
+			}
+
+			if (success) {
+				control.setDirty(false);
+			} else {
+				monitor.setCanceled(true);
+			}
+		} else {
+			monitor.done();
+		}
 	}
 
 	@Override
@@ -80,6 +105,7 @@ public class OrionEditor extends EditorPart {
 		try {
 			control = new OrionEditorControl(parent, SWT.NONE, new CSSBuilder(
 					""));
+			control.addDirtyListener(this);
 
 			if (source != null) {
 				control.setText(loadFile(source.getContents(), 1024));
@@ -101,7 +127,14 @@ public class OrionEditor extends EditorPart {
 	}
 
 	public String getContents() {
-		return control.getText();
+		return control != null ? control.getText() : "";
+	}
+
+	public void setContents(String contents) {
+		if (control != null && !control.getText().equals(contents)) {
+			control.setText(contents);
+			control.setDirty(true);
+		}
 	}
 
 	/**
@@ -131,5 +164,10 @@ public class OrionEditor extends EditorPart {
 			reader.close();
 		}
 		return out.toString();
+	}
+
+	@Override
+	public void dirtyChanged(boolean dirty) {
+		firePropertyChange(ISaveablePart.PROP_DIRTY);
 	}
 }

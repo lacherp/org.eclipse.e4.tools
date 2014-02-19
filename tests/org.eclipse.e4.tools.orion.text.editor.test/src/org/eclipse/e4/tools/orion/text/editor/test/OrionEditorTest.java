@@ -98,6 +98,27 @@ public class OrionEditorTest extends UITestCase {
 		FileUtil.delete(file);
 	}
 
+	public void testSaveCssFile() throws Throwable {
+		proj = FileUtil.createProject("testOpenEditor");
+		String fileContents = ".someClass { background: #000000; }";
+
+		// Insert text into the CSS file
+		IFile file = FileUtil.createFile("test.css", proj);
+
+		// Make sure that the editor properly opens.
+		IEditorPart editor = IDE.openEditor(fActivePage, file, true);
+		assertTrue(ArrayUtil.contains(fActivePage.getEditors(), editor));
+		assertEquals(fActivePage.getActiveEditor(), editor);
+		assertEquals(editor.getSite().getId(), fWorkbench.getEditorRegistry()
+				.getDefaultEditor(file.getName()).getId());
+
+		OrionEditor orionEditor = (OrionEditor)editor;
+		orionEditor.setContents(fileContents);
+		assertTrue(orionEditor.isDirty());
+		editor.doSave(null);
+		assertEquals(fileContents, orionEditor.loadFile(file.getContents(), 1024));
+	}
+
 	public void testIsDirtyReturnsFalseWhenOrionEditorControlIsNull() {
 		OrionEditor editor = new OrionEditor();
 		assertFalse(editor.isDirty());
