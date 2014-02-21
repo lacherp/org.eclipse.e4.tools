@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Lars Vogel <lars.vogel@gmail.com> - Bug 419723, 422644
+ *     Lars Vogel <lars.vogel@gmail.com> - Bug 419723, 422644, 428728
  *     Markus A. Kuppe <bugs.eclipse.org@lemmster.de> - Bug 421259
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.liveeditor;
@@ -124,8 +124,6 @@ public class ModelProcessor {
 			descriptor.setLabel("Live Application Model");
 			descriptor
 					.setContributionURI("bundleclass://org.eclipse.e4.tools.emf.liveeditor/org.eclipse.e4.tools.emf.liveeditor.LivePartDelegator");
-			descriptor
-					.setContributorURI("bundleclass://org.eclipse.e4.tools.emf.liveeditor");
 			descriptor
 					.setIconURI("platform:/plugin/org.eclipse.e4.tools.emf.liveeditor/icons/full/obj16/application_lightning.png");
 			application.getDescriptors().add(descriptor);
