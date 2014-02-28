@@ -15,6 +15,8 @@ import java.io.InputStream;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.e4.tools.orion.editor.builder.css.CSSBuilder;
+import org.eclipse.e4.tools.orion.editor.builder.html.HTMLBuilder;
 import org.eclipse.e4.tools.orion.text.editor.OrionEditor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -29,8 +31,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 
 public class OrionEditorTest extends UITestCase {
 
-	private static final String ORION_EDITOR_ID =
-			"org.eclipse.e4.tools.orion.text.editor"; //$NON-NLS-1$
+	private static final String ORION_EDITOR_ID = "org.eclipse.e4.tools.orion.text.editor"; //$NON-NLS-1$
 
 	private IWorkbenchPage fActivePage;
 
@@ -72,6 +73,30 @@ public class OrionEditorTest extends UITestCase {
 		assertEquals(fActivePage.getActiveEditor(), editor);
 		assertEquals(editor.getSite().getId(), fWorkbench.getEditorRegistry()
 				.getDefaultEditor(file.getName()).getId());
+
+		// Now make sure that the correct builder is used
+		OrionEditor orionEditor = (OrionEditor) editor;
+		assertTrue(orionEditor.getBuilder() instanceof CSSBuilder);
+	}
+
+	public void testOpenEditorForEmptyHtmlFile() throws Throwable {
+		proj = FileUtil.createProject("testOpenEditor");
+
+		IFile file = FileUtil.createFile("test.html", proj);
+		// Check that the default editor for CSS files is the Orion Editor
+		assertEquals(ORION_EDITOR_ID, fWorkbench.getEditorRegistry()
+				.getDefaultEditor(file.getName()).getId());
+
+		// Then check if the OrionEditor automatically opens for CSS files.
+		IEditorPart editor = IDE.openEditor(fActivePage, file, true);
+		assertTrue(ArrayUtil.contains(fActivePage.getEditors(), editor));
+		assertEquals(fActivePage.getActiveEditor(), editor);
+		assertEquals(editor.getSite().getId(), fWorkbench.getEditorRegistry()
+				.getDefaultEditor(file.getName()).getId());
+
+		// Now make sure that the correct builder is used
+		OrionEditor orionEditor = (OrionEditor) editor;
+		assertTrue(orionEditor.getBuilder() instanceof HTMLBuilder);
 	}
 
 	public void testOpenEditorForNonEmptyCssFile() throws Throwable {
@@ -80,7 +105,8 @@ public class OrionEditorTest extends UITestCase {
 
 		// Insert text into the CSS file
 		IFile file = FileUtil.createFile("test.css", proj);
-		InputStream in = new ByteArrayInputStream(fileContents.getBytes("UTF-8"));
+		InputStream in = new ByteArrayInputStream(
+				fileContents.getBytes("UTF-8"));
 		file.setContents(in, IFile.NONE, null);
 
 		// Make sure that the editor properly opens.
@@ -92,7 +118,32 @@ public class OrionEditorTest extends UITestCase {
 
 		// Check that the OrionEditorControl contains the text
 		// that was in the CSS file.
-		OrionEditor orionEditor = (OrionEditor)editor;
+		OrionEditor orionEditor = (OrionEditor) editor;
+		assertEquals(fileContents, orionEditor.getContents());
+
+		FileUtil.delete(file);
+	}
+
+	public void testOpenEditorForNonEmptyHtmlFile() throws Throwable {
+		proj = FileUtil.createProject("testOpenEditor");
+		String fileContents = "<!DOCTYPE html><html><body><h1>Some File</h1></body></html>";
+
+		// Insert text into the CSS file
+		IFile file = FileUtil.createFile("test.htm", proj);
+		InputStream in = new ByteArrayInputStream(
+				fileContents.getBytes("UTF-8"));
+		file.setContents(in, IFile.NONE, null);
+
+		// Make sure that the editor properly opens.
+		IEditorPart editor = IDE.openEditor(fActivePage, file, true);
+		assertTrue(ArrayUtil.contains(fActivePage.getEditors(), editor));
+		assertEquals(fActivePage.getActiveEditor(), editor);
+		assertEquals(editor.getSite().getId(), fWorkbench.getEditorRegistry()
+				.getDefaultEditor(file.getName()).getId());
+
+		// Check that the OrionEditorControl contains the text
+		// that was in the CSS file.
+		OrionEditor orionEditor = (OrionEditor) editor;
 		assertEquals(fileContents, orionEditor.getContents());
 
 		FileUtil.delete(file);
@@ -112,11 +163,12 @@ public class OrionEditorTest extends UITestCase {
 		assertEquals(editor.getSite().getId(), fWorkbench.getEditorRegistry()
 				.getDefaultEditor(file.getName()).getId());
 
-		OrionEditor orionEditor = (OrionEditor)editor;
+		OrionEditor orionEditor = (OrionEditor) editor;
 		orionEditor.setContents(fileContents);
 		assertTrue(orionEditor.isDirty());
 		editor.doSave(null);
-		assertEquals(fileContents, orionEditor.loadFile(file.getContents(), 1024));
+		assertEquals(fileContents,
+				orionEditor.loadFile(file.getContents(), 1024));
 	}
 
 	public void testIsDirtyReturnsFalseWhenOrionEditorControlIsNull() {
@@ -124,7 +176,8 @@ public class OrionEditorTest extends UITestCase {
 		assertFalse(editor.isDirty());
 	}
 
-	public void testIsDirtyReturnsFalseWhenOrionEditorControlIsDisposed() throws Throwable {
+	public void testIsDirtyReturnsFalseWhenOrionEditorControlIsDisposed()
+			throws Throwable {
 		proj = FileUtil.createProject("testOpenEditor");
 		IFile file = FileUtil.createFile("test.css", proj);
 
@@ -144,7 +197,8 @@ public class OrionEditorTest extends UITestCase {
 	@SuppressWarnings("restriction")
 	public void testInitThrowsExceptionWithNonFileEditorInput() {
 		try {
-			IEditorPart editor = IDE.openEditor(fActivePage, new NullEditorInput(), ORION_EDITOR_ID);
+			IEditorPart editor = IDE.openEditor(fActivePage,
+					new NullEditorInput(), ORION_EDITOR_ID);
 			assertTrue(editor instanceof ErrorEditorPart);
 		} catch (PartInitException e) {
 			fail("The PartInitException should be caught internally.");

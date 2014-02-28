@@ -20,7 +20,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.tools.orion.editor.builder.IHTMLBuilder;
 import org.eclipse.e4.tools.orion.editor.builder.css.CSSBuilder;
+import org.eclipse.e4.tools.orion.editor.builder.html.HTMLBuilder;
 import org.eclipse.e4.tools.orion.editor.swt.IDirtyListener;
 import org.eclipse.e4.tools.orion.editor.swt.OrionEditorControl;
 import org.eclipse.swt.SWT;
@@ -34,8 +36,11 @@ import org.eclipse.ui.part.FileEditorInput;
 
 public class OrionEditor extends EditorPart implements IDirtyListener {
 
+	private static final String CSS_EXTENSION = "css";
+
 	private OrionEditorControl control;
 	private IFile source;
+	private IHTMLBuilder builder;
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
@@ -103,13 +108,23 @@ public class OrionEditor extends EditorPart implements IDirtyListener {
 	@Override
 	public void createPartControl(Composite parent) {
 		try {
-			control = new OrionEditorControl(parent, SWT.NONE, new CSSBuilder(
-					""));
-			control.addDirtyListener(this);
+			String text = "";
+			// Assume HTML context for files other than CSS and JS
+			builder = new HTMLBuilder();
 
 			if (source != null) {
-				control.setText(loadFile(source.getContents(), 1024));
+				String extension = source.getFileExtension();
+
+				if (extension.equals(CSS_EXTENSION)) {
+					builder = new CSSBuilder("");
+				}
+
+				text = loadFile(source.getContents(), 1024);
 			}
+
+			control = new OrionEditorControl(parent, SWT.NONE, builder);
+			control.addDirtyListener(this);
+			control.setText(text);
 		} catch (Exception e) {
 			Activator
 					.getDefault()
@@ -135,6 +150,10 @@ public class OrionEditor extends EditorPart implements IDirtyListener {
 			control.setText(contents);
 			control.setDirty(true);
 		}
+	}
+
+	public IHTMLBuilder getBuilder() {
+		return builder;
 	}
 
 	/**

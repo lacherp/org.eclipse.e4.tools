@@ -13,6 +13,7 @@ Require-Bundle: org.eclipse.swt;resolution:=optional,
  org.apache.commons.lang;bundle-version="2.6.0"
 Export-Package: org.eclipse.e4.tools.orion.editor.builder,
  org.eclipse.e4.tools.orion.editor.builder.css,
+ org.eclipse.e4.tools.orion.editor.builder.html,
  org.eclipse.e4.tools.orion.editor.builder.js,
  org.eclipse.e4.tools.orion.editor.internal,
  org.eclipse.e4.tools.orion.editor.swt

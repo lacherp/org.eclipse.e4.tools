@@ -7,7 +7,7 @@
             class="org.eclipse.e4.tools.orion.text.editor.OrionEditor"
             contributorClass="org.eclipse.e4.tools.orion.text.editor.OrionEditorActionBarContributor"
             default="true"
-            extensions="css"
+            extensions="css,html,htm"
             id="org.eclipse.e4.tools.orion.text.editor"
             matchingStrategy="org.eclipse.e4.tools.orion.text.editor.OrionEditorMatchingStrategy"
             name="OrionEditor">
