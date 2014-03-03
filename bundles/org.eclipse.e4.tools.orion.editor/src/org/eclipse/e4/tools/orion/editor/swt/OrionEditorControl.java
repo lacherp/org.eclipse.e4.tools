@@ -134,7 +134,7 @@ public class OrionEditorControl extends Composite {
 			focusToBeSet = null;
 		}
 		// add dirty event listener.
-		browser.evaluate("window.editor.addEventListener('DirtyChanged', orion_dirty, true)");
+		browser.evaluate("window.editor.addEventListener('DirtyChanged', function() {orion_dirty();}, true)");
 		// Set dirty if need
 		if (dirtyToBeSet != null) {
 			setDirty(dirtyToBeSet);
@@ -183,6 +183,7 @@ public class OrionEditorControl extends Composite {
 		String js = new StringBuilder("window.editor.setInput(null, null, \"")
 				.append(StringEscapeUtils.escapeJavaScript(text))
 				.append("\", false );").toString();
+		System.err.println(js);
 		browser.evaluate(js);
 	}
 
