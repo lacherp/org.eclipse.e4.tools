@@ -183,7 +183,6 @@ public class OrionEditorControl extends Composite {
 		String js = new StringBuilder("window.editor.setInput(null, null, \"")
 				.append(StringEscapeUtils.escapeJavaScript(text))
 				.append("\", false );").toString();
-		System.err.println(js);
 		browser.evaluate(js);
 	}
 
