@@ -2,12 +2,14 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         id="id1"
-         point="org.eclipse.e4.workbench.model">
-      <processor
-            beforefragment="false"
-            class="org.eclipse.e4.tools.emf.liveeditor.ModelProcessor">
-      </processor>
+         point="org.eclipse.e4.tools.spy.spyPart">
+      <spyPart
+            description="Open the live model editor"
+            icon="icons/full/obj16/application_lightning.png"
+            name="Live Model Editor"
+            part="org.eclipse.e4.tools.emf.liveeditor.LivePartDelegator"
+            shortcut="M2+M3+F9">
+      </spyPart>
    </extension>
 
 </plugin>

@@ -17,7 +17,5 @@ import org.eclipse.e4.ui.bindings.EBindingService;
 public class Constants {
 	public static final String PLUGIN_ID = PluginUtils.getBundleId(Constants.class);
 
-	public static final String BINDING_MODIFIED_BY_USER_TAG = EBindingService.TYPE_ATTR_TAG + ":user";
 
-	public static final String BINDING_DELETED_BY_USER_TAG = EBindingService.DELETED_BINDING_TAG;
 }

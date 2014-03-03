@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin>
-   <extension
-         id="id1"
-         point="org.eclipse.e4.workbench.model">
-      <processor
-            beforefragment="false"
-            class="org.eclipse.e4.tools.context.spy.ContextSpyProcessor">
-      </processor>
+   <extension point="org.eclipse.e4.tools.spy.spyPart">
+      <spyPart
+            description="Context Spy to understand what is behind the scene of injection"
+            icon="icons/annotation_obj.gif"
+            name="Context spy"
+            part="org.eclipse.e4.tools.context.spy.ContextSpyPart"
+            shortcut="M2+M3+F10">
+      </spyPart>
    </extension>
-
-
 </plugin>

@@ -65,6 +65,9 @@ public class CapturedEventFilters {
 
 	private Text baseTopicText;
 	
+	// For bug 428903 : cache the text value for predestroy to avoid widget disposed exception.
+	private String baseTopicTextValue = BASE_EVENT_TOPIC;
+	
 	private List filters;
 
 	private java.util.List<CapturedEventFilter> rawFilters;
@@ -135,10 +138,12 @@ public class CapturedEventFilters {
 		baseTopicText.setLayoutData(new RowData(312, SWT.DEFAULT));
 		baseTopicText.setText(BASE_EVENT_TOPIC);
 		baseTopicText.addFocusListener(new FocusAdapter() {
+
 			public void focusLost(FocusEvent e) {
 				if (baseTopicText.getText().trim().length() == 0) {
 					baseTopicText.setText(BASE_EVENT_TOPIC);
 				}
+				baseTopicTextValue = baseTopicText.getText();
 			}			
 		});
 
@@ -281,7 +286,7 @@ public class CapturedEventFilters {
 	}
 	
 	public String getBaseTopic() {
-		return baseTopicText.getText();
+		return baseTopicTextValue;
 	}
 	
 	public boolean hasFilters() {

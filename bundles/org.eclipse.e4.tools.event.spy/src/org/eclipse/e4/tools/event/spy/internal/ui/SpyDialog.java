@@ -7,14 +7,19 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Olivier Prouvost <olivier.prouvost@opcoach.com> 
+ *       - Fix bug 428903 : transform this dialog into a part to be definied with spyPart extension
  *******************************************************************************/
 package org.eclipse.e4.tools.event.spy.internal.ui;
 
 import java.util.Collection;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.tools.event.spy.internal.core.EventMonitor;
 import org.eclipse.e4.tools.event.spy.internal.model.CapturedEvent;
@@ -22,17 +27,14 @@ import org.eclipse.e4.tools.event.spy.internal.model.CapturedEventFilter;
 import org.eclipse.e4.tools.event.spy.internal.util.JDTUtils;
 import org.eclipse.e4.tools.event.spy.internal.util.LoggerWrapper;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
 
-public class SpyDialog extends Dialog implements EventMonitor.NewEventListener {
+public class SpyDialog /*extends Dialog */ implements EventMonitor.NewEventListener {
 	private final static String DIALOG_TITLE = "Event spy dialog";
 
 	private final static String[] SHOW_FILTER_LINK_TEXT = new String[]{"Show filters", "Hide filters"};
@@ -56,11 +58,6 @@ public class SpyDialog extends Dialog implements EventMonitor.NewEventListener {
 	@Inject
 	private MApplication appplication;
 	
-	@Inject
-	public SpyDialog(Shell shell) {
-		super(shell);
-		setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE);
-	}
 
 	/* Layout scheme:
 	 *
@@ -86,29 +83,24 @@ public class SpyDialog extends Dialog implements EventMonitor.NewEventListener {
 	 *
 	 * */
 
-	@Override
-	protected Point getInitialSize() {
-		return new Point(608, 450);
-	}
 
-	@Override
-	protected Control createDialogArea(Composite parent) {
-		outer = (Composite) super.createDialogArea(parent);
-		SpyDialogMemento memento = (SpyDialogMemento) appplication
-			.getContext().get(SpyDialogMemento.class.getName()); 
-				
+	@PostConstruct
+	protected void createDialogArea(Composite parent, @Optional SpyDialogMemento memento) {
+		
+		// Bug 428903 : create now a part, and inject directly optional memento (set in saveDialogMemento).
+		
+		outer = parent;
+		
+		outer.setLayout(new GridLayout());
+		outer.setLayoutData(new GridData(GridData.FILL_BOTH));
+
 		createActionBar(outer);
 		createFilters(outer, memento);
 		createCapturedEventTree(outer);
-		return outer;
-	}
-	
-	@Override
-	public boolean close() {
-		saveDialogMemento();
-		return super.close();
 	}
 
+	
+	@PreDestroy
 	private void saveDialogMemento() {
 		SpyDialogMemento memento = null;
 		String baseTopic = capturedEventFilters.getBaseTopic();
@@ -189,16 +181,6 @@ public class SpyDialog extends Dialog implements EventMonitor.NewEventListener {
 		});
 	}
 
-	@Override
-	protected void configureShell(Shell newShell) {
-		super.configureShell(newShell);
-		newShell.setText(DIALOG_TITLE);
-	}
-
-	@Override
-	protected void createButtonsForButtonBar(Composite parent) {
-		//do nothing
-	}
 
 	public void captureEvents() {
 		capturedEventTree.removeAll();
@@ -207,14 +189,14 @@ public class SpyDialog extends Dialog implements EventMonitor.NewEventListener {
 			eventMonitor.setNewEventListener(this);
 		}
 		eventMonitor.start(capturedEventFilters.getBaseTopic(), capturedEventFilters.getFilters());
-		getShell().setText(DIALOG_TITLE + " - capturing...");
+		// getShell().setText(DIALOG_TITLE + " - capturing...");
 	}
 
 	public void stopCaptureEvents() {
 		if (eventMonitor != null) {
 			eventMonitor.stop();
 		}
-		getShell().setText(DIALOG_TITLE);
+		// getShell().setText(DIALOG_TITLE);
 	}
 
 	public void newEvent(CapturedEvent event) {

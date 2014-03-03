@@ -58,6 +58,7 @@
     <module>./bundles/org.eclipse.e4.tools.orion.text.editor</module>
     <module>./bundles/org.eclipse.e4.tools.css.spy</module>
     <module>./bundles/org.eclipse.e4.tools.context.spy</module>
+    <module>./bundles/org.eclipse.e4.tools.spy</module>
     <module>./bundles/org.eclipse.e4.tools.event.spy</module>
     <module>./features/org.eclipse.e4.core.tools.feature</module>
     <module>./features/org.eclipse.e4.tools.css.editor.feature</module>

@@ -21,12 +21,13 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jface.databinding,
  org.eclipse.core.databinding.observable,
  org.eclipse.core.databinding.beans,
- org.eclipse.core.databinding.property
+ org.eclipse.core.databinding.property,
+ org.eclipse.e4.tools.spy,
+ org.eclipse.e4.ui.di
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: javax.annotation;version="1.1.0"
 Export-Package: org.eclipse.e4.tools.event.spy,
- org.eclipse.e4.tools.event.spy.handlers,
  org.eclipse.e4.tools.event.spy.internal.core;x-internal:=true,
  org.eclipse.e4.tools.event.spy.internal.model;x-internal:=true,
  org.eclipse.e4.tools.event.spy.internal.ui;x-internal:=true,
