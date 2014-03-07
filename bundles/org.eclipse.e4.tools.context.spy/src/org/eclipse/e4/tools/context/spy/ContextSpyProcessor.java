@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.tools.context.spy;
 
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -164,26 +166,32 @@ public class ContextSpyProcessor
 		// If this context does not yet exist, create it also.
 		if (spyBindingTable == null)
 		{
-			MBindingContext dialAndWindowContext = null;
-			for (MBindingContext bc : application.getBindingContexts())
-				if (ORG_ECLIPSE_UI_CONTEXTS_DIALOG_AND_WINDOW.equals(bc.getElementId()))
-				{
-					dialAndWindowContext = bc;
-					break;
+			
+			MBindingContext bc = null;
+			final List<MBindingContext> bindingContexts = application
+					.getBindingContexts();
+			if (bindingContexts.size() == 0) {
+				bc = modelService.createModelElement(MBindingContext.class);
+				bc.setElementId("org.eclipse.ui.contexts.window");
+			} else {
+				// Prefer org.eclipse.ui.contexts.dialogAndWindow but randomly
+				// select another one
+				// if org.eclipse.ui.contexts.dialogAndWindow cannot be found
+				for (MBindingContext aBindingContext : bindingContexts) {
+					bc = aBindingContext;
+					if ("org.eclipse.ui.contexts.dialogAndWindow"
+							.equals(aBindingContext.getElementId())) {
+						break;
+					}
 				}
-
-			if (dialAndWindowContext == null)
-			{
-				// This context has not yet been created... Application model
-				// must be very poor....
-				dialAndWindowContext = modelService.createModelElement(MBindingContext.class);
-				dialAndWindowContext.setElementId(ORG_ECLIPSE_UI_CONTEXTS_DIALOG_AND_WINDOW);
 			}
-
+			
+			
+	
 			// Can now create the binding table and bind it to this context...
 			spyBindingTable = modelService.createModelElement(MBindingTable.class);
 			spyBindingTable.setElementId(E4_SPIES_BINDING_TABLE);
-			spyBindingTable.setBindingContext(dialAndWindowContext);
+			spyBindingTable.setBindingContext(bc);
 			application.getBindingTables().add(spyBindingTable);
 		}
 
