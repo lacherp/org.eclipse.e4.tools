@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.tools.orion.editor.builder.IHTMLBuilder;
 import org.eclipse.e4.tools.orion.editor.builder.css.CSSBuilder;
 import org.eclipse.e4.tools.orion.editor.builder.html.HTMLBuilder;
+import org.eclipse.e4.tools.orion.editor.builder.js.JSBuilder;
 import org.eclipse.e4.tools.orion.editor.swt.IDirtyListener;
 import org.eclipse.e4.tools.orion.editor.swt.OrionEditorControl;
 import org.eclipse.swt.SWT;
@@ -37,6 +38,7 @@ import org.eclipse.ui.part.FileEditorInput;
 public class OrionEditor extends EditorPart implements IDirtyListener {
 
 	private static final String CSS_EXTENSION = "css";
+	private static final String JS_EXTENSION = "js";
 
 	private OrionEditorControl control;
 	private IFile source;
@@ -86,6 +88,7 @@ public class OrionEditor extends EditorPart implements IDirtyListener {
 
 		setSite(site);
 		setInput(input);
+		setPartName(input.getName());
 
 		FileEditorInput fileInput = ((FileEditorInput) input);
 		if (fileInput != null) {
@@ -117,6 +120,8 @@ public class OrionEditor extends EditorPart implements IDirtyListener {
 
 				if (extension.equals(CSS_EXTENSION)) {
 					builder = new CSSBuilder("");
+				} else if (extension.equals(JS_EXTENSION)) {
+					builder = new JSBuilder();
 				}
 
 				text = loadFile(source.getContents(), 1024);
