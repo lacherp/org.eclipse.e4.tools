@@ -17,6 +17,8 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -26,12 +28,14 @@ import org.eclipse.e4.tools.orion.editor.builder.html.HTMLBuilder;
 import org.eclipse.e4.tools.orion.editor.builder.js.JSBuilder;
 import org.eclipse.e4.tools.orion.editor.swt.IDirtyListener;
 import org.eclipse.e4.tools.orion.editor.swt.OrionEditorControl;
+import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 
@@ -47,25 +51,7 @@ public class OrionEditor extends EditorPart implements IDirtyListener {
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		if (isDirty()) {
-			boolean success = true;
-			try {
-				InputStream contentStream = new ByteArrayInputStream(control
-						.getText().getBytes("UTF-8"));
-				source.setContents(contentStream, IFile.KEEP_HISTORY, monitor);
-			} catch (Exception e) {
-				success = false;
-				Activator
-						.getDefault()
-						.getLog()
-						.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-								"Failed to save CSS", e));
-			}
-
-			if (success) {
-				control.setDirty(false);
-			} else {
-				monitor.setCanceled(true);
-			}
+			performSave(source, monitor);
 		} else {
 			monitor.done();
 		}
@@ -73,8 +59,65 @@ public class OrionEditor extends EditorPart implements IDirtyListener {
 
 	@Override
 	public void doSaveAs() {
-		// TODO Auto-generated method stub
+		if (isSaveAsAllowed()) {
+			SaveAsDialog dialog = new SaveAsDialog(getSite().getShell());
 
+			if (source != null) {
+				dialog.setOriginalFile(source);
+			}
+
+			IProgressMonitor monitor = getStatusLineManager()
+					.getProgressMonitor();
+			if (dialog.open() == SaveAsDialog.CANCEL) {
+				monitor.setCanceled(true);
+			} else {
+				IWorkspace workspace = ResourcesPlugin.getWorkspace();
+				IFile file = workspace.getRoot().getFile(dialog.getResult());
+
+				if (performSave(file, monitor)) {
+					source = file;
+					setPartName(file.getName());
+					setInput(new FileEditorInput(file));
+				}
+			}
+		}
+	}
+
+	/**
+	 * Attempts to save the contents of the editor to the specified
+	 * {@link IFile} using the given {@link IProgressMonitor}.
+	 * 
+	 * @param file
+	 *            The file to which the contents of the editor should be saved.
+	 * @param monitor
+	 *            The progress monitor to use.
+	 * @return True if the save operation succeeds, false otherwise.
+	 */
+	private boolean performSave(IFile file, IProgressMonitor monitor) {
+		boolean success = true;
+		try {
+			InputStream contentStream = new ByteArrayInputStream(control
+					.getText().getBytes("UTF-8"));
+			if (file.exists()) {
+				file.setContents(contentStream, IFile.KEEP_HISTORY, monitor);
+			} else {
+				file.create(contentStream, IFile.KEEP_HISTORY, monitor);
+			}
+		} catch (Exception e) {
+			success = false;
+			Activator
+					.getDefault()
+					.getLog()
+					.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+							"Failed to save file", e));
+		}
+
+		if (success) {
+			control.setDirty(false);
+		} else {
+			monitor.setCanceled(true);
+		}
+		return success;
 	}
 
 	@Override
@@ -104,8 +147,7 @@ public class OrionEditor extends EditorPart implements IDirtyListener {
 
 	@Override
 	public boolean isSaveAsAllowed() {
-		// TODO Auto-generated method stub
-		return false;
+		return !(control == null || control.isDisposed());
 	}
 
 	@Override
@@ -135,7 +177,7 @@ public class OrionEditor extends EditorPart implements IDirtyListener {
 					.getDefault()
 					.getLog()
 					.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-							"Failed to load CSS", e));
+							"Failed to load file", e));
 		}
 	}
 
@@ -144,6 +186,14 @@ public class OrionEditor extends EditorPart implements IDirtyListener {
 		if (control != null) {
 			control.setFocus();
 		}
+	}
+
+	@Override
+	public void dispose() {
+		if (control != null) {
+			control.dispose();
+		}
+		super.dispose();
 	}
 
 	public String getContents() {
@@ -193,5 +243,9 @@ public class OrionEditor extends EditorPart implements IDirtyListener {
 	@Override
 	public void dirtyChanged(boolean dirty) {
 		firePropertyChange(ISaveablePart.PROP_DIRTY);
+	}
+
+	private IStatusLineManager getStatusLineManager() {
+		return getEditorSite().getActionBars().getStatusLineManager();
 	}
 }

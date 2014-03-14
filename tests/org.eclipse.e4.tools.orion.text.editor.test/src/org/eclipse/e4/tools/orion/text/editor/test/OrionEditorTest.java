@@ -225,16 +225,17 @@ public class OrionEditorTest extends UITestCase {
 		assertFalse(editor.isDirty());
 	}
 
-	public void testIsDirtyReturnsFalseWhenOrionEditorControlIsDisposed()
+	public void testIsSaveAsAllowedReturnsFalseWhenOrionEditorControlIsNull() {
+		OrionEditor editor = new OrionEditor();
+		assertFalse(editor.isSaveAsAllowed());
+	}
+
+	public void testIsSaveAsAllowedReturnsTrueWhenOrionEditorControlExists()
 			throws Throwable {
 		proj = FileUtil.createProject("testOpenEditor");
-		IFile file = FileUtil.createFile("test.css", proj);
+		IFile file = FileUtil.createFile("test.js", proj);
 		IEditorPart editor = openEditor(file);
-
-		FileUtil.deleteProject(proj);
-		proj = null;
-
-		assertFalse(editor.isDirty());
+		assertTrue(editor.isSaveAsAllowed());
 	}
 
 	@SuppressWarnings("restriction")
