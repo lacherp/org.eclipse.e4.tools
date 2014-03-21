@@ -18,9 +18,10 @@ public class OrionEditorTestSuite extends TestCase {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(OrionEditorTestSuite.class.getName());
-		//$JUnit-BEGIN$
+		// $JUnit-BEGIN$
 		suite.addTestSuite(OrionEditorTest.class);
-		//$JUnit-END$
+		suite.addTestSuite(RevertOrionEditorHandlerTest.class);
+		// $JUnit-END$
 		return suite;
 	}
 }

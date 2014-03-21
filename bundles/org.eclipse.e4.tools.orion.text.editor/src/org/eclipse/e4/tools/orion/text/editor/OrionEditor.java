@@ -28,14 +28,17 @@ import org.eclipse.e4.tools.orion.editor.builder.html.HTMLBuilder;
 import org.eclipse.e4.tools.orion.editor.builder.js.JSBuilder;
 import org.eclipse.e4.tools.orion.editor.swt.IDirtyListener;
 import org.eclipse.e4.tools.orion.editor.swt.OrionEditorControl;
+import org.eclipse.e4.tools.orion.text.editor.handlers.RevertOrionEditorHandler;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.ISaveablePart;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.SaveAsDialog;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 
@@ -105,11 +108,7 @@ public class OrionEditor extends EditorPart implements IDirtyListener {
 			}
 		} catch (Exception e) {
 			success = false;
-			Activator
-					.getDefault()
-					.getLog()
-					.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-							"Failed to save file", e));
+			logError("Failed to save file", e);
 		}
 
 		if (success) {
@@ -132,6 +131,12 @@ public class OrionEditor extends EditorPart implements IDirtyListener {
 		setSite(site);
 		setInput(input);
 		setPartName(input.getName());
+
+		// Set up the revert file handler
+		IHandlerService handlerService = (IHandlerService) site
+				.getService(IHandlerService.class);
+		handlerService.activateHandler(IWorkbenchCommandConstants.FILE_REVERT,
+				new RevertOrionEditorHandler(this));
 
 		FileEditorInput fileInput = ((FileEditorInput) input);
 		if (fileInput != null) {
@@ -173,11 +178,7 @@ public class OrionEditor extends EditorPart implements IDirtyListener {
 			control.addDirtyListener(this);
 			control.setText(text);
 		} catch (Exception e) {
-			Activator
-					.getDefault()
-					.getLog()
-					.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-							"Failed to load file", e));
+			logError("Failed to load file", e);
 		}
 	}
 
@@ -243,6 +244,28 @@ public class OrionEditor extends EditorPart implements IDirtyListener {
 	@Override
 	public void dirtyChanged(boolean dirty) {
 		firePropertyChange(ISaveablePart.PROP_DIRTY);
+	}
+
+	public void revert() {
+		if (control != null) {
+			if (source == null) {
+				control.setText("");
+			} else {
+				try {
+					control.setText(loadFile(source.getContents(), 1024));
+					control.setDirty(false);
+				} catch (Exception e) {
+					logError("Failed to revert file", e);
+				}
+			}
+		}
+	}
+
+	private void logError(String message, Exception e) {
+		Activator
+				.getDefault()
+				.getLog()
+				.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, message, e));
 	}
 
 	private IStatusLineManager getStatusLineManager() {

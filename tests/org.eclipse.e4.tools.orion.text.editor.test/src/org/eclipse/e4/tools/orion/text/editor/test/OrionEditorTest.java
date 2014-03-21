@@ -248,4 +248,21 @@ public class OrionEditorTest extends UITestCase {
 			fail("The PartInitException should be caught internally.");
 		}
 	}
+
+	public void testRevertFile() throws Throwable {
+		proj = FileUtil.createProject("testOpenEditor");
+		String fileContents = "#simple {display: inline-block;}";
+
+		IFile file = FileUtil.createFile("test.css", proj);
+		InputStream in = new ByteArrayInputStream(
+				fileContents.getBytes("UTF-8"));
+		file.setContents(in, IFile.NONE, null);
+		IEditorPart editor = openEditor(file);
+
+		OrionEditor orionEditor = (OrionEditor) editor;
+		orionEditor.setContents(".newCss {display: none;}");
+		assertTrue(orionEditor.isDirty());
+		orionEditor.revert();
+		assertEquals(fileContents, orionEditor.getContents());
+	}
 }

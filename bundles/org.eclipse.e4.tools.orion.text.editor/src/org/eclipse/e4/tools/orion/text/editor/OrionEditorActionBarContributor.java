@@ -10,27 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.tools.orion.text.editor;
 
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorActionBarContributor;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.part.EditorActionBarContributor;
 
-public class OrionEditorActionBarContributor implements
-		IEditorActionBarContributor {
-
-	@Override
-	public void init(IActionBars bars, IWorkbenchPage page) {
-		// Intentionally empty.
-	}
-
-	@Override
-	public void setActiveEditor(IEditorPart targetEditor) {
-		// Intentionally empty.
-	}
-
-	@Override
-	public void dispose() {
-		// Intentionally empty.
-	}
-
+public class OrionEditorActionBarContributor extends EditorActionBarContributor {
+	// Intentionally empty
 }
