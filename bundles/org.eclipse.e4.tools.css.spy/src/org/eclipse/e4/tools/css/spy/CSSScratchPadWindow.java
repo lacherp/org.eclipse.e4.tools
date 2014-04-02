@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.eclipse.e4.ui.css.core.dom.ExtendedDocumentCSS;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.e4.ui.css.swt.internal.theme.ThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.jface.dialogs.Dialog;
@@ -93,41 +92,54 @@ public class CSSScratchPadWindow extends Dialog {
 	}
 
 	private void applyCSS() {
+		if (themeEngine == null) {
+			exceptions.setText("No theme engine available!");
+			return;
+		}
 		long start = System.nanoTime();
 		exceptions.setText("");
-		CSSEngine engine = WidgetElement.getEngine(getShell().getDisplay());
-		if (engine == null) {
-			exceptions.setText("No CSS Engine available");
-		}
-		if (themeEngine != null) {
-			// FIXME: expose this new protocol
-			((ThemeEngine) themeEngine).resetCurrentTheme();
-		}
-		ExtendedDocumentCSS doc = (ExtendedDocumentCSS) engine
-				.getDocumentCSS();
-		List<StyleSheet> sheets = new ArrayList<StyleSheet>();
-		StyleSheetList list = doc.getStyleSheets();
-		for (int i = 0; i < list.getLength(); i++) {
-			sheets.add(list.item(i));
-		}
 
-		try {
-			Reader reader = new StringReader(cssText.getText());
-			sheets.add(0, engine.parseStyleSheet(reader));
-			doc.removeAllStyleSheets();
-			for (StyleSheet sheet : sheets) {
-				doc.addStyleSheet(sheet);
+		StringBuilder sb = new StringBuilder();
+
+		// FIXME: expose these new protocols: resetCurrentTheme() and
+		// getCSSEngines()
+		((ThemeEngine) themeEngine).resetCurrentTheme();
+
+		int count = 0;
+		for (CSSEngine engine : ((ThemeEngine) themeEngine).getCSSEngines()) {
+			if (count++ > 0) {
+				sb.append("\n\n");
 			}
-			engine.reapply();
+			sb.append("Engine[").append(engine.getClass().getSimpleName())
+					.append("]");
+			ExtendedDocumentCSS doc = (ExtendedDocumentCSS) engine
+					.getDocumentCSS();
+			List<StyleSheet> sheets = new ArrayList<StyleSheet>();
+			StyleSheetList list = doc.getStyleSheets();
+			for (int i = 0; i < list.getLength(); i++) {
+				sheets.add(list.item(i));
+			}
 
-			long nanoDiff = System.nanoTime() - start;
-			exceptions.setText("Total time: " + (nanoDiff / 1000000) + "ms");
-		} catch (CSSParseException e) {
-			exceptions.setText("Error: line " + e.getLineNumber() + " col "
-					+ e.getColumnNumber() + ": " + e.getLocalizedMessage());
-		} catch (IOException e) {
-			exceptions.setText("Error: " + e.getLocalizedMessage());
+			try {
+				Reader reader = new StringReader(cssText.getText());
+				sheets.add(0, engine.parseStyleSheet(reader));
+				doc.removeAllStyleSheets();
+				for (StyleSheet sheet : sheets) {
+					doc.addStyleSheet(sheet);
+				}
+				engine.reapply();
+
+				long nanoDiff = System.nanoTime() - start;
+				sb.append("\nTime: ").append(nanoDiff / 1000000).append("ms");
+			} catch (CSSParseException e) {
+				sb.append("\nError: line ").append(e.getLineNumber())
+						.append(" col ").append(e.getColumnNumber())
+						.append(": ").append(e.getLocalizedMessage());
+			} catch (IOException e) {
+				sb.append("\nError: ").append(e.getLocalizedMessage());
+			}
 		}
+		exceptions.setText(sb.toString());
 	}
 
 }
