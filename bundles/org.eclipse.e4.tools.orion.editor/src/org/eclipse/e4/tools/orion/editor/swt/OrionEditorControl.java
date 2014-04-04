@@ -97,6 +97,13 @@ public class OrionEditorControl extends Composite {
 				return null;
 			}
 		};
+		// focus function
+		new BrowserFunction(browser, "orion_focus") {
+			public Object function(Object[] arguments) {
+				setFocus();
+				return null;
+			}
+		};
 	}
 
 	/**
@@ -135,6 +142,8 @@ public class OrionEditorControl extends Composite {
 		}
 		// add dirty event listener.
 		browser.evaluate("window.editor.addEventListener('DirtyChanged', function() {orion_dirty();}, true)");
+		// add focus event listener.
+		browser.evaluate("window.editor.getTextView().addEventListener('Focus', function() {orion_focus();}, true)");
 		// Set dirty if need
 		if (dirtyToBeSet != null) {
 			setDirty(dirtyToBeSet);
