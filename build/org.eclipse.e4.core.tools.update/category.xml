@@ -25,10 +25,10 @@
       <category name="org.eclipse.e4.tools.css.spy"/>
    </feature>
    <feature url="features/org.eclipse.e4.tools.emf.liveeditor.feature_0.15.0.qualifier.jar" id="org.eclipse.e4.tools.emf.liveeditor.feature" version="0.15.0.qualifier">
-      <category name="org.eclipse.e4.tools.emf.liveeditor.feature"/>
+      <category name="org.eclipse.e4.tools.liveeditor"/>
    </feature>
    <feature url="features/org.eclipse.e4.tools.emf.liveeditor.feature.source_0.15.0.qualifier.jar" id="org.eclipse.e4.tools.emf.liveeditor.feature.source" version="0.15.0.qualifier">
-      <category name="org.eclipse.e4.tools.emf.liveeditor.feature"/>
+      <category name="org.eclipse.e4.tools.liveeditor"/>
    </feature>
    <feature url="features/org.eclipse.e4.tools.e3x.bridge.feature_0.14.0.qualifier.jar" id="org.eclipse.e4.tools.e3x.bridge.feature" version="0.14.0.qualifier">
       <category name="org.eclipse.e4.tools.e3x.bridge"/>
@@ -51,4 +51,5 @@
    <category-def name="org.eclipse.e4.tools.css.editor" label="Eclipse 4 - CSS File Editor"/>
    <category-def name="org.eclipse.e4.tools.event.spy" label="Eclipse 4 - Event Spy"/>
    <category-def name="org.eclipse.e4.tools.context.spy" label="Eclipse 4 - Context Spy"/>
+   <category-def name="org.eclipse.e4.tools.liveeditor" label="Eclipse 4 - Live application model editor"/>
 </site>
