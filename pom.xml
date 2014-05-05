@@ -66,6 +66,7 @@
     <module>./features/org.eclipse.e4.tools.context.spy.feature</module>
     <module>./features/org.eclipse.e4.tools.e3x.bridge.feature</module>
     <module>./features/org.eclipse.e4.tools.event.spy.feature</module>
+    <module>./features/org.eclipse.e4.tools.emf.liveeditor.feature</module>
     <module>./build/org.eclipse.e4.core.tools.update/</module>
   </modules>
 
