@@ -15,3 +15,5 @@ Require-Bundle: javax.inject;bundle-version="1.0.0",
  org.eclipse.e4.ui.di,
  org.eclipse.equinox.event
 Import-Package: javax.annotation;version="1.1.0"
+Bundle-Vendor: Eclipse Foundation
+Bundle-ActivationPolicy: lazy
