@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.e4.tools.spy;
 
-import java.net.URL;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -82,7 +81,7 @@ public class SpyProcessor
 				bindSpyKeyBinding(shortCut, command, partID);
 
 				// Add the descriptor in application
-				addSpyPartDescriptor(partID, partName, b.getEntry(iconPath), partClass);
+				addSpyPartDescriptor(partID, partName, iconPath, partClass);
 
 			} catch (InvalidRegistryObjectException e1)
 			{
@@ -250,7 +249,7 @@ public class SpyProcessor
 
 	}
 
-	public void addSpyPartDescriptor(String partId, String partLabel, URL iconPath, Class<?> spyPartClass)
+	public void addSpyPartDescriptor(String partId, String partLabel, String iconPath, Class<?> spyPartClass)
 	{
 		for (MPartDescriptor mp : application.getDescriptors())
 		{
@@ -271,11 +270,11 @@ public class SpyProcessor
 
 		descriptor.setLabel(partLabel);
 		descriptor.setCloseable(true);
-		String bundle = FrameworkUtil.getBundle(spyPartClass).getSymbolicName();
-		descriptor.setContributionURI("bundleclass://" + bundle + "/" + spyPartClass.getCanonicalName());
-		String contributorURI = "platform:/plugin/" + FrameworkUtil.getBundle(spyPartClass).getSymbolicName();
+		String bundleId = FrameworkUtil.getBundle(spyPartClass).getSymbolicName();
+		descriptor.setContributionURI("bundleclass://" + bundleId + "/" + spyPartClass.getCanonicalName());
+		String contributorURI = "platform:/plugin/" + bundleId;
 		descriptor.setContributorURI(contributorURI);
-		descriptor.setIconURI(iconPath.toString());
+		descriptor.setIconURI(contributorURI + "/" + iconPath);
 		application.getDescriptors().add(descriptor);
 
 	}
