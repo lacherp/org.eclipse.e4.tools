@@ -91,6 +91,12 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSValue;
 
+/**
+ *
+ * @deprecated use now cssSpyPart
+ *
+ */
+@Deprecated
 public class CssSpyDialog extends Dialog {
 	/** @return the CSS element corresponding to the argument, or null if none */
 	public static CSSStylableElement getCSSElement(Object o) {
@@ -666,11 +672,13 @@ public class CssSpyDialog extends Dialog {
 			private Runnable updater;
 			private IProgressMonitor monitor;
 
+			@Override
 			public void modifyText(ModifyEvent e) {
 				if (monitor != null) {
 					monitor.setCanceled(false);
 				}
 				display.timerExec(200, updater = new Runnable() {
+					@Override
 					public void run() {
 						if (updater == this) {
 							performCSSSearch(monitor = new NullProgressMonitor());
@@ -691,6 +699,7 @@ public class CssSpyDialog extends Dialog {
 
 		widgetTreeViewer
 				.addSelectionChangedListener(new ISelectionChangedListener() {
+					@Override
 					public void selectionChanged(SelectionChangedEvent event) {
 						updateForWidgetSelection(event.getSelection());
 						showCssFragment.setEnabled(!event.getSelection()
@@ -699,6 +708,7 @@ public class CssSpyDialog extends Dialog {
 				});
 		if (isLive()) {
 			container.addMouseMoveListener(new MouseMoveListener() {
+				@Override
 				public void mouseMove(MouseEvent e) {
 					update();
 				}
@@ -732,6 +742,7 @@ public class CssSpyDialog extends Dialog {
 		});
 
 		outer.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				dispose();
 			}
