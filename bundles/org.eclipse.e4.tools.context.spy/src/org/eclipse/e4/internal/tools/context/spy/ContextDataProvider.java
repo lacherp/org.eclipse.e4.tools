@@ -20,7 +20,6 @@ import javax.inject.Inject;
 
 import org.eclipse.e4.core.internal.contexts.Computation;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
-import org.eclipse.e4.internal.tools.context.spy.search.ContextRegistry;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -71,7 +70,7 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 	private ImageRegistry imgReg;
 
 	@Inject
-	private ContextRegistry contextRegistry;
+	private ContextDataFilter contextFilter;
 
 	/** Store the selected context (initialized in inputChanged) */
 	@SuppressWarnings("restriction")
@@ -215,7 +214,7 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 			return COLOR_IF_NOT_COMPUTED;
 
 		// Return blue color if the string matches the search
-		return (contextRegistry.matchText(s)) ? COLOR_IF_FOUND : null;
+		return (contextFilter.matchText(s)) ? COLOR_IF_FOUND : null;
 	}
 
 	/** Get the bold font for keys that are computed with ContextFunction */
@@ -361,9 +360,8 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 	}
 
 	@SuppressWarnings({ "restriction", "unchecked" })
-	private Set<Computation> getListeners(Object element)
+	Set<Computation> getListeners(Object element)
 	{
-
 		if (selectedContext != null)
 		{
 			if (element instanceof Map.Entry)

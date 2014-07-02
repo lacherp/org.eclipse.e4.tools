@@ -16,7 +16,6 @@ import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
-import org.eclipse.e4.internal.tools.context.spy.search.ContextRegistry;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -36,7 +35,7 @@ public class ContextSpyProvider extends LabelProvider implements ITreeContentPro
 {
 
 	@Inject
-	private ContextRegistry contextRegistry;
+	private ContextDataFilter contextFilter;
 
 	@Inject
 	public ContextSpyProvider()
@@ -104,7 +103,7 @@ public class ContextSpyProvider extends LabelProvider implements ITreeContentPro
 	public Color getForeground(Object element)
 	{
 		// Return a color if a text contained in this node contains the text.
-		if (element instanceof IEclipseContext && contextRegistry.containsText((IEclipseContext) element))
+		if (element instanceof IEclipseContext && contextFilter.containsText((IEclipseContext) element))
 		{
 			return Display.getCurrent().getSystemColor(SWT.COLOR_BLUE);
 		}

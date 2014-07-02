@@ -27,6 +27,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -213,6 +214,14 @@ public class ContextDataPart
 	public void refresh(boolean refreshLabel)
 	{
 		contextDataViewer.refresh(refreshLabel);
+	}
+
+	
+	private static final ViewerFilter[] NO_FILTER = new ViewerFilter[0];
+	public void setFilter(ViewerFilter filter)
+	{
+		
+		contextDataViewer.setFilters((filter == null) ? NO_FILTER : new ViewerFilter[] { filter });
 	}
 
 }

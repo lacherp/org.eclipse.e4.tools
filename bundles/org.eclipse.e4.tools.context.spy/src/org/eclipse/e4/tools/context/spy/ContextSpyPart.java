@@ -16,10 +16,10 @@ import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.internal.tools.context.spy.ContextDataFilter;
 import org.eclipse.e4.internal.tools.context.spy.ContextDataPart;
 import org.eclipse.e4.internal.tools.context.spy.ContextSpyHelper;
 import org.eclipse.e4.internal.tools.context.spy.ContextSpyProvider;
-import org.eclipse.e4.internal.tools.context.spy.search.ContextRegistry;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
@@ -33,11 +33,10 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -46,12 +45,13 @@ import org.eclipse.swt.widgets.Text;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
-/** This class is the main part of the context spy. 
- * It creates a treeviewer and the context data part listening to context selection
+/**
+ * This class is the main part of the context spy. It creates a treeviewer and
+ * the context data part listening to context selection
  */
 public class ContextSpyPart
 {
-	
+
 	private static final String ICON_COLLAPSEALL = "icons/collapseall.gif";
 	private static final String ICON_EXPANDALL = "icons/expandall.gif";
 	private static final String ICON_REFRESH = "icons/refresh.gif";
@@ -68,12 +68,18 @@ public class ContextSpyPart
 
 	private ImageRegistry imgReg;
 
+
 	@Inject
-	private ContextRegistry contextRegistry;
+	private ContextDataFilter contextFilter;
 
 	private ContextDataPart contextDataPart;
+	private Button showOnlyFilteredElements;
+	private Text filterText;
 
-		
+	/** Store the values to set it when it is reopened */
+	private static String lastFilterText = null;
+	private static boolean lastShowFiltered = false;
+
 	@Inject
 	private void initializeImageRegistry()
 	{
@@ -93,117 +99,90 @@ public class ContextSpyPart
 		parent.setLayout(new GridLayout(1, false));
 
 		final Composite comp = new Composite(parent, SWT.NONE);
-		comp.setLayout(new GridLayout(6, false));
+		comp.setLayout(new GridLayout(7, false));
 
 		Button refreshButton = new Button(comp, SWT.FLAT);
 		refreshButton.setImage(imgReg.get(ICON_REFRESH));
 		refreshButton.setToolTipText("Refresh the contexts");
-		refreshButton.addSelectionListener(new SelectionListener()
+		refreshButton.addSelectionListener(new SelectionAdapter()
 			{
-
 				@Override
 				public void widgetSelected(SelectionEvent e)
 				{
 					contextTreeViewer.refresh(true);
-				}
-
-				@Override
-				public void widgetDefaultSelected(SelectionEvent e)
-				{
+					contextDataPart.refresh(true);
 				}
 			});
 
 		Button expandAll = new Button(comp, SWT.FLAT);
 		expandAll.setImage(imgReg.get(ICON_EXPANDALL));
 		expandAll.setToolTipText("Expand context nodes");
-		expandAll.addSelectionListener(new SelectionListener()
+		expandAll.addSelectionListener(new SelectionAdapter()
 			{
-
 				@Override
 				public void widgetSelected(SelectionEvent e)
 				{
 					contextTreeViewer.expandAll();
 				}
-
-				@Override
-				public void widgetDefaultSelected(SelectionEvent e)
-				{
-				}
 			});
 		Button collapseAll = new Button(comp, SWT.FLAT);
 		collapseAll.setImage(imgReg.get(ICON_COLLAPSEALL));
 		collapseAll.setToolTipText("Collapse context nodes");
-		collapseAll.addSelectionListener(new SelectionListener()
+		collapseAll.addSelectionListener(new SelectionAdapter()
 			{
-
 				@Override
 				public void widgetSelected(SelectionEvent e)
 				{
 					contextTreeViewer.collapseAll();
 				}
 
-				@Override
-				public void widgetDefaultSelected(SelectionEvent e)
-				{
-				}
 			});
 
-		// Do the search widget
-		final Text text = new Text(comp, SWT.SEARCH | SWT.ICON_SEARCH);
-		GridDataFactory.fillDefaults().hint(250, SWT.DEFAULT).applyTo(text);
-		text.setMessage("Search data");
-		text.setToolTipText("Highlight the contexts where the contained objects match this string pattern.\n"
-				+ "You can use patterns like : *selection*, or *NameOfYourClass*");
-		text.addKeyListener(new KeyListener()
+		filterText = new Text(comp, SWT.SEARCH | SWT.ICON_SEARCH);
+		GridDataFactory.fillDefaults().hint(200, SWT.DEFAULT).applyTo(filterText);
+		filterText.setMessage("Search data");
+		filterText.setToolTipText("Highlight the contexts where the contained objects contains this string pattern.\n"
+				+ "Case is ignored.");
+		if (lastFilterText != null)
+			filterText.setText(lastFilterText);
+		contextFilter.setPattern(lastFilterText);
+		filterText.addKeyListener(new KeyAdapter()
 			{
-
 				@Override
 				public void keyReleased(KeyEvent e)
 				{
-					contextRegistry.setPattern(text.getText());
+					String textToSearch = filterText.getText();
+					lastFilterText = textToSearch;
+					boolean enableButton = textToSearch.length() > 0;
+					// Enable/disable button for filtering
+					showOnlyFilteredElements.setEnabled(enableButton);
+
+					// Then update filters and viewers
+					contextFilter.setPattern(textToSearch);
+					setFilter();
 					contextTreeViewer.refresh(true);
 					contextDataPart.refresh(true);
 				}
 
-				@Override
-				public void keyPressed(KeyEvent e)
-				{
-					// TODO Auto-generated method stub
-
-				}
 			});
 
-		final Button ignoreCase = new Button(comp, SWT.CHECK);
-		ignoreCase.setText("Ignore case");
-		ignoreCase.setToolTipText("Ignore case in the search pattern");
-		ignoreCase.addSelectionListener(new SelectionAdapter()
+		showOnlyFilteredElements = new Button(comp, SWT.CHECK);
+		showOnlyFilteredElements.setText("Show Only Filtered");
+		showOnlyFilteredElements.setToolTipText("Show only the filtered items in the table view");
+		showOnlyFilteredElements.setEnabled((lastFilterText != null) && (lastFilterText.length() > 0));
+		showOnlyFilteredElements.setSelection(lastShowFiltered);
+		showOnlyFilteredElements.addSelectionListener(new SelectionAdapter()
 			{
 				@Override
 				public void widgetSelected(SelectionEvent e)
 				{
-					contextRegistry.setIgnoreCase(ignoreCase.getSelection());
-					contextTreeViewer.refresh(true);
-					contextDataPart.refresh(true);
-				}
-			});
-
-		final Button ignoreWildCards = new Button(comp, SWT.CHECK);
-		ignoreWildCards.setText("Ignore WildCards");
-		ignoreWildCards.setToolTipText("Ignore wildcards in the search pattern");
-		ignoreWildCards.addSelectionListener(new SelectionAdapter()
-			{
-				@Override
-				public void widgetSelected(SelectionEvent e)
-				{
-					contextRegistry.setIgnoreWildCards(ignoreWildCards.getSelection());
-					contextTreeViewer.refresh(true);
-					contextDataPart.refresh(true);
+					lastShowFiltered = showOnlyFilteredElements.getSelection();
+					setFilter();
 				}
 			});
 
 		SashForm sashForm = new SashForm(parent, SWT.VERTICAL | SWT.V_SCROLL | SWT.H_SCROLL);
 		sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		
 
 		// TreeViewer on the top
 		contextTreeViewer = new TreeViewer(sashForm);
@@ -228,6 +207,7 @@ public class ContextSpyPart
 		IEclipseContext subCtx = ctx.createChild("Context for ContextDataPart");
 		subCtx.set(Composite.class, sashForm);
 		contextDataPart = ContextInjectionFactory.make(ContextDataPart.class, subCtx);
+		setFilter();
 
 		// Set the correct weight for SashForm
 		sashForm.setWeights(new int[] { 35, 65 });
@@ -237,6 +217,14 @@ public class ContextSpyPart
 
 	}
 
+	/** Set the filter on context data part */
+	public void setFilter()
+	{
+		if (showOnlyFilteredElements.isEnabled() && showOnlyFilteredElements.getSelection())
+			contextDataPart.setFilter(contextFilter);
+		else
+			contextDataPart.setFilter(null);
+	}
 
 	@PreDestroy
 	public void dispose()
