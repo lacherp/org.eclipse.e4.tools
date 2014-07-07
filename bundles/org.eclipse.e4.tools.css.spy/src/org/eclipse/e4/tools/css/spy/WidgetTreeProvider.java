@@ -27,10 +27,12 @@ import org.w3c.dom.NodeList;
 public class WidgetTreeProvider implements ITreeContentProvider {
     private static final Object[] EMPTY_ARRAY = new Object[0];
 
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+    @Override
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
     }
 
-    public Object[] getElements(Object inputElement) {
+    @Override
+	public Object[] getElements(Object inputElement) {
         if (inputElement instanceof Object[]) {
             return (Object[]) inputElement;
         } else if (inputElement instanceof Collection< ? >) {
@@ -40,7 +42,8 @@ public class WidgetTreeProvider implements ITreeContentProvider {
     }
 
 
-    public Object[] getChildren(Object parentElement) {
+    @Override
+	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof Display) {
 			List<Shell> shells = new ArrayList<Shell>();
 			for (Shell s : ((Display) parentElement).getShells()) {
@@ -50,7 +53,7 @@ public class WidgetTreeProvider implements ITreeContentProvider {
 			}
 			return shells.toArray();
 		}
-        CSSStylableElement element = CssSpyDialog.getCSSElement(parentElement);
+		CSSStylableElement element = CssSpyPart.getCSSElement(parentElement);
         if (element == null) {
 			return EMPTY_ARRAY;
         }
@@ -62,7 +65,8 @@ public class WidgetTreeProvider implements ITreeContentProvider {
         return children.toArray();
     }
 
-    public Object getParent(Object element) {
+    @Override
+	public Object getParent(Object element) {
 		if (element instanceof Control) {
 			Control control = (Control) element;
 			return control.isDisposed() ? null : control.getParent();
@@ -74,11 +78,13 @@ public class WidgetTreeProvider implements ITreeContentProvider {
 		return null;
     }
 
-    public boolean hasChildren(Object element) {
+    @Override
+	public boolean hasChildren(Object element) {
         return getChildren(element).length > 0;
     }
 
-    public void dispose() {
+    @Override
+	public void dispose() {
     }
 
 }

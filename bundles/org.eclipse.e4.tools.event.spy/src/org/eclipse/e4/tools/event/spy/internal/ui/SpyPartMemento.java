@@ -14,7 +14,7 @@ import java.util.Collection;
 
 import org.eclipse.e4.tools.event.spy.internal.model.CapturedEventFilter;
 
-public class SpyDialogMemento {
+public class SpyPartMemento {
 	private String baseTopic;
 	
 	private Collection<CapturedEventFilter> filters;

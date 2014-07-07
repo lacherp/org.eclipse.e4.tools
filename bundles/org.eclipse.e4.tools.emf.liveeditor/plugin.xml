@@ -6,7 +6,7 @@
       <spyPart
             description="Open the live model editor"
             icon="icons/full/obj16/application_lightning.png"
-            name="Live Model Editor"
+            name="Model Spy"
             part="org.eclipse.e4.tools.emf.liveeditor.LivePartDelegator"
             shortcut="M2+M3+F9">
       </spyPart>

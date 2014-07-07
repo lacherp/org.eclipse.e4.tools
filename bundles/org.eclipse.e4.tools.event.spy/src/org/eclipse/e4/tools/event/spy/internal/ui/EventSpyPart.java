@@ -8,7 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Olivier Prouvost <olivier.prouvost@opcoach.com> 
- *       - Fix bug 428903 : transform this dialog into a part to be definied with spyPart extension
+ *       - Fix bug 428903 : transform this dialog into a part to be defined with spyPart extension
+ *       - Fix Bug 428903 - Having a common debug window for all spies 
+
  *******************************************************************************/
 package org.eclipse.e4.tools.event.spy.internal.ui;
 
@@ -34,7 +36,7 @@ import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 
-public class SpyDialog /*extends Dialog */ implements EventMonitor.NewEventListener {
+public class EventSpyPart implements EventMonitor.NewEventListener {
 	private final static String DIALOG_TITLE = "Event spy dialog";
 
 	private final static String[] SHOW_FILTER_LINK_TEXT = new String[]{"Show filters", "Hide filters"};
@@ -85,7 +87,7 @@ public class SpyDialog /*extends Dialog */ implements EventMonitor.NewEventListe
 
 
 	@PostConstruct
-	protected void createDialogArea(Composite parent, @Optional SpyDialogMemento memento) {
+	protected void createDialogArea(Composite parent, @Optional SpyPartMemento memento) {
 		
 		// Bug 428903 : create now a part, and inject directly optional memento (set in saveDialogMemento).
 		
@@ -102,25 +104,25 @@ public class SpyDialog /*extends Dialog */ implements EventMonitor.NewEventListe
 	
 	@PreDestroy
 	private void saveDialogMemento() {
-		SpyDialogMemento memento = null;
+		SpyPartMemento memento = null;
 		String baseTopic = capturedEventFilters.getBaseTopic();
 		Collection<CapturedEventFilter> filters = capturedEventFilters.getFilters();
 		IEclipseContext context = appplication.getContext();
 		
 		if (!CapturedEventFilters.BASE_EVENT_TOPIC.equals(baseTopic)) {
-			memento = new SpyDialogMemento();
+			memento = new SpyPartMemento();
 			memento.setBaseTopic(baseTopic);
 		}
 		if (!filters.isEmpty()) {
 			if (memento == null) {
-				memento = new SpyDialogMemento();
+				memento = new SpyPartMemento();
 			}
 			memento.setFilters(filters);
 		}
 		if (memento != null) {
-			context.set(SpyDialogMemento.class.getName(), memento);
-		} else if (context.containsKey(SpyDialogMemento.class.getName())) {
-			context.remove(SpyDialogMemento.class.getName());
+			context.set(SpyPartMemento.class.getName(), memento);
+		} else if (context.containsKey(SpyPartMemento.class.getName())) {
+			context.remove(SpyPartMemento.class.getName());
 		}
 	}
 	
@@ -156,7 +158,7 @@ public class SpyDialog /*extends Dialog */ implements EventMonitor.NewEventListe
 		});
 	}
 
-	private void createFilters(Composite parent, SpyDialogMemento memento) {
+	private void createFilters(Composite parent, SpyPartMemento memento) {
 		capturedEventFilters = new CapturedEventFilters(outer);
 		capturedEventFilters.getControl().setVisible(false);
 		GridData gridData = createDefaultGridData();

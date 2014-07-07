@@ -25,22 +25,25 @@ public class CSSPropertiesContentProvider implements IStructuredContentProvider 
     protected CSSEngine cssEngine;
     protected CSSStylableElement input;
 
-    public void dispose() {
+	@Override
+	public void dispose() {
         cssEngine = null;
         input = null;
     }
 
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+	@Override
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         if (newInput instanceof CSSStylableElement) {
             this.input = (CSSStylableElement) newInput;
-            this.cssEngine = CssSpyDialog.getCSSEngine((Widget) input.getNativeWidget());
+			this.cssEngine = CssSpyPart.getCSSEngine(input.getNativeWidget());
         } else if (newInput instanceof Widget) {
-            this.cssEngine = CssSpyDialog.getCSSEngine((Widget) newInput);
+			this.cssEngine = CssSpyPart.getCSSEngine(newInput);
 			this.input = (CSSStylableElement) cssEngine.getElement(newInput);
         }
     }
 
-    public Object[] getElements(Object inputElement) {
+	@Override
+	public Object[] getElements(Object inputElement) {
 		Collection<String> propertyNames = cssEngine.getCSSProperties(input);
 		List<CSSPropertyProvider> properties = new ArrayList<CSSPropertyProvider>(
 				propertyNames.size());

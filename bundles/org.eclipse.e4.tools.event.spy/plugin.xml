@@ -7,7 +7,7 @@
             description="Open the Event Spy"
             icon="icons/eventspy.gif"
             name="Event Spy"
-            part="org.eclipse.e4.tools.event.spy.internal.ui.SpyDialog"
+            part="org.eclipse.e4.tools.event.spy.internal.ui.EventSpyPart"
             shortcut="M2+M3+F8">
       </spyPart>
    </extension>

@@ -874,17 +874,17 @@ public class CssSpyPart
 		Shell controlShell = (control == null) ? display.getActiveShell() : control.getShell();
 		Shell spyPartShell = outer.getShell();
 
-		if (spyPartShell != controlShell)
+		if (p != cssPart)
+		{
+			// Must remove the highlights if selected
+			disposeHighlights();
+
+		} else if (spyPartShell != controlShell)
 		{
 			// A widget has been selected in another shell.. We can display the
 			// corresponding control as a specimen
 			shown = null;
 			setSpecimen(control);
-		}
-		else if (p != cssPart)
-		{
-			// Must remove the highlights if selected
-			disposeHighlights();
 		}
 
 
