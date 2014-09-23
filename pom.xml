@@ -50,8 +50,6 @@
     <module>./bundles/org.eclipse.e4.tools.emf.ui</module> 
     <module>./bundles/org.eclipse.e4.tools.emf.ui.script.js</module>
     <module>./bundles/org.eclipse.e4.tools.jdt.templates</module>  
-    <module>./bundles/org.eclipse.e4.tools.css.editor.ui</module>
-    <module>./bundles/org.eclipse.e4.tools.css.editor</module>
     <module>./bundles/org.eclipse.e4.tools.orion.css.editor</module>
     <module>./bundles/org.eclipse.e4.tools.orion.editor</module>
     <module>./bundles/org.eclipse.e4.tools.orion.editor.samples</module>
@@ -61,7 +59,6 @@
     <module>./bundles/org.eclipse.e4.tools.spy</module>
     <module>./bundles/org.eclipse.e4.tools.event.spy</module>
     <module>./features/org.eclipse.e4.core.tools.feature</module>
-    <module>./features/org.eclipse.e4.tools.css.editor.feature</module>
     <module>./features/org.eclipse.e4.tools.orion.css.editor.feature</module>
     <module>./features/org.eclipse.e4.tools.css.spy.feature</module>
     <module>./features/org.eclipse.e4.tools.context.spy.feature</module>
