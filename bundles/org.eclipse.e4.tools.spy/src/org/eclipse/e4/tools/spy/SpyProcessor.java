@@ -262,11 +262,11 @@ public class SpyProcessor
 
 		// If descriptor not yet in descriptor list, add it now
 		MPartDescriptor descriptor = modelService.createModelElement(MPartDescriptor.class);
-		descriptor.setCategory("org.eclipse.e4.secondaryDataStack");
+		descriptor.setCategory("Eclipse runtime spies");
 		descriptor.setElementId(partId);
 		descriptor.getTags().add("View");
 		descriptor.getTags().add(SPY_TAG);
-		descriptor.getTags().add("categoryTag:General");
+		descriptor.getTags().add("categoryTag:Eclipse runtime spies");
 
 		descriptor.setLabel(partLabel);
 		descriptor.setCloseable(true);
