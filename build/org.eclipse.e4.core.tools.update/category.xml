@@ -27,9 +27,25 @@
    <feature url="features/org.eclipse.e4.tools.context.spy.feature_0.1.0.qualifier.jar" id="org.eclipse.e4.tools.context.spy.feature" version="0.1.0.qualifier">
       <category name="org.eclipse.e4.tools.context.spy"/>
    </feature>
+   <feature url="features/org.eclipse.e4.tools.spies.feature_0.1.0.qualifier.jar" id="org.eclipse.e4.tools.spies.feature" version="0.1.0.qualifier">
+      <category name="org.eclipse.e4.tools.spies.feature"/>
+   </feature>
+   <feature url="features/org.eclipse.e4.tools.model.spy.feature_0.1.0.qualifier.jar" id="org.eclipse.e4.tools.model.spy.feature" version="0.1.0.qualifier">
+      <category name="org.eclipse.e4.tools.model.spy"/>
+   </feature>
    <category-def name="org.eclipse.e4.tools.core" label="Eclipse 4 - Core Tools"/>
    <category-def name="org.eclipse.e4.tools.css.spy" label="Eclipse 4 - CSS Spy"/>
    <category-def name="org.eclipse.e4.tools.e3x.bridge" label="Eclipse 4 - 3.x  Bridge"/>
    <category-def name="org.eclipse.e4.tools.event.spy" label="Eclipse 4 - Event Spy"/>
    <category-def name="org.eclipse.e4.tools.context.spy" label="Eclipse 4 - Context Spy"/>
+   <category-def name="org.eclipse.e4.tools.spies.feature" label="Eclipse 4 - All Spies">
+      <description>
+         Feature to group all spies into one feature.
+      </description>
+   </category-def>
+   <category-def name="org.eclipse.e4.tools.model.spy" label="Eclipse 4 - Model Spy">
+      <description>
+         A spy to investigate and alter the Eclipse 4 runtime model. Formerly known as the &quot;Live Editor&quot;.
+      </description>
+   </category-def>
 </site>

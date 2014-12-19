@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.e4.tools.spies.feature"
+      label="%featureName"
+      version="0.1.0.qualifier"
+      provider-name="%providerName"
+      license-feature="org.eclipse.license"
+      license-feature-version="1.0.0.qualifier">
+
+   <description>
+      %description
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <includes
+         id="org.eclipse.e4.tools.context.spy.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.e4.tools.css.spy.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.e4.tools.event.spy.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.e4.tools.model.spy.feature"
+         version="0.0.0"/>
+
+</feature>
