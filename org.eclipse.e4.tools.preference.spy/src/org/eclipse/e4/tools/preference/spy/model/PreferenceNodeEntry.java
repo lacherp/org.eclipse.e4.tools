@@ -1,0 +1,55 @@
+/*******************************************************************************
+ * Copyright (c) 2015 vogella GmbH.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Simon Scholz <simon.scholz@vogella.com> - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.e4.tools.preference.spy.model;
+
+import java.util.Arrays;
+import java.util.Collection;
+
+import org.eclipse.core.databinding.observable.set.IObservableSet;
+import org.eclipse.core.databinding.observable.set.WritableSet;
+
+public class PreferenceNodeEntry extends PreferenceEntry {
+
+	private IObservableSet preferenceEntries = new WritableSet();
+
+	public PreferenceNodeEntry() {
+		super();
+	}
+
+	public PreferenceNodeEntry(String nodePath) {
+		super(nodePath, "", "", "");
+	}
+
+	public void addChildren(Collection<PreferenceEntry> entries) {
+		getPreferenceEntries().addAll(entries);
+	}
+
+	public boolean addChildren(PreferenceEntry... entry) {
+		return getPreferenceEntries().addAll(Arrays.asList(entry));
+	}
+
+	public void removeChildren(Collection<PreferenceEntry> entries) {
+		getPreferenceEntries().removeAll(entries);
+	}
+
+	public void removeChildren(PreferenceEntry... entry) {
+		getPreferenceEntries().removeAll(Arrays.asList(entry));
+	}
+
+	public IObservableSet getPreferenceEntries() {
+		return preferenceEntries;
+	}
+
+	public void setPreferenceEntries(IObservableSet preferenceEntries) {
+		this.preferenceEntries = preferenceEntries;
+	}
+
+}
