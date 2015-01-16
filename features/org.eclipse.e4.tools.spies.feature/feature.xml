@@ -35,4 +35,8 @@
          id="org.eclipse.e4.tools.model.spy.feature"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.e4.tools.bundle.spy.feature"
+         version="0.0.0"/>
+
 </feature>
