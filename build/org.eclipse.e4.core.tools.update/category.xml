@@ -18,6 +18,9 @@
    <feature url="features/org.eclipse.e4.tools.bundle.spy.feature_0.1.0.qualifier.jar" id="org.eclipse.e4.tools.bundle.spy.feature" version="0.1.0.qualifier">
       <category name="org.eclipse.e4.tools.bundle.spy"/>
    </feature>
+   <feature url="features/org.eclipse.e4.tools.preference.spy.feature_0.1.0.qualifier.jar" id="org.eclipse.e4.tools.preference.spy.feature" version="0.1.0.qualifier">
+      <category name="org.eclipse.e4.tools.preference.spy"/>
+   </feature>
    <category-def name="org.eclipse.e4.tools.core" label="Eclipse 4 - Core Tools"/>
    <category-def name="org.eclipse.e4.tools.css.spy" label="Eclipse 4 - CSS Spy"/>
    <category-def name="org.eclipse.e4.tools.event.spy" label="Eclipse 4 - Event Spy"/>
@@ -35,6 +38,11 @@
    <category-def name="org.eclipse.e4.tools.bundle.spy" label="Eclipse 4 - Bundle Spy">
       <description>
          A spy to display all the bundles running in the application and to start or stop some of them.
+      </description>
+   </category-def>
+   <category-def name="org.eclipse.e4.tools.preference.spy" label="Eclipse 4 - Preference Spy">
+      <description>
+         A spy to display recently changed or even all the preferences of the running application. You can see the notepaths, keys, new and old values of these preferences. See http://blog.vogella.com/2014/12/28/preferences-spy-for-eclipse-ide-and-rcp/
       </description>
    </category-def>
 </site>
