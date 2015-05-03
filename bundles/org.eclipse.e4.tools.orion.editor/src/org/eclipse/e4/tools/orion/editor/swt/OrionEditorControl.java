@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     Robert Roth <robert.roth.off@gmail.com> - bug 418457
  *******************************************************************************/
 package org.eclipse.e4.tools.orion.editor.swt;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.e4.tools.orion.editor.builder.IHTMLBuilder;
 import org.eclipse.swt.browser.Browser;
@@ -243,12 +245,10 @@ public class OrionEditorControl extends Composite {
 	 * Add dirty listener.
 	 * 
 	 * @param listener
-	 *            dirty listener to add.
+	 *            dirty listener to add, must not be null
 	 */
 	public void addDirtyListener(IDirtyListener dirtyListener) {
-		if (dirtyListener == null) {
-			throw new NullPointerException("Cannot add a null dirty listener"); //$NON-NLS-1$
-		}
+		Assert.isNotNull(dirtyListener, "Cannot add a null dirty listener"); //$NON-NLS-1$
 		if (dirtyListeners == null) {
 			dirtyListeners = new ListenerList(ListenerList.IDENTITY);
 		}
@@ -260,13 +260,10 @@ public class OrionEditorControl extends Composite {
 	 * Remove dirty listener.
 	 * 
 	 * @param listener
-	 *            dirty listener to remove.
+	 *            dirty listener to remove, must not be null
 	 */
 	public void removeDirtyListener(IDirtyListener dirtyListener) {
-		if (dirtyListener == null) {
-			throw new NullPointerException(
-					"Cannot remove a null dirty listener"); //$NON-NLS-1$
-		}
+		Assert.isNotNull(dirtyListener, "Cannot remove a null dirty listener"); //$NON-NLS-1$
 
 		if (dirtyListeners != null) {
 			dirtyListeners.remove(dirtyListener);
