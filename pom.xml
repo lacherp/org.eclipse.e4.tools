@@ -43,7 +43,7 @@
 
    <modules>
     <module>./bundles/org.eclipse.e4.tools.emf.liveeditor</module>
-    <module>./bundles/org.eclipse.e4.tools.orion.css.editor</module
+    <module>./bundles/org.eclipse.e4.tools.orion.css.editor</module>
     <module>./bundles/org.eclipse.e4.tools.orion.editor</module>
     <module>./bundles/org.eclipse.e4.tools.orion.editor.samples</module>
     <module>./bundles/org.eclipse.e4.tools.orion.text.editor</module>
