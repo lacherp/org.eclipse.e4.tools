@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 OPCoach.
+ * Copyright (c) 2015 OPCoach and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Olivier Prouvost <olivier.prouvost@opcoach.com> - initial API and implementation (bug #451116)
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 466785
  *******************************************************************************/
 package org.eclipse.e4.tools.bundles.spy;
 
@@ -31,6 +32,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -257,17 +260,43 @@ public class BundleSpyPart {
 
 	}
 
-	private void addColumn(TableViewer parentTable, int width, String title,
-			int colnum) {
+	private void addColumn(final TableViewer parentTable, int width, String title,
+			final int column) {
 		TableViewerColumn col = new TableViewerColumn(bundlesTableViewer,
 				SWT.NONE);
 		col.getColumn().setWidth(width);
 		col.getColumn().setText(title);
 
-		BundleDataProvider bdp = ContextInjectionFactory.make(
+		final BundleDataProvider bdp = ContextInjectionFactory.make(
 				BundleDataProvider.class, ctx);
-		bdp.setColumn(colnum);
+		bdp.setColumn(column);
 		col.setLabelProvider(bdp);
+
+		col.getColumn().addSelectionListener(new SelectionAdapter() {
+
+			private int turnAround = 1;
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				turnAround *= -1;
+				parentTable.setComparator(new ViewerComparator() {
+					@Override
+					public int compare(Viewer viewer, Object e1, Object e2) {
+						if(BundleDataProvider.COL_STATE == column) {
+							Bundle b1 = (Bundle) e1;
+							Bundle b2 = (Bundle) e2;
+							return turnAround(Integer.compare(b1.getState(), b2.getState()));
+						}
+
+						return turnAround(bdp.getText(e1).compareTo(bdp.getText(e2)));
+					}
+				});
+			}
+
+			private int turnAround(int compare) {
+				return compare * turnAround;
+			}
+		});
 
 	}
 
