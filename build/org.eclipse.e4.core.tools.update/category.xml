@@ -12,7 +12,7 @@
    <feature url="features/org.eclipse.e4.tools.event.spy.feature.source_0.15.0.qualifier.jar" id="org.eclipse.e4.tools.event.spy.feature.source" version="0.15.0.qualifier">
       <category name="org.eclipse.e4.tools.event.spy"/>
    </feature>
-   <feature url="features/org.eclipse.e4.tools.context.spy.feature_0.1.0.qualifier.jar" id="org.eclipse.e4.tools.context.spy.feature" version="0.1.0.qualifier">
+   <feature url="features/org.eclipse.e4.tools.context.spy.feature_0.1.0.qualifier.jar" id="org.eclipse.e4.tools.context.spy.feature" version="0.17.0.qualifier">
       <category name="org.eclipse.e4.tools.context.spy"/>
    </feature>
    <feature url="features/org.eclipse.e4.tools.bundle.spy.feature_0.1.0.qualifier.jar" id="org.eclipse.e4.tools.bundle.spy.feature" version="0.1.0.qualifier">

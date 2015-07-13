@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Context Spy
 Bundle-SymbolicName: org.eclipse.e4.tools.context.spy;singleton:=true
-Bundle-Version: 0.1.0.qualifier
+Bundle-Version: 0.17.0.qualifier
 Bundle-Vendor: Eclipse Foundation
 Export-Package: org.eclipse.e4.tools.context.spy
 Require-Bundle: javax.inject;bundle-version="1.0.0",

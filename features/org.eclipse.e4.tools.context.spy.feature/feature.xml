@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.e4.tools.context.spy.feature"
       label="%featureName"
-      version="0.1.0.qualifier"
+      version="0.17.0.qualifier"
       provider-name="%providerName"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.0.qualifier">
