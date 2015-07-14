@@ -24,7 +24,7 @@
    <feature url="features/org.eclipse.e4.tools.model.spy.feature_0.1.0.qualifier.jar" id="org.eclipse.e4.tools.model.spy.feature" version="0.1.0.qualifier">
       <category name="org.eclipse.e4.tools.model.spy"/>
    </feature>
-   <feature url="features/org.eclipse.e4.tools.spies.feature_0.1.0.qualifier.jar" id="org.eclipse.e4.tools.spies.feature" version="0.1.0.qualifier">
+   <feature url="features/org.eclipse.e4.tools.spies.feature_0.17.0.qualifier.jar" id="org.eclipse.e4.tools.spies.feature" version="0.17.0.qualifier">
       <category name="org.eclipse.e4.tools.spies.feature"/>
    </feature>
    <category-def name="org.eclipse.e4.tools.core" label="Eclipse 4 - Core Tools"/>
