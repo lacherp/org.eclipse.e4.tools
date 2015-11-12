@@ -60,7 +60,7 @@ public class SpyProcessor
 		// to open this spy in the dedicated spy window.
 
 		// First of all, it creates the spyCommand having one parameter (Id of
-		// the part to display) and defaut handler for this command.
+		// the part to display) and default handler for this command.
 		MCommand command = getOrCreateSpyCommand();
 
 		for (IConfigurationElement e : extRegistry.getConfigurationElementsFor("org.eclipse.e4.tools.spy.spyPart"))
