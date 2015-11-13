@@ -101,14 +101,12 @@ public class PreferenceSpyPart implements TreeViewerPart {
 
 		Realm realm = DisplayRealm.getRealm(filteredTree.getViewer().getControl().getDisplay());
 		PreferenceEntriesContentProvider contentProvider = new PreferenceEntriesContentProvider(
-				BeanProperties.set("preferenceEntries",
-						PreferenceNodeEntry.class).setFactory(realm), null);
+				BeanProperties.set("preferenceEntries", PreferenceNodeEntry.class).setFactory(realm), null);
 		contentProvider.setHierarchicalLayout(hierarchicalLayoutPreference);
 		filteredTree.getViewer().setContentProvider(contentProvider);
-		filteredTree.getViewer().setLabelProvider(
-				new PreferenceMapLabelProvider(fontDescriptor, Properties.observeEach(
-						contentProvider.getKnownElements(), BeanProperties.values(PreferenceEntry.class, new String[] { "nodePath",
-							"key", "oldValue", "newValue" }))));
+		filteredTree.getViewer().setLabelProvider(new PreferenceMapLabelProvider(fontDescriptor,
+				Properties.observeEach(contentProvider.getKnownElements(), BeanProperties.values(PreferenceEntry.class,
+						new String[] { "nodePath", "key", "oldValue", "newValue" }))));
 		filteredTree.getViewer().setInput(preferenceEntryManager);
 	}
 
@@ -144,9 +142,8 @@ public class PreferenceSpyPart implements TreeViewerPart {
 	public void preferenceChanged(
 			@UIEventTopic(PreferenceSpyEventTopics.PREFERENCESPY_PREFERENCE_CHANGED) PreferenceChangeEvent event) {
 
-
-		PreferenceNodeEntry preferenceNodeEntry = preferenceEntryManager.getRecentPreferenceNodeEntry(event.getNode()
-				.absolutePath());
+		PreferenceNodeEntry preferenceNodeEntry = preferenceEntryManager
+				.getRecentPreferenceNodeEntry(event.getNode().absolutePath());
 		PreferenceEntry preferenceEntry = new PreferenceEntry(event.getNode().absolutePath(), event.getKey());
 		preferenceEntry.setRecentlyChanged(true);
 		if (null == preferenceNodeEntry) {

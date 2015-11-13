@@ -27,7 +27,7 @@ public class PreferenceEntryViewerComparator extends ViewerComparator {
 
 	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
-		if(e1 instanceof PreferenceEntry && e2 instanceof PreferenceEntry){
+		if (e1 instanceof PreferenceEntry && e2 instanceof PreferenceEntry) {
 			PreferenceEntry entry1 = (PreferenceEntry) e1;
 			PreferenceEntry entry2 = (PreferenceEntry) e2;
 

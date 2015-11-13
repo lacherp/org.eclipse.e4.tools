@@ -30,8 +30,7 @@ public class PreferenceSpyEditingSupport extends EditingSupport {
 
 	@Override
 	protected CellEditor getCellEditor(Object element) {
-		return new TextCellEditor((Composite) getViewer().getControl(),
-				SWT.READ_ONLY);
+		return new TextCellEditor((Composite) getViewer().getControl(), SWT.READ_ONLY);
 	}
 
 	@Override

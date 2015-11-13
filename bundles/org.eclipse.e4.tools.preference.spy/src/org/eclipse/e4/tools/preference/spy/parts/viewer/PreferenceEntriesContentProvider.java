@@ -44,7 +44,6 @@ public class PreferenceEntriesContentProvider extends ObservableSetTreeContentPr
 		return childList.toArray();
 	}
 
-
 	private void getChildren(Object element, List<PreferenceEntry> childList) {
 		if (element instanceof PreferenceNodeEntry) {
 			IObservableSet preferenceEntries = ((PreferenceNodeEntry) element).getPreferenceEntries();

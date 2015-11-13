@@ -23,12 +23,9 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 
 public class RemoveEntryHandler {
 	@Execute
-	public void execute(
-			IEventBroker eventBroker,
+	public void execute(IEventBroker eventBroker,
 			@Optional @Named(IServiceConstants.ACTIVE_SELECTION) List<PreferenceEntry> preferenceEntries) {
-		eventBroker
-				.post(PreferenceSpyEventTopics.PREFERENCESPY_PREFERENCE_ENTRIES_DELETE,
-						preferenceEntries);
+		eventBroker.post(PreferenceSpyEventTopics.PREFERENCESPY_PREFERENCE_ENTRIES_DELETE, preferenceEntries);
 	}
 
 }

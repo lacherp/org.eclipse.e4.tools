@@ -50,10 +50,11 @@ public class ToggleLayoutControl {
 			@Preference(value = PreferenceConstants.HIERARCHICAL_LAYOUT) boolean hierarchicalLayoutPreference) {
 		if (toolItem != null && !toolItem.isDisposed()) {
 			toolItem.setSelection(hierarchicalLayoutPreference);
-			toolItem.setImage(hierarchicalLayoutPreference ? getResourceManager().createImage(
-					getHierarchicalImageDescriptor()) : getResourceManager().createImage(getFlatImageDescriptor()));
-			toolItem.setToolTipText(hierarchicalLayoutPreference ? "Toogle to flat layout"
-					: "Toggle to hierarchical layout");
+			toolItem.setImage(
+					hierarchicalLayoutPreference ? getResourceManager().createImage(getHierarchicalImageDescriptor())
+							: getResourceManager().createImage(getFlatImageDescriptor()));
+			toolItem.setToolTipText(
+					hierarchicalLayoutPreference ? "Toogle to flat layout" : "Toggle to hierarchical layout");
 		}
 	}
 
@@ -62,8 +63,8 @@ public class ToggleLayoutControl {
 			@Preference(value = PreferenceConstants.HIERARCHICAL_LAYOUT) boolean hierarchicalLayoutPreference) {
 		ToolBar toolBar = new ToolBar(parent, SWT.NONE);
 		toolItem = new ToolItem(toolBar, SWT.CHECK);
-		toolItem.setToolTipText(hierarchicalLayoutPreference ? "Toogle to flat layout"
-				: "Toggle to hierarchical layout");
+		toolItem.setToolTipText(
+				hierarchicalLayoutPreference ? "Toogle to flat layout" : "Toggle to hierarchical layout");
 		toolItem.addSelectionListener(new SelectionAdapter() {
 
 			@Override

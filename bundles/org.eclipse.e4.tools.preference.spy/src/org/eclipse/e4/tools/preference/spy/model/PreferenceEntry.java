@@ -38,8 +38,7 @@ public class PreferenceEntry extends AbstractModelObject {
 		this.key = key;
 	}
 
-	public PreferenceEntry(String nodePath, String key, String oldValue,
-			String newValue) {
+	public PreferenceEntry(String nodePath, String key, String oldValue, String newValue) {
 		this.nodePath = nodePath;
 		this.key = key;
 		this.oldValue = oldValue;

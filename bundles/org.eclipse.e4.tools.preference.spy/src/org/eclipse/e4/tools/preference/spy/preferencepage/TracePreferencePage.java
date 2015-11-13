@@ -30,10 +30,10 @@ public class TracePreferencePage extends FieldEditorPreferencePage implements IW
 	 */
 	@Override
 	public void createFieldEditors() {
-		addField(new BooleanFieldEditor(PreferenceConstants.TRACE_PREFERENCES,
-				"&Trace preference values ", getFieldEditorParent()));
-		addField(new BooleanFieldEditor(PreferenceConstants.HIERARCHICAL_LAYOUT,
-				"&Use hierarchical layout in the tree", getFieldEditorParent()));
+		addField(new BooleanFieldEditor(PreferenceConstants.TRACE_PREFERENCES, "&Trace preference values ",
+				getFieldEditorParent()));
+		addField(new BooleanFieldEditor(PreferenceConstants.HIERARCHICAL_LAYOUT, "&Use hierarchical layout in the tree",
+				getFieldEditorParent()));
 	}
 
 	@Override
