@@ -36,37 +36,37 @@ public class OpenLiveDialogHandler {
 	public void run(@Named(IServiceConstants.ACTIVE_SHELL) Shell s, MApplication application, IStylingEngine engine) {
 		if (this.shell == null || this.shell.isDisposed()) {
 			try {
-				this.shell = new Shell(s,SWT.SHELL_TRIM);
-				//FIXME Style
-				this.shell.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_WHITE)); 
+				this.shell = new Shell(s, SWT.SHELL_TRIM);
+				// FIXME Style
+				this.shell.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 				this.shell.setBackgroundMode(SWT.INHERIT_DEFAULT);
 				FillLayout layout = new FillLayout();
-				layout.marginHeight=10;
-				layout.marginWidth=10;
+				layout.marginHeight = 10;
+				layout.marginWidth = 10;
 				this.shell.setLayout(layout);
-				
-				final IEclipseContext childContext = application.getContext()
-						.createChild("EditorContext");
+
+				final IEclipseContext childContext = application.getContext().createChild("EditorContext");
 				MemoryModelResource resource = new MemoryModelResource(application);
 				childContext.set(IModelResource.class, resource);
 				childContext.set(Composite.class.getName(), shell);
 				childContext.set(Shell.class.getName(), shell);
 				ContextInjectionFactory.make(ApplicationModelEditor.class, childContext);
-				
-//				new ApplicationModelEditor(shell, childContext, resource, null);
+
+				// new ApplicationModelEditor(shell, childContext, resource,
+				// null);
 				shell.open();
 				Display d = shell.getDisplay();
-				while( ! shell.isDisposed() ) {
-					if( ! d.readAndDispatch() ) {
+				while (!shell.isDisposed()) {
+					if (!d.readAndDispatch()) {
 						d.sleep();
 					}
 				}
 				childContext.dispose();
-//				d.update();
+				// d.update();
 				shell = null;
 			} catch (Exception e) {
 				e.printStackTrace();
-			} 
+			}
 		}
 	}
 }

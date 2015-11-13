@@ -10,7 +10,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.liveeditor;
 
-
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.resources.IMarker;
@@ -28,41 +27,49 @@ import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
 public class MemoryModelResource implements IModelResource {
 	private WritableList list = new WritableList();
 	private EditingDomain editingDomain;
-	
+
 	public MemoryModelResource(MApplication application) {
 		list.add(application);
 		BasicCommandStack commandStack = new BasicCommandStack();
-		ComposedAdapterFactory adapterFactory = new ComposedAdapterFactory(ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
+		ComposedAdapterFactory adapterFactory = new ComposedAdapterFactory(
+				ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
 		adapterFactory.addAdapterFactory(new ReflectiveItemProviderAdapterFactory());
 		editingDomain = new AdapterFactoryEditingDomain(adapterFactory, commandStack);
 	}
-	
+
+	@Override
 	public IObservableList getRoot() {
 		return list;
 	}
 
+	@Override
 	public boolean isSaveable() {
 		return false;
 	}
 
+	@Override
 	public IStatus save() {
 		return Status.OK_STATUS;
 	}
 
+	@Override
 	public EditingDomain getEditingDomain() {
 		return editingDomain;
 	}
 
+	@Override
 	public boolean isDirty() {
 		return false;
 	}
 
+	@Override
 	public void addModelListener(ModelListener listener) {
-		
+
 	}
 
+	@Override
 	public void removeModelListener(ModelListener listener) {
-		
+
 	}
 
 	public IMarker createMarker() {
@@ -70,10 +77,11 @@ public class MemoryModelResource implements IModelResource {
 	}
 
 	public void clearMarkers() {
-		
+
 	}
 
+	@Override
 	public void replaceRoot(EObject eobject) {
-		
+
 	}
 }

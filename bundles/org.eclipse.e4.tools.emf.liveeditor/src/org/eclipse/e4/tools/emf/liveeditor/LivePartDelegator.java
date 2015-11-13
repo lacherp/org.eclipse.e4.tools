@@ -22,16 +22,16 @@ import org.eclipse.e4.ui.model.application.MApplication;
 public class LivePartDelegator {
 	private ApplicationModelEditor instance;
 	private IEclipseContext childContext;
-	
+
 	@Inject
 	public LivePartDelegator(IEclipseContext context, MApplication application) {
 		childContext = context.createChild("EditorContext");
 		MemoryModelResource resource = new MemoryModelResource(application);
 		childContext.set(IModelResource.class, resource);
-		
+
 		instance = ContextInjectionFactory.make(ApplicationModelEditor.class, childContext);
 	}
-	
+
 	@Focus
 	void focus() {
 		ContextInjectionFactory.invoke(instance, Focus.class, childContext);

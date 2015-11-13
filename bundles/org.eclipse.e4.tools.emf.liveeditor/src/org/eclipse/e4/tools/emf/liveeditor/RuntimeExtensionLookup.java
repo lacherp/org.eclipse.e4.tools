@@ -7,6 +7,7 @@ import org.eclipse.e4.tools.emf.ui.common.IExtensionLookup;
 
 public class RuntimeExtensionLookup implements IExtensionLookup {
 
+	@Override
 	public IExtension[] findExtensions(String extensionPointId, boolean liveModel) {
 		IExtensionRegistry registry = RegistryFactory.getRegistry();
 		return registry.getExtensionPoint(extensionPointId).getExtensions();
