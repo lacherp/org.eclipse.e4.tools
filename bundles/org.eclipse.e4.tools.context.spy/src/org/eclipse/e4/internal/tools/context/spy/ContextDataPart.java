@@ -38,25 +38,23 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 
 /**
- * This part listen to selection, and if it is an EclipseContext,
- * it displays its information It is used in the integrated ContextSpyPart
- * and (in the future) it could be used outside to display the context of focused part for instance
- * */
-public class ContextDataPart
-{
+ * This part listen to selection, and if it is an EclipseContext, it displays
+ * its information It is used in the integrated ContextSpyPart and (in the
+ * future) it could be used outside to display the context of focused part for
+ * instance
+ */
+public class ContextDataPart {
 	private TreeViewer contextDataViewer;
 
 	private ContextDataProvider dataProvider;
 
 	private ContextEntryComparator comparator;
 
-
 	/**
 	 * Create contents of the view part.
 	 */
 	@PostConstruct
-	public void createControls(Composite parent, IEclipseContext ctx)
-	{
+	public void createControls(Composite parent, IEclipseContext ctx) {
 
 		parent.setLayout(new GridLayout(1, false));
 
@@ -107,24 +105,21 @@ public class ContextDataPart
 	}
 
 	@PreDestroy
-	public void dispose()
-	{
+	public void dispose() {
 	}
 
 	@Focus
-	public void setFocus()
-	{
+	public void setFocus() {
 		contextDataViewer.getControl().setFocus();
 	}
 
 	@SuppressWarnings("restriction")
 	@Inject
 	@Optional
-	public void listenToContext(@Named(IServiceConstants.ACTIVE_SELECTION) EclipseContext ctx)
-	{
-		// Must check if dataviewer is created or not (when we reopen the window @postconstruct has not been called yet) 
-		if ((ctx == null) || (contextDataViewer == null))
-		{
+	public void listenToContext(@Named(IServiceConstants.ACTIVE_SELECTION) EclipseContext ctx) {
+		// Must check if dataviewer is created or not (when we reopen the window
+		// @postconstruct has not been called yet)
+		if ((ctx == null) || (contextDataViewer == null)) {
 			return;
 		}
 		contextDataViewer.setInput(ctx);
@@ -135,33 +130,27 @@ public class ContextDataPart
 	 * An entry comparator for the table, dealing with column index, keys and
 	 * values
 	 */
-	public class ContextEntryComparator extends ViewerComparator
-	{
+	public class ContextEntryComparator extends ViewerComparator {
 		private int columnIndex;
 		private int direction;
 		private ILabelProvider labelProvider;
 
-		public ContextEntryComparator(int columnIndex, ILabelProvider defaultLabelProvider)
-		{
+		public ContextEntryComparator(int columnIndex, ILabelProvider defaultLabelProvider) {
 			this.columnIndex = columnIndex;
 			direction = SWT.UP;
 			labelProvider = defaultLabelProvider;
 		}
 
-		public int getDirection()
-		{
+		public int getDirection() {
 			return direction;
 		}
 
 		/** Called when click on table header, reverse order */
-		public void setColumn(int column)
-		{
-			if (column == columnIndex)
-			{
+		public void setColumn(int column) {
+			if (column == columnIndex) {
 				// Same column as last sort; toggle the direction
 				direction = (direction == SWT.UP) ? SWT.DOWN : SWT.UP;
-			} else
-			{
+			} else {
 				// New column; do a descending sort
 				columnIndex = column;
 				direction = SWT.DOWN;
@@ -169,8 +158,7 @@ public class ContextDataPart
 		}
 
 		@Override
-		public int compare(Viewer viewer, Object e1, Object e2)
-		{
+		public int compare(Viewer viewer, Object e1, Object e2) {
 			// For root elements at first level, we keep Local before Inherited
 			if ((e1 == ContextDataProvider.LOCAL_VALUE_NODE) || (e2 == ContextDataProvider.LOCAL_VALUE_NODE))
 				return -1;
@@ -185,42 +173,36 @@ public class ContextDataPart
 			return (direction == SWT.DOWN) ? -rc : rc;
 		}
 
-		public void setLabelProvider(ILabelProvider textProvider)
-		{
+		public void setLabelProvider(ILabelProvider textProvider) {
 			labelProvider = textProvider;
 		}
 
 	}
 
-	private SelectionAdapter getHeaderSelectionAdapter(final TreeViewer viewer, final TreeColumn column, final int columnIndex,
-			final ILabelProvider textProvider)
-	{
-		SelectionAdapter selectionAdapter = new SelectionAdapter()
-			{
-				@Override
-				public void widgetSelected(SelectionEvent e)
-				{
-					viewer.setComparator(comparator);
-					comparator.setColumn(columnIndex);
-					comparator.setLabelProvider(textProvider);
-					viewer.getTree().setSortDirection(comparator.getDirection());
-					viewer.getTree().setSortColumn(column);
-					viewer.refresh();
-				}
-			};
+	private SelectionAdapter getHeaderSelectionAdapter(final TreeViewer viewer, final TreeColumn column,
+			final int columnIndex, final ILabelProvider textProvider) {
+		SelectionAdapter selectionAdapter = new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				viewer.setComparator(comparator);
+				comparator.setColumn(columnIndex);
+				comparator.setLabelProvider(textProvider);
+				viewer.getTree().setSortDirection(comparator.getDirection());
+				viewer.getTree().setSortColumn(column);
+				viewer.refresh();
+			}
+		};
 		return selectionAdapter;
 	}
 
-	public void refresh(boolean refreshLabel)
-	{
+	public void refresh(boolean refreshLabel) {
 		contextDataViewer.refresh(refreshLabel);
 	}
 
-	
 	private static final ViewerFilter[] NO_FILTER = new ViewerFilter[0];
-	public void setFilter(ViewerFilter filter)
-	{
-		
+
+	public void setFilter(ViewerFilter filter) {
+
 		contextDataViewer.setFilters((filter == null) ? NO_FILTER : new ViewerFilter[] { filter });
 	}
 

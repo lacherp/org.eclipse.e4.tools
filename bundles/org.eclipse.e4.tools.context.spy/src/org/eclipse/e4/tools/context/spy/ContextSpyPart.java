@@ -49,8 +49,7 @@ import org.osgi.framework.FrameworkUtil;
  * This class is the main part of the context spy. It creates a treeviewer and
  * the context data part listening to context selection
  */
-public class ContextSpyPart
-{
+public class ContextSpyPart {
 
 	private static final String ICON_COLLAPSEALL = "icons/collapseall.gif";
 	private static final String ICON_EXPANDALL = "icons/expandall.gif";
@@ -68,7 +67,6 @@ public class ContextSpyPart
 
 	private ImageRegistry imgReg;
 
-
 	@Inject
 	private ContextDataFilter contextFilter;
 
@@ -81,8 +79,7 @@ public class ContextSpyPart
 	private static boolean lastShowFiltered = false;
 
 	@Inject
-	private void initializeImageRegistry()
-	{
+	private void initializeImageRegistry() {
 		Bundle b = FrameworkUtil.getBundle(this.getClass());
 		imgReg = new ImageRegistry();
 		imgReg.put(ICON_COLLAPSEALL, ImageDescriptor.createFromURL(b.getEntry(ICON_COLLAPSEALL)));
@@ -94,8 +91,7 @@ public class ContextSpyPart
 	 * Create contents of the view part.
 	 */
 	@PostConstruct
-	public void createControls(Composite parent, MApplication a, IEclipseContext ctx)
-	{
+	public void createControls(Composite parent, MApplication a, IEclipseContext ctx) {
 		parent.setLayout(new GridLayout(1, false));
 
 		final Composite comp = new Composite(parent, SWT.NONE);
@@ -104,39 +100,33 @@ public class ContextSpyPart
 		Button refreshButton = new Button(comp, SWT.FLAT);
 		refreshButton.setImage(imgReg.get(ICON_REFRESH));
 		refreshButton.setToolTipText("Refresh the contexts");
-		refreshButton.addSelectionListener(new SelectionAdapter()
-			{
-				@Override
-				public void widgetSelected(SelectionEvent e)
-				{
-					contextTreeViewer.refresh(true);
-					contextDataPart.refresh(true);
-				}
-			});
+		refreshButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				contextTreeViewer.refresh(true);
+				contextDataPart.refresh(true);
+			}
+		});
 
 		Button expandAll = new Button(comp, SWT.FLAT);
 		expandAll.setImage(imgReg.get(ICON_EXPANDALL));
 		expandAll.setToolTipText("Expand context nodes");
-		expandAll.addSelectionListener(new SelectionAdapter()
-			{
-				@Override
-				public void widgetSelected(SelectionEvent e)
-				{
-					contextTreeViewer.expandAll();
-				}
-			});
+		expandAll.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				contextTreeViewer.expandAll();
+			}
+		});
 		Button collapseAll = new Button(comp, SWT.FLAT);
 		collapseAll.setImage(imgReg.get(ICON_COLLAPSEALL));
 		collapseAll.setToolTipText("Collapse context nodes");
-		collapseAll.addSelectionListener(new SelectionAdapter()
-			{
-				@Override
-				public void widgetSelected(SelectionEvent e)
-				{
-					contextTreeViewer.collapseAll();
-				}
+		collapseAll.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				contextTreeViewer.collapseAll();
+			}
 
-			});
+		});
 
 		filterText = new Text(comp, SWT.SEARCH | SWT.ICON_SEARCH);
 		GridDataFactory.fillDefaults().hint(200, SWT.DEFAULT).applyTo(filterText);
@@ -146,40 +136,36 @@ public class ContextSpyPart
 		if (lastFilterText != null)
 			filterText.setText(lastFilterText);
 		contextFilter.setPattern(lastFilterText);
-		filterText.addKeyListener(new KeyAdapter()
-			{
-				@Override
-				public void keyReleased(KeyEvent e)
-				{
-					String textToSearch = filterText.getText();
-					lastFilterText = textToSearch;
-					boolean enableButton = textToSearch.length() > 0;
-					// Enable/disable button for filtering
-					showOnlyFilteredElements.setEnabled(enableButton);
+		filterText.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				String textToSearch = filterText.getText();
+				lastFilterText = textToSearch;
+				boolean enableButton = textToSearch.length() > 0;
+				// Enable/disable button for filtering
+				showOnlyFilteredElements.setEnabled(enableButton);
 
-					// Then update filters and viewers
-					contextFilter.setPattern(textToSearch);
-					setFilter();
-					contextTreeViewer.refresh(true);
-					contextDataPart.refresh(true);
-				}
+				// Then update filters and viewers
+				contextFilter.setPattern(textToSearch);
+				setFilter();
+				contextTreeViewer.refresh(true);
+				contextDataPart.refresh(true);
+			}
 
-			});
+		});
 
 		showOnlyFilteredElements = new Button(comp, SWT.CHECK);
 		showOnlyFilteredElements.setText("Show Only Filtered");
 		showOnlyFilteredElements.setToolTipText("Show only the filtered items in the table view");
 		showOnlyFilteredElements.setEnabled((lastFilterText != null) && (lastFilterText.length() > 0));
 		showOnlyFilteredElements.setSelection(lastShowFiltered);
-		showOnlyFilteredElements.addSelectionListener(new SelectionAdapter()
-			{
-				@Override
-				public void widgetSelected(SelectionEvent e)
-				{
-					lastShowFiltered = showOnlyFilteredElements.getSelection();
-					setFilter();
-				}
-			});
+		showOnlyFilteredElements.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				lastShowFiltered = showOnlyFilteredElements.getSelection();
+				setFilter();
+			}
+		});
 
 		SashForm sashForm = new SashForm(parent, SWT.VERTICAL | SWT.V_SCROLL | SWT.H_SCROLL);
 		sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -194,15 +180,13 @@ public class ContextSpyPart
 		// tv.setInput(a);
 		contextTreeViewer.setInput(ContextSpyHelper.getAllBundleContexts());
 
-		contextTreeViewer.addSelectionChangedListener(new ISelectionChangedListener()
-			{
-				@Override
-				public void selectionChanged(SelectionChangedEvent event)
-				{
-					IStructuredSelection ss = (IStructuredSelection) event.getSelection();
-					selService.setSelection((ss.size() == 1) ? ss.getFirstElement() : ss.toArray());
-				}
-			});
+		contextTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection ss = (IStructuredSelection) event.getSelection();
+				selService.setSelection((ss.size() == 1) ? ss.getFirstElement() : ss.toArray());
+			}
+		});
 
 		IEclipseContext subCtx = ctx.createChild("Context for ContextDataPart");
 		subCtx.set(Composite.class, sashForm);
@@ -218,8 +202,7 @@ public class ContextSpyPart
 	}
 
 	/** Set the filter on context data part */
-	public void setFilter()
-	{
+	public void setFilter() {
 		if (showOnlyFilteredElements.isEnabled() && showOnlyFilteredElements.getSelection())
 			contextDataPart.setFilter(contextFilter);
 		else
@@ -227,13 +210,11 @@ public class ContextSpyPart
 	}
 
 	@PreDestroy
-	public void dispose()
-	{
+	public void dispose() {
 	}
 
 	@Focus
-	public void setFocus()
-	{
+	public void setFocus() {
 		contextTreeViewer.getControl().setFocus();
 	}
 

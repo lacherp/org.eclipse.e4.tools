@@ -29,9 +29,8 @@ import org.eclipse.jface.viewers.ViewerFilter;
 
 @Creatable
 @Singleton
-public class ContextDataFilter extends ViewerFilter
-{
-	
+public class ContextDataFilter extends ViewerFilter {
+
 	@Inject
 	Logger log;
 
@@ -39,9 +38,9 @@ public class ContextDataFilter extends ViewerFilter
 
 	// Implements the filter for the data table content
 	@Override
-	public boolean select(Viewer viewer, Object parentElement, Object element)
-	{
-		if ((element == ContextDataProvider.LOCAL_VALUE_NODE) || (element == ContextDataProvider.INHERITED_INJECTED_VALUE_NODE))
+	public boolean select(Viewer viewer, Object parentElement, Object element) {
+		if ((element == ContextDataProvider.LOCAL_VALUE_NODE)
+				|| (element == ContextDataProvider.INHERITED_INJECTED_VALUE_NODE))
 			return true;
 
 		// Must only select objects matching the pattern or objects under a kept
@@ -68,11 +67,8 @@ public class ContextDataFilter extends ViewerFilter
 
 	}
 
-
-
 	/** Set the pattern and use it as lowercase */
-	public void setPattern(String newPattern)
-	{
+	public void setPattern(String newPattern) {
 		if ((newPattern == null) || (newPattern.length() == 0))
 			pattern = null;
 		else
@@ -83,8 +79,7 @@ public class ContextDataFilter extends ViewerFilter
 	 * This method search for an object and check if it contains the text or a
 	 * pattern matching this text
 	 */
-	public boolean containsText(IEclipseContext ctx)
-	{
+	public boolean containsText(IEclipseContext ctx) {
 		// It is useless to store the values in a map, because context changes
 		// everytime and it should be tracked.
 		Collection<String> values = computeValues(ctx);
@@ -92,10 +87,8 @@ public class ContextDataFilter extends ViewerFilter
 		// Search if string is just in one of the values... manage ignore case
 		// and contain...
 		boolean found = false;
-		for (String s : values)
-		{
-			if (matchText(s))
-			{
+		for (String s : values) {
+			if (matchText(s)) {
 				found = true;
 				break;
 			}
@@ -103,23 +96,20 @@ public class ContextDataFilter extends ViewerFilter
 		return found;
 	}
 
-	public boolean matchText(String text)
-	{
+	public boolean matchText(String text) {
 		return ((text == null) || (pattern == null)) ? false : text.toLowerCase().contains(pattern);
 	}
 
 	/**
 	 * Extract all string values in context
-	 * 
+	 *
 	 * @param ctx
 	 * @return
 	 */
 	@SuppressWarnings("restriction")
-	private Collection<String> computeValues(IEclipseContext ctx)
-	{
+	private Collection<String> computeValues(IEclipseContext ctx) {
 		Collection<String> result = new ArrayList<String>();
-		if (ctx instanceof EclipseContext)
-		{
+		if (ctx instanceof EclipseContext) {
 			// Search for all strings in this context (values and context
 			// function)
 
@@ -137,38 +127,33 @@ public class ContextDataFilter extends ViewerFilter
 			Collection<String> localKeys = currentContext.localData().keySet();
 			Collection<String> localContextFunctionsKeys = currentContext.localContextFunction().keySet();
 
-			if (currentContext.getRawListenerNames() != null)
-			{
-				for (String name : currentContext.getRawListenerNames())
-				{
+			if (currentContext.getRawListenerNames() != null) {
+				for (String name : currentContext.getRawListenerNames()) {
 					if (!localKeys.contains(name) && !localContextFunctionsKeys.contains(name))
 						result.add(name);
 				}
 			}
 
-		} else
-		{
-			log.warn("Warning : the received EclipseContext has not the expected type. It is a : " + ctx.getClass().toString());
+		} else {
+			log.warn("Warning : the received EclipseContext has not the expected type. It is a : "
+					+ ctx.getClass().toString());
 		}
 
 		return result;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param map
 	 *            the map to extract the strings (keys and values)
 	 * @param result
 	 *            the result to fill with strings
 	 */
-	private void extractStringsFromMap(Map<String, Object> map, Collection<String> result)
-	{
-		for (Map.Entry<String, Object> entry : map.entrySet())
-		{
+	private void extractStringsFromMap(Map<String, Object> map, Collection<String> result) {
+		for (Map.Entry<String, Object> entry : map.entrySet()) {
 			result.add(entry.getKey().toString());
 			Object value = entry.getValue();
-			if (value != null)
-			{
+			if (value != null) {
 				result.add(value.toString());
 			}
 		}

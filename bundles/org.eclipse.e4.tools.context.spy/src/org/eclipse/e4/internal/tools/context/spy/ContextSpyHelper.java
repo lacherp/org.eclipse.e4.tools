@@ -21,26 +21,23 @@ import org.osgi.framework.BundleContext;
 
 /**
  * A helper class to get information inside context management system. This
- * class uses internal fields or methods defined in EclipseContext
- * Could be updated in the future.
- * 
+ * class uses internal fields or methods defined in EclipseContext Could be
+ * updated in the future.
+ *
  * @author olivier
- * 
+ *
  */
-public class ContextSpyHelper
-{
+public class ContextSpyHelper {
 
 	/**
 	 * Get all the contexts created by EclipseContextFactory. It get values from
 	 * field introspection. Should be rewritten if internal structure changes
-	 * 
+	 *
 	 * @return a collection of contexts created by EclipseContextFactory
 	 */
-	public static Collection<IEclipseContext> getAllBundleContexts()
-	{
+	public static Collection<IEclipseContext> getAllBundleContexts() {
 		Collection<IEclipseContext> result = Collections.emptyList();
-		try
-		{
+		try {
 			// Must use introspection to get the weak hash map (no getter).
 			Field f = EclipseContextFactory.class.getDeclaredField("serviceContexts");
 			f.setAccessible(true);
@@ -48,25 +45,18 @@ public class ContextSpyHelper
 			Map<BundleContext, IEclipseContext> ctxs = (Map<BundleContext, IEclipseContext>) f.get(null);
 			result = ctxs.values();
 
-		} catch (SecurityException e)
-		{
+		} catch (SecurityException e) {
 			e.printStackTrace();
-		} catch (NoSuchFieldException e)
-		{
+		} catch (NoSuchFieldException e) {
 			e.printStackTrace();
-		} catch (IllegalArgumentException e)
-		{
+		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
-		} catch (IllegalAccessException e)
-		{
+		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
 
 		return result;
 
 	}
-	
 
-	
-	
 }
