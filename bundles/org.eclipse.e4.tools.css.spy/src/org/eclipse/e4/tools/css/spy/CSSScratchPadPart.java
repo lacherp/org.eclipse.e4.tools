@@ -34,8 +34,7 @@ import org.w3c.dom.stylesheets.StyleSheet;
 import org.w3c.dom.stylesheets.StyleSheetList;
 
 @SuppressWarnings("restriction")
-public class CSSScratchPadPart
-{
+public class CSSScratchPadPart {
 	@Inject
 	@Optional
 	private IThemeEngine themeEngine;
@@ -46,9 +45,9 @@ public class CSSScratchPadPart
 	 * setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE/* | SWT.PRIMARY_MODAL
 	 */
 	// );
-		// setShellStyle(SWT.DIALOG_TRIM | SWT.MAX | SWT.RESIZE
-		// | getDefaultOrientation());
-	//}
+	// setShellStyle(SWT.DIALOG_TRIM | SWT.MAX | SWT.RESIZE
+	// | getDefaultOrientation());
+	// }
 
 	/*
 	 * @Override protected void configureShell(Shell newShell) {
@@ -65,8 +64,7 @@ public class CSSScratchPadPart
 	private Text exceptions;
 
 	@PostConstruct
-	protected Control createDialogArea(Composite parent)
-	{
+	protected Control createDialogArea(Composite parent) {
 
 		Composite outer = parent;
 		outer.setLayout(new GridLayout());
@@ -74,8 +72,7 @@ public class CSSScratchPadPart
 
 		SashForm sashForm = new SashForm(outer, SWT.VERTICAL);
 
-		cssText = new Text(sashForm, SWT.BORDER | SWT.MULTI | SWT.WRAP
-				| SWT.V_SCROLL);
+		cssText = new Text(sashForm, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
 
 		exceptions = new Text(sashForm, SWT.BORDER | SWT.MULTI | SWT.READ_ONLY);
 
@@ -93,8 +90,7 @@ public class CSSScratchPadPart
 		// IDialogConstants.CANCEL_LABEL, false);
 	}
 
-	protected Button createButton(Composite parent, int id, String label,
-			boolean defaultButton) {
+	protected Button createButton(Composite parent, int id, String label, boolean defaultButton) {
 		// increment the number of columns in the button bar
 		((GridLayout) parent.getLayout()).numColumns++;
 		Button button = new Button(parent, SWT.PUSH);
@@ -114,13 +110,9 @@ public class CSSScratchPadPart
 			}
 		}
 		buttons.put(new Integer(id), button);
-		//setButtonLayoutData(button);
+		// setButtonLayoutData(button);
 		return button;
 	}
-
-
-
-
 
 	protected void buttonPressed(int buttonId) {
 		switch (buttonId) {
@@ -151,10 +143,8 @@ public class CSSScratchPadPart
 			if (count++ > 0) {
 				sb.append("\n\n");
 			}
-			sb.append("Engine[").append(engine.getClass().getSimpleName())
-					.append("]");
-			ExtendedDocumentCSS doc = (ExtendedDocumentCSS) engine
-					.getDocumentCSS();
+			sb.append("Engine[").append(engine.getClass().getSimpleName()).append("]");
+			ExtendedDocumentCSS doc = (ExtendedDocumentCSS) engine.getDocumentCSS();
 			List<StyleSheet> sheets = new ArrayList<StyleSheet>();
 			StyleSheetList list = doc.getStyleSheets();
 			for (int i = 0; i < list.getLength(); i++) {
@@ -173,8 +163,7 @@ public class CSSScratchPadPart
 				long nanoDiff = System.nanoTime() - start;
 				sb.append("\nTime: ").append(nanoDiff / 1000000).append("ms");
 			} catch (CSSParseException e) {
-				sb.append("\nError: line ").append(e.getLineNumber())
-						.append(" col ").append(e.getColumnNumber())
+				sb.append("\nError: line ").append(e.getLineNumber()).append(" col ").append(e.getColumnNumber())
 						.append(": ").append(e.getLocalizedMessage());
 			} catch (IOException e) {
 				sb.append("\nError: ").append(e.getLocalizedMessage());

@@ -23,33 +23,39 @@ public class Activator implements BundleActivator {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
+	 * 
+	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.
+	 * BundleContext)
 	 */
+	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 * 
+	 * @see
+	 * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		Activator.context = null;
 	}
 
-    public static String join(String[] elements, String glue) {
-        StringBuilder sb = new StringBuilder();
-        join(sb, elements, glue);
-        return sb.toString();
-    }
+	public static String join(String[] elements, String glue) {
+		StringBuilder sb = new StringBuilder();
+		join(sb, elements, glue);
+		return sb.toString();
+	}
 
-    public static void join(StringBuilder sb, String[] elements, String glue) {
-        for (int i = 0; i < elements.length; i++) {
-            sb.append(elements[i]);
-            if (i < elements.length - 1) {
-                sb.append(glue);
-            }
-        }
-    }
+	public static void join(StringBuilder sb, String[] elements, String glue) {
+		for (int i = 0; i < elements.length; i++) {
+			sb.append(elements[i]);
+			if (i < elements.length - 1) {
+				sb.append(glue);
+			}
+		}
+	}
 
 }

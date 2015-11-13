@@ -25,24 +25,23 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.w3c.dom.NodeList;
 
 public class WidgetTreeProvider implements ITreeContentProvider {
-    private static final Object[] EMPTY_ARRAY = new Object[0];
+	private static final Object[] EMPTY_ARRAY = new Object[0];
 
-    @Override
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-    }
+	}
 
-    @Override
+	@Override
 	public Object[] getElements(Object inputElement) {
-        if (inputElement instanceof Object[]) {
-            return (Object[]) inputElement;
-        } else if (inputElement instanceof Collection< ? >) {
-            return ((Collection< ? >) inputElement).toArray();
-        }
-        return getChildren(inputElement);
-    }
+		if (inputElement instanceof Object[]) {
+			return (Object[]) inputElement;
+		} else if (inputElement instanceof Collection<?>) {
+			return ((Collection<?>) inputElement).toArray();
+		}
+		return getChildren(inputElement);
+	}
 
-
-    @Override
+	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof Display) {
 			List<Shell> shells = new ArrayList<Shell>();
@@ -54,18 +53,18 @@ public class WidgetTreeProvider implements ITreeContentProvider {
 			return shells.toArray();
 		}
 		CSSStylableElement element = CssSpyPart.getCSSElement(parentElement);
-        if (element == null) {
+		if (element == null) {
 			return EMPTY_ARRAY;
-        }
-        NodeList kids = element.getChildNodes();
-        ArrayList<Object> children = new ArrayList<Object>(kids.getLength());
-        for (int i = 0; i < kids.getLength(); i++) {
+		}
+		NodeList kids = element.getChildNodes();
+		ArrayList<Object> children = new ArrayList<Object>(kids.getLength());
+		for (int i = 0; i < kids.getLength(); i++) {
 			children.add(((CSSStylableElement) kids.item(i)).getNativeWidget());
-        }
-        return children.toArray();
-    }
+		}
+		return children.toArray();
+	}
 
-    @Override
+	@Override
 	public Object getParent(Object element) {
 		if (element instanceof Control) {
 			Control control = (Control) element;
@@ -76,15 +75,15 @@ public class WidgetTreeProvider implements ITreeContentProvider {
 			return ((ToolItem) element).getParent();
 		}
 		return null;
-    }
+	}
 
-    @Override
+	@Override
 	public boolean hasChildren(Object element) {
-        return getChildren(element).length > 0;
-    }
+		return getChildren(element).length > 0;
+	}
 
-    @Override
+	@Override
 	public void dispose() {
-    }
+	}
 
 }

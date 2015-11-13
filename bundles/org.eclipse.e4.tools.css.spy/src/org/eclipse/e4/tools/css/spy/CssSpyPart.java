@@ -97,26 +97,21 @@ import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSValue;
 
 @SuppressWarnings("restriction")
-public class CssSpyPart
-{
+public class CssSpyPart {
 
 	@Inject
 	@Named(IServiceConstants.ACTIVE_SHELL)
 	private Shell activeShell;
 
-
-
-	/** @return the CSS element corresponding to the argument, or null if none */
-	public static CSSStylableElement getCSSElement(Object o)
-	{
-		if (o instanceof CSSStylableElement)
-		{
+	/**
+	 * @return the CSS element corresponding to the argument, or null if none
+	 */
+	public static CSSStylableElement getCSSElement(Object o) {
+		if (o instanceof CSSStylableElement) {
 			return (CSSStylableElement) o;
-		} else
-		{
+		} else {
 			CSSEngine engine = getCSSEngine(o);
-			if (engine != null)
-			{
+			if (engine != null) {
 				return (CSSStylableElement) engine.getElement(o);
 			}
 		}
@@ -124,24 +119,19 @@ public class CssSpyPart
 	}
 
 	/** @return the CSS engine governing the argument, or null if none */
-	public static CSSEngine getCSSEngine(Object o)
-	{
+	public static CSSEngine getCSSEngine(Object o) {
 		CSSEngine engine = null;
-		if (o instanceof CSSStylableElement)
-		{
+		if (o instanceof CSSStylableElement) {
 			CSSStylableElement element = (CSSStylableElement) o;
 			engine = WidgetElement.getEngine((Widget) element.getNativeWidget());
 		}
-		if (engine == null && o instanceof Widget)
-		{
-			if (((Widget) o).isDisposed())
-			{
+		if (engine == null && o instanceof Widget) {
+			if (((Widget) o).isDisposed()) {
 				return null;
 			}
 			engine = WidgetElement.getEngine((Widget) o);
 		}
-		if (engine == null && Display.getCurrent() != null)
-		{
+		if (engine == null && Display.getCurrent() != null) {
 			engine = new CSSSWTEngineImpl(Display.getCurrent());
 		}
 		return engine;
@@ -169,75 +159,60 @@ public class CssSpyPart
 	private Button showUnsetProperties;
 	private Button showCssFragment;
 
-	protected ViewerFilter unsetPropertyFilter = new ViewerFilter()
-		{
+	protected ViewerFilter unsetPropertyFilter = new ViewerFilter() {
 
-			@Override
-			public boolean select(Viewer viewer, Object parentElement, Object element)
-			{
-				if (element instanceof CSSPropertyProvider)
-				{
-					try
-					{
-						return ((CSSPropertyProvider) element).getValue() != null;
-					} catch (Exception e)
-					{
-						return false;
-					}
+		@Override
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (element instanceof CSSPropertyProvider) {
+				try {
+					return ((CSSPropertyProvider) element).getValue() != null;
+				} catch (Exception e) {
+					return false;
 				}
-				return false;
 			}
-		};
+			return false;
+		}
+	};
 
 	private Composite outer;
 
-	public Widget getSpecimen()
-	{
+	public Widget getSpecimen() {
 		return specimen;
 	}
 
-	private boolean isLive()
-	{
+	private boolean isLive() {
 		return specimen == null;
 	}
 
-	public void setSpecimen(Widget specimen)
-	{
+	public void setSpecimen(Widget specimen) {
 		this.specimen = specimen;
 		update();
 	}
 
-	private Widget getActiveSpecimen()
-	{
-		if (specimen != null)
-		{
+	private Widget getActiveSpecimen() {
+		if (specimen != null) {
 			return specimen;
 		}
 		return display.getCursorControl();
 	}
 
-	protected boolean shouldDismissOnLostFocus()
-	{
+	protected boolean shouldDismissOnLostFocus() {
 		return false;
 	}
 
-	protected void update()
-	{
-		if (activeShell == null)
-		{
+	protected void update() {
+		if (activeShell == null) {
 			return;
 		}
 		Widget current = getActiveSpecimen();
-		if (shown == current)
-		{
+		if (shown == current) {
 			return;
 		}
 		shown = current;
 
 		CSSEngine engine = getCSSEngine(shown);
 		CSSStylableElement element = (CSSStylableElement) engine.getElement(shown);
-		if (element == null)
-		{
+		if (element == null) {
 			return;
 		}
 
@@ -245,60 +220,48 @@ public class CssSpyPart
 		revealAndSelect(Collections.singletonList(shown));
 	}
 
-	private <T> void revealAndSelect(List<T> elements)
-	{
+	private <T> void revealAndSelect(List<T> elements) {
 		widgetTreeViewer.setSelection(new StructuredSelection(elements), true);
 	}
 
-	private void updateForWidgetSelection(ISelection sel)
-	{
+	private void updateForWidgetSelection(ISelection sel) {
 		disposeHighlights();
-		if (sel.isEmpty())
-		{
+		if (sel.isEmpty()) {
 			return;
 		}
 		StructuredSelection selection = (StructuredSelection) sel;
-		for (Object s : selection.toList())
-		{
-			if (s instanceof Widget)
-			{
+		for (Object s : selection.toList()) {
+			if (s instanceof Widget) {
 				highlightWidget((Widget) s);
 			}
 		}
-		populate(selection.size() == 1 && selection.getFirstElement() instanceof Widget ? (Widget) selection.getFirstElement()
-				: null);
+		populate(selection.size() == 1 && selection.getFirstElement() instanceof Widget
+				? (Widget) selection.getFirstElement() : null);
 	}
 
-	private void updateWidgetTreeInput()
-	{
-		if (showAllShells.getSelection())
-		{
+	private void updateWidgetTreeInput() {
+		if (showAllShells.getSelection()) {
 			widgetTreeViewer.setInput(display);
-		} else
-		{
+		} else {
 			widgetTreeViewer.setInput(new Object[] { shown instanceof Control ? ((Control) shown).getShell() : shown });
 		}
 		performCSSSearch(new NullProgressMonitor());
 	}
 
-	protected void populate(Widget selected)
-	{
-		if (selected == null)
-		{
+	protected void populate(Widget selected) {
+		if (selected == null) {
 			cssPropertiesViewer.setInput(null);
 			cssRules.setText("");
 			return;
 		}
-		if (selected.isDisposed())
-		{
+		if (selected.isDisposed()) {
 			cssPropertiesViewer.setInput(null);
 			cssRules.setText("*DISPOSED*");
 			return;
 		}
 
 		CSSStylableElement element = getCSSElement(selected);
-		if (element == null)
-		{
+		if (element == null) {
 			cssPropertiesViewer.setInput(null);
 			cssRules.setText("Not a stylable element");
 			return;
@@ -310,40 +273,32 @@ public class CssSpyPart
 		CSSEngine engine = getCSSEngine(element);
 		CSSStyleDeclaration decl = engine.getViewCSS().getComputedStyle(element, null);
 
-		if (element.getCSSStyle() != null)
-		{
+		if (element.getCSSStyle() != null) {
 			sb.append("\nCSS Inline Style(s):\n  ");
 			Activator.join(sb, element.getCSSStyle().split(";"), ";\n  ");
 		}
 
-		if (decl != null)
-		{
+		if (decl != null) {
 			sb.append("\n\nCSS Properties:\n");
-			try
-			{
-				if (decl != null)
-				{
+			try {
+				if (decl != null) {
 					sb.append(decl.getCssText());
 				}
-			} catch (Exception e)
-			{
+			} catch (Exception e) {
 				sb.append(e);
 			}
 		}
-		if (element.getStaticPseudoInstances().length > 0)
-		{
+		if (element.getStaticPseudoInstances().length > 0) {
 			sb.append("\n\nStatic Pseudoinstances:\n  ");
 			Activator.join(sb, element.getStaticPseudoInstances(), "\n  ");
 		}
 
-		if (element.getCSSClass() != null)
-		{
+		if (element.getCSSClass() != null) {
 			sb.append("\n\nCSS Classes:\n  ");
 			Activator.join(sb, element.getCSSClass().split(" +"), "\n  ");
 		}
 
-		if (element.getAttribute("style") != null)
-		{
+		if (element.getAttribute("style") != null) {
 			sb.append("\n\nSWT Style Bits:\n  ");
 			Activator.join(sb, element.getAttribute("style").split(" +"), "\n  ");
 		}
@@ -351,37 +306,31 @@ public class CssSpyPart
 		sb.append("\n\nCSS Class Element:\n  ").append(element.getClass().getName());
 
 		// this is useful for diagnosing issues
-		if (element.getNativeWidget() instanceof Shell && ((Shell) element.getNativeWidget()).getParent() != null)
-		{
+		if (element.getNativeWidget() instanceof Shell && ((Shell) element.getNativeWidget()).getParent() != null) {
 			Shell nw = (Shell) element.getNativeWidget();
 			sb.append("\n\nShell parent: ").append(nw.getParent());
 		}
-		if (element.getNativeWidget() instanceof Composite)
-		{
+		if (element.getNativeWidget() instanceof Composite) {
 			Composite nw = (Composite) element.getNativeWidget();
 			sb.append("\n\nSWT Layout: ").append(nw.getLayout());
 		}
 		Rectangle bounds = getBounds(selected);
-		if (bounds != null)
-		{
+		if (bounds != null) {
 			sb.append("\nBounds: x=").append(bounds.x).append(" y=").append(bounds.y);
 			sb.append(" h=").append(bounds.height).append(" w=").append(bounds.width);
 		}
 
-		if (element.getNativeWidget() instanceof Widget)
-		{
+		if (element.getNativeWidget() instanceof Widget) {
 			Widget w = (Widget) element.getNativeWidget();
-			if (w.getData() != null)
-			{
+			if (w.getData() != null) {
 				sb.append("\nWidget data: ").append(w.getData());
 			}
-			if (w.getData(SWT.SKIN_ID) != null)
-			{
+			if (w.getData(SWT.SKIN_ID) != null) {
 				sb.append("\nWidget Skin ID (").append(SWT.SKIN_ID).append("): ").append(w.getData(SWT.SKIN_ID));
 			}
-			if (w.getData(SWT.SKIN_CLASS) != null)
-			{
-				sb.append("\nWidget Skin Class (").append(SWT.SKIN_CLASS).append("): ").append(w.getData(SWT.SKIN_CLASS));
+			if (w.getData(SWT.SKIN_CLASS) != null) {
+				sb.append("\nWidget Skin Class (").append(SWT.SKIN_CLASS).append("): ")
+						.append(w.getData(SWT.SKIN_CLASS));
 			}
 		}
 
@@ -391,27 +340,22 @@ public class CssSpyPart
 		highlightWidget(selected);
 	}
 
-	private Shell getShell(Widget widget)
-	{
-		if (widget instanceof Control)
-		{
+	private Shell getShell(Widget widget) {
+		if (widget instanceof Control) {
 			return ((Control) widget).getShell();
 		}
 		return null;
 	}
 
 	/** Add a highlight-rectangle for the selected widget */
-	private void highlightWidget(Widget selected)
-	{
-		if (selected == null || selected.isDisposed())
-		{
+	private void highlightWidget(Widget selected) {
+		if (selected == null || selected.isDisposed()) {
 			return;
 		}
 
 		Rectangle bounds = getBounds(selected); // relative to absolute display,
 												// not the widget
-		if (bounds == null /* || bounds.height == 0 || bounds.width == 0 */)
-		{
+		if (bounds == null /* || bounds.height == 0 || bounds.width == 0 */) {
 			return;
 		}
 		// emulate a transparent background as per SWT Snippet180
@@ -434,38 +378,30 @@ public class CssSpyPart
 		highlightRegions.add(highlightRegion);
 	}
 
-	private void disposeHighlights()
-	{
-		for (Shell highlight : highlights)
-		{
+	private void disposeHighlights() {
+		for (Shell highlight : highlights) {
 			highlight.dispose();
 		}
 		highlights.clear();
-		for (Region region : highlightRegions)
-		{
+		for (Region region : highlightRegions) {
 			region.dispose();
 		}
 		highlightRegions.clear();
 	}
 
-	private Rectangle getBounds(Widget widget)
-	{
-		if (widget instanceof Shell)
-		{
+	private Rectangle getBounds(Widget widget) {
+		if (widget instanceof Shell) {
 			// Shell bounds are already in display coordinates
 			return ((Shell) widget).getBounds();
-		} else if (widget instanceof Control)
-		{
+		} else if (widget instanceof Control) {
 			Control control = (Control) widget;
 			Rectangle bounds = control.getBounds();
 			return control.getDisplay().map(control.getParent(), null, bounds);
-		} else if (widget instanceof ToolItem)
-		{
+		} else if (widget instanceof ToolItem) {
 			ToolItem item = (ToolItem) widget;
 			Rectangle bounds = item.getBounds();
 			return item.getDisplay().map(item.getParent(), null, bounds);
-		} else if (widget instanceof CTabItem)
-		{
+		} else if (widget instanceof CTabItem) {
 			CTabItem item = (CTabItem) widget;
 			Rectangle bounds = item.getBounds();
 			return item.getDisplay().map(item.getParent(), null, bounds);
@@ -480,8 +416,7 @@ public class CssSpyPart
 	 * @param parent
 	 */
 	@PostConstruct
-	protected Control createDialogArea(Composite parent, IEclipseContext ctx)
-	{
+	protected Control createDialogArea(Composite parent, IEclipseContext ctx) {
 		outer = parent;
 		outer.setLayout(new GridLayout());
 		outer.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -515,64 +450,54 @@ public class CssSpyPart
 		TreeViewerColumn widgetTypeColumn = new TreeViewerColumn(widgetTreeViewer, SWT.NONE);
 		widgetTypeColumn.getColumn().setWidth(100);
 		widgetTypeColumn.getColumn().setText("Widget");
-		widgetTypeColumn.setLabelProvider(new ColumnLabelProvider()
-			{
-				@Override
-				public String getText(Object item)
-				{
-					CSSStylableElement element = CssSpyPart.getCSSElement(item);
-					return element.getLocalName() + " (" + element.getNamespaceURI() + ")";
-				}
-			});
+		widgetTypeColumn.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object item) {
+				CSSStylableElement element = CssSpyPart.getCSSElement(item);
+				return element.getLocalName() + " (" + element.getNamespaceURI() + ")";
+			}
+		});
 
 		TreeViewerColumn widgetClassColumn = new TreeViewerColumn(widgetTreeViewer, SWT.NONE);
 		widgetClassColumn.getColumn().setText("CSS Class");
 		widgetClassColumn.getColumn().setWidth(100);
-		widgetClassColumn.setLabelProvider(new ColumnLabelProvider()
-			{
-				@Override
-				public String getText(Object item)
-				{
-					CSSStylableElement element = CssSpyPart.getCSSElement(item);
-					if (element.getCSSClass() == null)
-					{
-						return null;
-					}
-					String classes[] = element.getCSSClass().split(" +");
-					return classes.length <= 1 ? classes[0] : classes[0] + " (+" + (classes.length - 1) + " others)";
+		widgetClassColumn.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object item) {
+				CSSStylableElement element = CssSpyPart.getCSSElement(item);
+				if (element.getCSSClass() == null) {
+					return null;
 				}
+				String classes[] = element.getCSSClass().split(" +");
+				return classes.length <= 1 ? classes[0] : classes[0] + " (+" + (classes.length - 1) + " others)";
+			}
 
-				@Override
-				public String getToolTipText(Object item)
-				{
-					CSSStylableElement element = CssSpyPart.getCSSElement(item);
-					if (element == null)
-					{
-						return null;
-					}
-					StringBuilder sb = new StringBuilder();
-					sb.append(element.getLocalName()).append(" (").append(element.getNamespaceURI()).append(")");
-					if (element.getCSSClass() != null)
-					{
-						sb.append("\nClasses:\n  ");
-						Activator.join(sb, element.getCSSClass().split(" +"), "\n  ");
-					}
-					return sb.toString();
+			@Override
+			public String getToolTipText(Object item) {
+				CSSStylableElement element = CssSpyPart.getCSSElement(item);
+				if (element == null) {
+					return null;
 				}
-			});
+				StringBuilder sb = new StringBuilder();
+				sb.append(element.getLocalName()).append(" (").append(element.getNamespaceURI()).append(")");
+				if (element.getCSSClass() != null) {
+					sb.append("\nClasses:\n  ");
+					Activator.join(sb, element.getCSSClass().split(" +"), "\n  ");
+				}
+				return sb.toString();
+			}
+		});
 
 		TreeViewerColumn widgetIdColumn = new TreeViewerColumn(widgetTreeViewer, SWT.NONE);
 		widgetIdColumn.getColumn().setWidth(100);
 		widgetIdColumn.getColumn().setText("CSS Id");
-		widgetIdColumn.setLabelProvider(new ColumnLabelProvider()
-			{
-				@Override
-				public String getText(Object item)
-				{
-					CSSStylableElement element = CssSpyPart.getCSSElement(item);
-					return element.getCSSId();
-				}
-			});
+		widgetIdColumn.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object item) {
+				CSSStylableElement element = CssSpyPart.getCSSElement(item);
+				return element.getCSSId();
+			}
+		});
 
 		TreeColumnLayout widgetsTableLayout = new TreeColumnLayout();
 		widgetsTableLayout.setColumnData(widgetTypeColumn.getColumn(), new ColumnWeightData(50));
@@ -598,96 +523,83 @@ public class CssSpyPart
 		gridData.minimumHeight = 50;
 		propsComposite.setLayoutData(gridData);
 
-		cssPropertiesViewer = new TableViewer(propsComposite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
+		cssPropertiesViewer = new TableViewer(propsComposite,
+				SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		cssPropertiesViewer.setContentProvider(new CSSPropertiesContentProvider());
 		cssPropertiesViewer.getTable().setLinesVisible(true);
 		cssPropertiesViewer.getTable().setHeaderVisible(true);
 		cssPropertiesViewer.setComparator(new ViewerComparator());
 
 		final TextCellEditor textCellEditor = new TextCellEditor(cssPropertiesViewer.getTable());
-		TableViewerEditor.create(cssPropertiesViewer, new TableViewerFocusCellManager(cssPropertiesViewer,
-				new FocusCellOwnerDrawHighlighter(cssPropertiesViewer)), new ColumnViewerEditorActivationStrategy(
-				cssPropertiesViewer), ColumnViewerEditor.TABBING_HORIZONTAL | ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR
-				| ColumnViewerEditor.TABBING_VERTICAL | ColumnViewerEditor.KEYBOARD_ACTIVATION);
+		TableViewerEditor.create(cssPropertiesViewer,
+				new TableViewerFocusCellManager(cssPropertiesViewer,
+						new FocusCellOwnerDrawHighlighter(cssPropertiesViewer)),
+				new ColumnViewerEditorActivationStrategy(cssPropertiesViewer),
+				ColumnViewerEditor.TABBING_HORIZONTAL | ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR
+						| ColumnViewerEditor.TABBING_VERTICAL | ColumnViewerEditor.KEYBOARD_ACTIVATION);
 
 		TableViewerColumn propName = new TableViewerColumn(cssPropertiesViewer, SWT.NONE);
 		propName.getColumn().setWidth(100);
 		propName.getColumn().setText("Property");
-		propName.setLabelProvider(new ColumnLabelProvider()
-			{
-				@Override
-				public String getText(Object element)
-				{
-					return ((CSSPropertyProvider) element).getPropertyName();
-				}
-			});
+		propName.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				return ((CSSPropertyProvider) element).getPropertyName();
+			}
+		});
 
 		TableViewerColumn propValue = new TableViewerColumn(cssPropertiesViewer, SWT.NONE);
 		propValue.getColumn().setWidth(100);
 		propValue.getColumn().setText("Value");
-		propValue.setLabelProvider(new ColumnLabelProvider()
-			{
-				@Override
-				public String getText(Object element)
-				{
-					try
-					{
-						return ((CSSPropertyProvider) element).getValue();
-					} catch (Exception e)
-					{
-						System.err.println("Error fetching property: " + element + ": " + e);
-						return null;
-					}
+		propValue.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				try {
+					return ((CSSPropertyProvider) element).getValue();
+				} catch (Exception e) {
+					System.err.println("Error fetching property: " + element + ": " + e);
+					return null;
 				}
-			});
-		propValue.setEditingSupport(new EditingSupport(cssPropertiesViewer)
-			{
-				@Override
-				protected CellEditor getCellEditor(Object element)
-				{
-					// do the fancy footwork here to return an appropriate
-					// editor to
-					// the value-type
-					return textCellEditor;
-				}
+			}
+		});
+		propValue.setEditingSupport(new EditingSupport(cssPropertiesViewer) {
+			@Override
+			protected CellEditor getCellEditor(Object element) {
+				// do the fancy footwork here to return an appropriate
+				// editor to
+				// the value-type
+				return textCellEditor;
+			}
 
-				@Override
-				protected boolean canEdit(Object element)
-				{
-					return true;
-				}
+			@Override
+			protected boolean canEdit(Object element) {
+				return true;
+			}
 
-				@Override
-				protected Object getValue(Object element)
-				{
-					try
-					{
-						String value = ((CSSPropertyProvider) element).getValue();
-						return value == null ? "" : value;
-					} catch (Exception e)
-					{
-						return "";
-					}
+			@Override
+			protected Object getValue(Object element) {
+				try {
+					String value = ((CSSPropertyProvider) element).getValue();
+					return value == null ? "" : value;
+				} catch (Exception e) {
+					return "";
 				}
+			}
 
-				@Override
-				protected void setValue(Object element, Object value)
-				{
-					try
-					{
-						if (value == null || ((String) value).trim().length() == 0)
-						{
-							return;
-						}
-						CSSPropertyProvider provider = (CSSPropertyProvider) element;
-						provider.setValue((String) value);
-					} catch (Exception e)
-					{
-						MessageDialog.openError(activeShell, "Error", "Unable to set property:\n\n" + e.getMessage());
+			@Override
+			protected void setValue(Object element, Object value) {
+				try {
+					if (value == null || ((String) value).trim().length() == 0) {
+						return;
 					}
-					cssPropertiesViewer.update(element, null);
+					CSSPropertyProvider provider = (CSSPropertyProvider) element;
+					provider.setValue((String) value);
+				} catch (Exception e) {
+					MessageDialog.openError(activeShell, "Error", "Unable to set property:\n\n" + e.getMessage());
 				}
-			});
+				cssPropertiesViewer.update(element, null);
+			}
+		});
 
 		TableColumnLayout propsTableLayout = new TableColumnLayout();
 		propsTableLayout.setColumnData(propName.getColumn(), new ColumnWeightData(50));
@@ -710,75 +622,58 @@ public class CssSpyPart
 
 		// / The listeners
 
-		cssSearchBox.addModifyListener(new ModifyListener()
-			{
-				private Runnable updater;
-				private IProgressMonitor monitor;
+		cssSearchBox.addModifyListener(new ModifyListener() {
+			private Runnable updater;
+			private IProgressMonitor monitor;
 
-				@Override
-				public void modifyText(ModifyEvent e)
-				{
-					if (monitor != null)
-					{
-						monitor.setCanceled(false);
-					}
-					display.timerExec(200, updater = new Runnable()
-						{
-							@Override
-							public void run()
-							{
-								if (updater == this)
-								{
-									performCSSSearch(monitor = new NullProgressMonitor());
-								}
-							}
-						});
+			@Override
+			public void modifyText(ModifyEvent e) {
+				if (monitor != null) {
+					monitor.setCanceled(false);
 				}
-			});
-		cssSearchBox.addKeyListener(new KeyAdapter()
-			{
-				@Override
-				public void keyPressed(KeyEvent e)
-				{
-					if (e.keyCode == SWT.ARROW_DOWN && (e.stateMask & SWT.MODIFIER_MASK) == 0)
-					{
-						widgetTreeViewer.getControl().setFocus();
-					}
-				}
-			});
-
-		widgetTreeViewer.addSelectionChangedListener(new ISelectionChangedListener()
-			{
-				@Override
-				public void selectionChanged(SelectionChangedEvent event)
-				{
-					updateForWidgetSelection(event.getSelection());
-					showCssFragment.setEnabled(!event.getSelection().isEmpty());
-				}
-			});
-		if (isLive())
-		{
-			container.addMouseMoveListener(new MouseMoveListener()
-				{
+				display.timerExec(200, updater = new Runnable() {
 					@Override
-					public void mouseMove(MouseEvent e)
-					{
-						update();
+					public void run() {
+						if (updater == this) {
+							performCSSSearch(monitor = new NullProgressMonitor());
+						}
 					}
 				});
+			}
+		});
+		cssSearchBox.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == SWT.ARROW_DOWN && (e.stateMask & SWT.MODIFIER_MASK) == 0) {
+					widgetTreeViewer.getControl().setFocus();
+				}
+			}
+		});
+
+		widgetTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				updateForWidgetSelection(event.getSelection());
+				showCssFragment.setEnabled(!event.getSelection().isEmpty());
+			}
+		});
+		if (isLive()) {
+			container.addMouseMoveListener(new MouseMoveListener() {
+				@Override
+				public void mouseMove(MouseEvent e) {
+					update();
+				}
+			});
 		}
 
-		if (shouldDismissOnLostFocus())
-		{
-			container.addFocusListener(new FocusAdapter()
-				{
-					@Override
-					public void focusLost(FocusEvent e)
-					{
-						// setReturnCode(Window.OK);
-						// close();
-					}
-				});
+		if (shouldDismissOnLostFocus()) {
+			container.addFocusListener(new FocusAdapter() {
+				@Override
+				public void focusLost(FocusEvent e) {
+					// setReturnCode(Window.OK);
+					// close();
+				}
+			});
 		}
 		/*
 		 * container.addKeyListener(new KeyAdapter() {
@@ -787,54 +682,43 @@ public class CssSpyPart
 		 * SWT.ESC) { cancelPressed(); } else if (e.character == SWT.CR |
 		 * e.character == SWT.LF) { okPressed(); } } });
 		 */
-		showAllShells.addSelectionListener(new SelectionAdapter()
-			{
-				@Override
-				public void widgetSelected(SelectionEvent e)
-				{
-					updateWidgetTreeInput();
-				}
-			});
+		showAllShells.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				updateWidgetTreeInput();
+			}
+		});
 
-		outer.addDisposeListener(new DisposeListener()
-			{
-				@Override
-				public void widgetDisposed(DisposeEvent e)
-				{
-					dispose();
-				}
-			});
+		outer.addDisposeListener(new DisposeListener() {
+			@Override
+			public void widgetDisposed(DisposeEvent e) {
+				dispose();
+			}
+		});
 
 		showUnsetProperties.setSelection(true);
-		showUnsetProperties.addSelectionListener(new SelectionAdapter()
-			{
-				@Override
-				public void widgetSelected(SelectionEvent e)
-				{
-					if (showUnsetProperties.getSelection())
-					{
-						cssPropertiesViewer.removeFilter(unsetPropertyFilter);
-					} else
-					{
-						cssPropertiesViewer.addFilter(unsetPropertyFilter);
-					}
+		showUnsetProperties.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (showUnsetProperties.getSelection()) {
+					cssPropertiesViewer.removeFilter(unsetPropertyFilter);
+				} else {
+					cssPropertiesViewer.addFilter(unsetPropertyFilter);
 				}
-			});
+			}
+		});
 
-		showCssFragment.addSelectionListener(new SelectionAdapter()
-			{
-				@Override
-				public void widgetSelected(SelectionEvent e)
-				{
-					showCssFragment();
-				}
+		showCssFragment.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				showCssFragment();
+			}
 
-				@Override
-				public void widgetDefaultSelected(SelectionEvent e)
-				{
-					widgetSelected(e);
-				}
-			});
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}
+		});
 
 		/*
 		 * if ((specimen != null) && !specimen.isDisposed()) { // Reopen this
@@ -856,13 +740,13 @@ public class CssSpyPart
 		return outer;
 	}
 
-	/** This method listen to current part and adapt the contents of spy part. */
+	/**
+	 * This method listen to current part and adapt the contents of spy part.
+	 */
 	@Inject
 	protected void reactOnActivate(@Named(IServiceConstants.ACTIVE_PART) MPart p, MPart cssPart,
-			@Named(IServiceConstants.ACTIVE_SHELL) Shell s)
-	{
-		if (outer == null)
-		{
+			@Named(IServiceConstants.ACTIVE_SHELL) Shell s) {
+		if (outer == null) {
 			// Do nothing if no UI created.
 			return;
 		}
@@ -874,36 +758,29 @@ public class CssSpyPart
 		Shell controlShell = (control == null) ? display.getActiveShell() : control.getShell();
 		Shell spyPartShell = outer.getShell();
 
-		if (p != cssPart)
-		{
+		if (p != cssPart) {
 			// Must remove the highlights if selected
 			disposeHighlights();
 
-		} else if (spyPartShell != controlShell)
-		{
+		} else if (spyPartShell != controlShell) {
 			// A widget has been selected in another shell.. We can display the
 			// corresponding control as a specimen
 			shown = null;
 			setSpecimen(control);
 		}
 
-
 	}
 
-	protected void showCssFragment()
-	{
-		if (!(widgetTreeViewer.getSelection() instanceof IStructuredSelection) || widgetTreeViewer.getSelection().isEmpty())
-		{
+	protected void showCssFragment() {
+		if (!(widgetTreeViewer.getSelection() instanceof IStructuredSelection)
+				|| widgetTreeViewer.getSelection().isEmpty()) {
 			return;
 		}
 
 		StringBuilder sb = new StringBuilder();
-		for (Object o : ((IStructuredSelection) widgetTreeViewer.getSelection()).toArray())
-		{
-			if (o instanceof Widget)
-			{
-				if (sb.length() > 0)
-				{
+		for (Object o : ((IStructuredSelection) widgetTreeViewer.getSelection()).toArray()) {
+			if (o instanceof Widget) {
+				if (sb.length() > 0) {
 					sb.append('\n');
 				}
 				addCssFragment((Widget) o, sb);
@@ -914,17 +791,14 @@ public class CssSpyPart
 		tpd.open();
 	}
 
-	private void addCssFragment(Widget w, StringBuilder sb)
-	{
+	private void addCssFragment(Widget w, StringBuilder sb) {
 		CSSStylableElement element = getCSSElement(w);
-		if (element == null)
-		{
+		if (element == null) {
 			return;
 		}
 
 		sb.append(element.getLocalName());
-		if (element.getCSSId() != null)
-		{
+		if (element.getCSSId() != null) {
 			sb.append("#").append(element.getCSSId());
 		}
 		sb.append(" {");
@@ -939,32 +813,26 @@ public class CssSpyPart
 		int count = 0;
 
 		// First list the generated properties
-		for (Iterator<String> iter = propertyNames.iterator(); iter.hasNext();)
-		{
+		for (Iterator<String> iter = propertyNames.iterator(); iter.hasNext();) {
 			String propertyName = iter.next();
 			String genValue = trim(engine.retrieveCSSProperty(element, propertyName, ""));
 			String declValue = null;
 
-			if (genValue == null)
-			{
+			if (genValue == null) {
 				continue;
 			}
 
-			if (decl != null)
-			{
+			if (decl != null) {
 				CSSValue cssValue = decl.getPropertyCSSValue(propertyName);
-				if (cssValue != null)
-				{
+				if (cssValue != null) {
 					declValue = trim(cssValue.getCssText());
 				}
 			}
-			if (count == 0)
-			{
+			if (count == 0) {
 				sb.append("\n  /* actual values */");
 			}
 			sb.append("\n  ").append(propertyName).append(": ").append(genValue).append(";");
-			if (declValue != null)
-			{
+			if (declValue != null) {
 				sb.append("\t/* declared in CSS: ").append(declValue).append(" */");
 			}
 			count++;
@@ -973,23 +841,18 @@ public class CssSpyPart
 
 		// then list any declared properties; generated properties already
 		// removed
-		if (decl != null)
-		{
+		if (decl != null) {
 			int declCount = 0;
-			for (String propertyName : propertyNames)
-			{
+			for (String propertyName : propertyNames) {
 				String declValue = null;
 				CSSValue cssValue = decl.getPropertyCSSValue(propertyName);
-				if (cssValue != null)
-				{
+				if (cssValue != null) {
 					declValue = trim(cssValue.getCssText());
 				}
-				if (declValue == null)
-				{
+				if (declValue == null) {
 					continue;
 				}
-				if (declCount == 0)
-				{
+				if (declCount == 0) {
 					sb.append("\n\n  /* declared in CSS rules */");
 				}
 				sb.append("\n  ").append(propertyName).append(": ").append(declValue).append(";");
@@ -1001,101 +864,81 @@ public class CssSpyPart
 	}
 
 	/** Trim the string; return null if empty */
-	private String trim(String s)
-	{
-		if (s == null)
-		{
+	private String trim(String s) {
+		if (s == null) {
 			return null;
 		}
 		s = s.trim();
 		return s.length() > 0 ? s : null;
 	}
 
-	protected void performCSSSearch(IProgressMonitor progress)
-	{
+	protected void performCSSSearch(IProgressMonitor progress) {
 		List<Widget> widgets = new ArrayList<Widget>();
 		performCSSSearch(progress, cssSearchBox.getText(), widgets);
-		if (!progress.isCanceled())
-		{
+		if (!progress.isCanceled()) {
 			revealAndSelect(widgets);
 		}
 	}
 
-	private void performCSSSearch(IProgressMonitor monitor, String text, Collection<Widget> results)
-	{
-		if (text.trim().length() == 0)
-		{
+	private void performCSSSearch(IProgressMonitor monitor, String text, Collection<Widget> results) {
+		if (text.trim().length() == 0) {
 			return;
 		}
 		widgetTreeViewer.collapseAll();
 		Object[] roots = widgetTreeProvider.getElements(widgetTreeViewer.getInput());
 		monitor.beginTask("Searching for \"" + text + "\"", roots.length * 10);
-		for (Object root : roots)
-		{
-			if (monitor.isCanceled())
-			{
+		for (Object root : roots) {
+			if (monitor.isCanceled()) {
 				return;
 			}
 
 			CSSStylableElement element = getCSSElement(root);
-			if (element == null)
-			{
+			if (element == null) {
 				continue;
 			}
 
 			CSSEngine engine = getCSSEngine(root);
-			try
-			{
+			try {
 				SelectorList selectors = engine.parseSelectors(text);
 				monitor.worked(2);
 				processCSSSearch(new SubProgressMonitor(monitor, 8), engine, selectors, element, null, results);
-			} catch (CSSParseException e)
-			{
+			} catch (CSSParseException e) {
 				System.out.println(e.toString());
-			} catch (IOException e)
-			{
+			} catch (IOException e) {
 				System.out.println(e.toString());
 			}
 		}
 		monitor.done();
 	}
 
-	private void processCSSSearch(IProgressMonitor monitor, CSSEngine engine, SelectorList selectors, CSSStylableElement element,
-			String pseudo, Collection<Widget> results)
-	{
-		if (monitor.isCanceled())
-		{
+	private void processCSSSearch(IProgressMonitor monitor, CSSEngine engine, SelectorList selectors,
+			CSSStylableElement element, String pseudo, Collection<Widget> results) {
+		if (monitor.isCanceled()) {
 			return;
 		}
 		NodeList children = element.getChildNodes();
 		monitor.beginTask("Searching", 5 + 5 * children.getLength());
 		boolean matched = false;
-		for (int i = 0; i < selectors.getLength(); i++)
-		{
-			if (matched = engine.matches(selectors.item(i), element, pseudo))
-			{
+		for (int i = 0; i < selectors.getLength(); i++) {
+			if (matched = engine.matches(selectors.item(i), element, pseudo)) {
 				break;
 			}
 		}
-		if (matched)
-		{
+		if (matched) {
 			results.add((Widget) element.getNativeWidget());
 		}
 		monitor.worked(5);
-		for (int i = 0; i < children.getLength(); i++)
-		{
-			if (monitor.isCanceled())
-			{
+		for (int i = 0; i < children.getLength(); i++) {
+			if (monitor.isCanceled()) {
 				return;
 			}
-			processCSSSearch(new SubProgressMonitor(monitor, 5), engine, selectors, (CSSStylableElement) children.item(i), pseudo,
-					results);
+			processCSSSearch(new SubProgressMonitor(monitor, 5), engine, selectors,
+					(CSSStylableElement) children.item(i), pseudo, results);
 		}
 		monitor.done();
 	}
 
-	protected void dispose()
-	{
+	protected void dispose() {
 		disposeHighlights();
 	}
 

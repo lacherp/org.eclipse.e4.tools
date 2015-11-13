@@ -23,8 +23,7 @@ public class CSSPropertyProvider {
 	private CSSStylableElement element;
 	private CSSEngine engine;
 
-	public CSSPropertyProvider(String propertyName, CSSStylableElement element,
-			CSSEngine engine) {
+	public CSSPropertyProvider(String propertyName, CSSStylableElement element, CSSEngine engine) {
 		this.propertyName = propertyName;
 		this.element = element;
 		this.engine = engine;
@@ -42,7 +41,6 @@ public class CSSPropertyProvider {
 		CSSValue v = engine.parsePropertyValue(value);
 		engine.applyCSSProperty(element, propertyName, v, "");
 	}
-
 
 	@Override
 	public String toString() {
