@@ -110,12 +110,10 @@ public class BundleSpyPart {
 		});
 
 		filterText = new Text(comp, SWT.SEARCH | SWT.ICON_SEARCH);
-		GridDataFactory.fillDefaults().hint(200, SWT.DEFAULT)
-				.applyTo(filterText);
+		GridDataFactory.fillDefaults().hint(200, SWT.DEFAULT).applyTo(filterText);
 		filterText.setMessage("Search data");
-		filterText
-				.setToolTipText("Highlight the bundles where the contained objects contains this string.\n"
-						+ "Case is ignored.");
+		filterText.setToolTipText(
+				"Highlight the bundles where the contained objects contains this string.\n" + "Case is ignored.");
 		if (lastFilterText != null)
 			filterText.setText(lastFilterText);
 		bundleFilter.setPattern(lastFilterText);
@@ -138,10 +136,8 @@ public class BundleSpyPart {
 
 		showOnlyFilteredElements = new Button(comp, SWT.CHECK);
 		showOnlyFilteredElements.setText("Show Only Filtered");
-		showOnlyFilteredElements
-				.setToolTipText("Show only the filtered items in the bundle table ");
-		showOnlyFilteredElements.setEnabled((lastFilterText != null)
-				&& (lastFilterText.length() > 0));
+		showOnlyFilteredElements.setToolTipText("Show only the filtered items in the bundle table ");
+		showOnlyFilteredElements.setEnabled((lastFilterText != null) && (lastFilterText.length() > 0));
 		showOnlyFilteredElements.setSelection(lastShowFiltered);
 		showOnlyFilteredElements.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -153,14 +149,12 @@ public class BundleSpyPart {
 
 		startButton = new Button(comp, SWT.FLAT);
 		startButton.setImage(imgReg.get(ICON_START));
-		startButton
-				.setToolTipText("Start the selected bundles not yet started");
+		startButton.setToolTipText("Start the selected bundles not yet started");
 		startButton.setEnabled(false);
 		startButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				IStructuredSelection sel = (IStructuredSelection) bundlesTableViewer
-						.getSelection();
+				IStructuredSelection sel = (IStructuredSelection) bundlesTableViewer.getSelection();
 				Iterator<?> iter = sel.iterator();
 				while (iter.hasNext()) {
 					Bundle b = (Bundle) iter.next();
@@ -182,12 +176,9 @@ public class BundleSpyPart {
 		stopButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (MessageDialog.openConfirm(
-						((Control) e.getSource()).getShell(),
-						"Confirm Bundle Stop",
+				if (MessageDialog.openConfirm(((Control) e.getSource()).getShell(), "Confirm Bundle Stop",
 						"Stopping a bundle may cause problems in your current application.\nUse this button only for your bundles under testing\n\nDo you confirm you want to stop the selected started bundle(s) ? ")) {
-					IStructuredSelection sel = (IStructuredSelection) bundlesTableViewer
-							.getSelection();
+					IStructuredSelection sel = (IStructuredSelection) bundlesTableViewer.getSelection();
 					Iterator<?> iter = sel.iterator();
 					while (iter.hasNext()) {
 						Bundle b = (Bundle) iter.next();
@@ -214,27 +205,22 @@ public class BundleSpyPart {
 
 		// Create the first column for bundle name
 		addColumn(bundlesTableViewer, 35, "State", BundleDataProvider.COL_STATE);
-		addColumn(bundlesTableViewer, 200, "Bundle Name",
-				BundleDataProvider.COL_NAME);
-		addColumn(bundlesTableViewer, 200, "Version",
-				BundleDataProvider.COL_VERSION);
+		addColumn(bundlesTableViewer, 200, "Bundle Name", BundleDataProvider.COL_NAME);
+		addColumn(bundlesTableViewer, 200, "Version", BundleDataProvider.COL_VERSION);
 
 		// Set input data and content provider (default ArrayContentProvider)
-		bundlesTableViewer.setContentProvider(ArrayContentProvider
-				.getInstance());
+		bundlesTableViewer.setContentProvider(ArrayContentProvider.getInstance());
 
 		// Get the list of bundles in platform using bundle context...
 		BundleContext bc = BundleSpyActivator.getContext();
 		bundlesTableViewer.setInput(bc.getBundles());
 
-		bundlesTableViewer
-				.addSelectionChangedListener(new ISelectionChangedListener() {
-					@Override
-					public void selectionChanged(SelectionChangedEvent event) {
-						updateButtonStatuses((IStructuredSelection) event
-								.getSelection());
-					}
-				});
+		bundlesTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				updateButtonStatuses((IStructuredSelection) event.getSelection());
+			}
+		});
 
 		ColumnViewerToolTipSupport.enableFor(bundlesTableViewer);
 
@@ -250,25 +236,20 @@ public class BundleSpyPart {
 		Iterator<?> iter = selection.iterator();
 		while (iter.hasNext()) {
 			Bundle b = (Bundle) iter.next();
-			oneBundleIsActive = oneBundleIsActive
-					|| (b.getState() == Bundle.ACTIVE);
-			oneBundleIsNotActive = oneBundleIsNotActive
-					|| (b.getState() != Bundle.ACTIVE);
+			oneBundleIsActive = oneBundleIsActive || (b.getState() == Bundle.ACTIVE);
+			oneBundleIsNotActive = oneBundleIsNotActive || (b.getState() != Bundle.ACTIVE);
 		}
 		startButton.setEnabled(oneBundleIsNotActive);
 		stopButton.setEnabled(oneBundleIsActive);
 
 	}
 
-	private void addColumn(final TableViewer parentTable, int width, String title,
-			final int column) {
-		TableViewerColumn col = new TableViewerColumn(bundlesTableViewer,
-				SWT.NONE);
+	private void addColumn(final TableViewer parentTable, int width, String title, final int column) {
+		TableViewerColumn col = new TableViewerColumn(bundlesTableViewer, SWT.NONE);
 		col.getColumn().setWidth(width);
 		col.getColumn().setText(title);
 
-		final BundleDataProvider bdp = ContextInjectionFactory.make(
-				BundleDataProvider.class, ctx);
+		final BundleDataProvider bdp = ContextInjectionFactory.make(BundleDataProvider.class, ctx);
 		bdp.setColumn(column);
 		col.setLabelProvider(bdp);
 
@@ -282,7 +263,7 @@ public class BundleSpyPart {
 				parentTable.setComparator(new ViewerComparator() {
 					@Override
 					public int compare(Viewer viewer, Object e1, Object e2) {
-						if(BundleDataProvider.COL_STATE == column) {
+						if (BundleDataProvider.COL_STATE == column) {
 							Bundle b1 = (Bundle) e1;
 							Bundle b2 = (Bundle) e2;
 							return turnAround(Integer.compare(b1.getState(), b2.getState()));
@@ -307,9 +288,8 @@ public class BundleSpyPart {
 	/** Set the filter on table */
 	public void setFilter() {
 
-		if (showOnlyFilteredElements.isEnabled()
-				&& showOnlyFilteredElements.getSelection()) {
-			bundlesTableViewer.setFilters(new ViewerFilter[]{bundleFilter});
+		if (showOnlyFilteredElements.isEnabled() && showOnlyFilteredElements.getSelection()) {
+			bundlesTableViewer.setFilters(new ViewerFilter[] { bundleFilter });
 		} else {
 			bundlesTableViewer.setFilters(NO_FILTER);
 		}
@@ -323,24 +303,15 @@ public class BundleSpyPart {
 	private ImageRegistry initializeImageRegistry() {
 		Bundle b = FrameworkUtil.getBundle(this.getClass());
 		ImageRegistry imgReg = new ImageRegistry();
-		imgReg.put(ICON_REFRESH,
-				ImageDescriptor.createFromURL(b.getEntry(ICON_REFRESH)));
-		imgReg.put(ICON_STATE_ACTIVE,
-				ImageDescriptor.createFromURL(b.getEntry(ICON_STATE_ACTIVE)));
-		imgReg.put(ICON_STATE_RESOLVED,
-				ImageDescriptor.createFromURL(b.getEntry(ICON_STATE_RESOLVED)));
-		imgReg.put(ICON_STATE_STARTING,
-				ImageDescriptor.createFromURL(b.getEntry(ICON_STATE_STARTING)));
-		imgReg.put(ICON_STATE_STOPPING,
-				ImageDescriptor.createFromURL(b.getEntry(ICON_STATE_STOPPING)));
-		imgReg.put(ICON_STATE_INSTALLED,
-				ImageDescriptor.createFromURL(b.getEntry(ICON_STATE_INSTALLED)));
-		imgReg.put(ICON_STATE_UNINSTALLED, ImageDescriptor.createFromURL(b
-				.getEntry(ICON_STATE_UNINSTALLED)));
-		imgReg.put(ICON_START,
-				ImageDescriptor.createFromURL(b.getEntry(ICON_START)));
-		imgReg.put(ICON_STOP,
-				ImageDescriptor.createFromURL(b.getEntry(ICON_STOP)));
+		imgReg.put(ICON_REFRESH, ImageDescriptor.createFromURL(b.getEntry(ICON_REFRESH)));
+		imgReg.put(ICON_STATE_ACTIVE, ImageDescriptor.createFromURL(b.getEntry(ICON_STATE_ACTIVE)));
+		imgReg.put(ICON_STATE_RESOLVED, ImageDescriptor.createFromURL(b.getEntry(ICON_STATE_RESOLVED)));
+		imgReg.put(ICON_STATE_STARTING, ImageDescriptor.createFromURL(b.getEntry(ICON_STATE_STARTING)));
+		imgReg.put(ICON_STATE_STOPPING, ImageDescriptor.createFromURL(b.getEntry(ICON_STATE_STOPPING)));
+		imgReg.put(ICON_STATE_INSTALLED, ImageDescriptor.createFromURL(b.getEntry(ICON_STATE_INSTALLED)));
+		imgReg.put(ICON_STATE_UNINSTALLED, ImageDescriptor.createFromURL(b.getEntry(ICON_STATE_UNINSTALLED)));
+		imgReg.put(ICON_START, ImageDescriptor.createFromURL(b.getEntry(ICON_START)));
+		imgReg.put(ICON_STOP, ImageDescriptor.createFromURL(b.getEntry(ICON_STOP)));
 
 		ctx.set(ImageRegistry.class, imgReg);
 

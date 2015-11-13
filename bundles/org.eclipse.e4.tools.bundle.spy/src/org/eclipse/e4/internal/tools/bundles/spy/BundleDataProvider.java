@@ -25,7 +25,7 @@ import org.osgi.framework.Bundle;
  * The column Label and content Provider used to display information in context
  * data TreeViewer. Two instances for label provider are created : one for key,
  * one for values
- * 
+ *
  * @see ContextDataPart
  */
 public class BundleDataProvider extends ColumnLabelProvider {
@@ -34,8 +34,7 @@ public class BundleDataProvider extends ColumnLabelProvider {
 	public static final int COL_VERSION = 1;
 	public static final int COL_STATE = 2;
 
-	private static final Color COLOR_IF_FOUND = Display.getCurrent()
-			.getSystemColor(SWT.COLOR_BLUE);
+	private static final Color COLOR_IF_FOUND = Display.getCurrent().getSystemColor(SWT.COLOR_BLUE);
 
 	@Inject
 	private ImageRegistry imgReg;
@@ -63,12 +62,12 @@ public class BundleDataProvider extends ColumnLabelProvider {
 
 	public static String getText(Bundle b, int col) {
 		switch (col) {
-			case COL_NAME :
-				return b.getSymbolicName();
-			case COL_VERSION :
-				return b.getVersion().toString();
-			case COL_STATE :
-				return ""; // No text for state (see tooltip)
+		case COL_NAME:
+			return b.getSymbolicName();
+		case COL_VERSION:
+			return b.getVersion().toString();
+		case COL_STATE:
+			return ""; // No text for state (see tooltip)
 
 		}
 		return null;
@@ -81,9 +80,7 @@ public class BundleDataProvider extends ColumnLabelProvider {
 		String s = getText(element);
 
 		// Return blue color if the string matches the search
-		return ((bundleFilter != null) && (bundleFilter.matchText(s)))
-				? COLOR_IF_FOUND
-				: null;
+		return ((bundleFilter != null) && (bundleFilter.matchText(s))) ? COLOR_IF_FOUND : null;
 	}
 
 	@Override
@@ -92,18 +89,18 @@ public class BundleDataProvider extends ColumnLabelProvider {
 		if (column == COL_STATE) {
 
 			switch (b.getState()) {
-				case Bundle.ACTIVE :
-					return imgReg.get(BundleSpyPart.ICON_STATE_ACTIVE);
-				case Bundle.INSTALLED :
-					return imgReg.get(BundleSpyPart.ICON_STATE_INSTALLED);
-				case Bundle.RESOLVED :
-					return imgReg.get(BundleSpyPart.ICON_STATE_RESOLVED);
-				case Bundle.STARTING :
-					return imgReg.get(BundleSpyPart.ICON_STATE_STARTING);
-				case Bundle.STOPPING :
-					return imgReg.get(BundleSpyPart.ICON_STATE_STOPPING);
-				case Bundle.UNINSTALLED :
-					return imgReg.get(BundleSpyPart.ICON_STATE_UNINSTALLED);
+			case Bundle.ACTIVE:
+				return imgReg.get(BundleSpyPart.ICON_STATE_ACTIVE);
+			case Bundle.INSTALLED:
+				return imgReg.get(BundleSpyPart.ICON_STATE_INSTALLED);
+			case Bundle.RESOLVED:
+				return imgReg.get(BundleSpyPart.ICON_STATE_RESOLVED);
+			case Bundle.STARTING:
+				return imgReg.get(BundleSpyPart.ICON_STATE_STARTING);
+			case Bundle.STOPPING:
+				return imgReg.get(BundleSpyPart.ICON_STATE_STOPPING);
+			case Bundle.UNINSTALLED:
+				return imgReg.get(BundleSpyPart.ICON_STATE_UNINSTALLED);
 
 			}
 		}
@@ -116,18 +113,18 @@ public class BundleDataProvider extends ColumnLabelProvider {
 		Bundle b = (Bundle) element;
 
 		switch (b.getState()) {
-			case Bundle.ACTIVE :
-				return "This bundle is Active";
-			case Bundle.INSTALLED :
-				return "This bundle is Installed";
-			case Bundle.RESOLVED :
-				return "This bundle is Resolved";
-			case Bundle.STARTING :
-				return "This bundle is Starting";
-			case Bundle.STOPPING :
-				return "This bundle is Stopping";
-			case Bundle.UNINSTALLED :
-				return "This bundle is Uninstalled";
+		case Bundle.ACTIVE:
+			return "This bundle is Active";
+		case Bundle.INSTALLED:
+			return "This bundle is Installed";
+		case Bundle.RESOLVED:
+			return "This bundle is Resolved";
+		case Bundle.STARTING:
+			return "This bundle is Starting";
+		case Bundle.STOPPING:
+			return "This bundle is Stopping";
+		case Bundle.UNINSTALLED:
+			return "This bundle is Uninstalled";
 
 		}
 
@@ -144,7 +141,6 @@ public class BundleDataProvider extends ColumnLabelProvider {
 	public int getToolTipStyle(Object object) {
 		return SWT.SHADOW_OUT;
 	}
-
 
 	public void setColumn(int col) {
 		column = col;

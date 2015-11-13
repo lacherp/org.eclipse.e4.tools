@@ -50,8 +50,7 @@ public class BundleDataFilter extends ViewerFilter {
 	}
 
 	public boolean matchText(String text) {
-		return ((text == null) || (pattern == null)) ? false : text
-				.toLowerCase().contains(pattern);
+		return ((text == null) || (pattern == null)) ? false : text.toLowerCase().contains(pattern);
 	}
 
 }
