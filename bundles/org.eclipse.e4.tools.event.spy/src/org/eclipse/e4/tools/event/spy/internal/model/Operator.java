@@ -11,13 +11,9 @@
 package org.eclipse.e4.tools.event.spy.internal.model;
 
 public enum Operator {
-	NotSelected("-- operator --", false),
-	Equals("equals to", true),
-	NotEquals("not equals to", false),
-	Contains("contains", true),
-	NotContains("not contains", false),
-	StartsWith("starts with", true),
-	NotStartsWith("not starts with", false);
+	NotSelected("-- operator --", false), Equals("equals to", true), NotEquals("not equals to",
+			false), Contains("contains", true), NotContains("not contains", false), StartsWith("starts with",
+					true), NotStartsWith("not starts with", false);
 
 	private String text;
 
@@ -38,12 +34,11 @@ public enum Operator {
 	}
 
 	public static Operator toOperator(String text) {
-		for (Operator operator: values()) {
+		for (Operator operator : values()) {
 			if (operator.text.equals(text)) {
 				return operator;
 			}
 		}
-		throw new IllegalArgumentException(String.format("%s not found for: %s",
-			Operator.class.getSimpleName(), text));
+		throw new IllegalArgumentException(String.format("%s not found for: %s", Operator.class.getSimpleName(), text));
 	}
 }

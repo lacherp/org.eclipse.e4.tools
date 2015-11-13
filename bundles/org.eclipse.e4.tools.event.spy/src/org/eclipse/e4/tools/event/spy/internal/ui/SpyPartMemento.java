@@ -16,21 +16,21 @@ import org.eclipse.e4.tools.event.spy.internal.model.CapturedEventFilter;
 
 public class SpyPartMemento {
 	private String baseTopic;
-	
+
 	private Collection<CapturedEventFilter> filters;
-	
+
 	public void setBaseTopic(String baseTopic) {
 		this.baseTopic = baseTopic;
 	}
-	
+
 	public String getBaseTopic() {
 		return baseTopic;
 	}
-	
+
 	public void setFilters(Collection<CapturedEventFilter> filters) {
 		this.filters = filters;
 	}
-	
+
 	public Collection<CapturedEventFilter> getFilters() {
 		return filters;
 	}

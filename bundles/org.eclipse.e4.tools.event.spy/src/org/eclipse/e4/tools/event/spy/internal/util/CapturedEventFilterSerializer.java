@@ -16,19 +16,19 @@ import org.eclipse.e4.tools.event.spy.internal.model.Operator;
 
 public class CapturedEventFilterSerializer {
 	private final static String FILTER_PARAM_SEPARATOR = ",";
-	
+
 	public static String serialize(CapturedEventFilter filter) {
 		return new StringBuilder(filter.getItemToFilter().toString()).append(FILTER_PARAM_SEPARATOR)
-				.append(filter.getOperator().toString()).append(FILTER_PARAM_SEPARATOR)
-				.append(filter.getValue()).toString();
+				.append(filter.getOperator().toString()).append(FILTER_PARAM_SEPARATOR).append(filter.getValue())
+				.toString();
 	}
-	
+
 	public static CapturedEventFilter deserialize(String filterAsText) {
 		String[] filterParams = filterAsText.split(FILTER_PARAM_SEPARATOR);
 		if (filterParams.length != 3) {
 			return null;
 		}
-		return new CapturedEventFilter(ItemToFilter.toItem(filterParams[0]),
-				Operator.toOperator(filterParams[1]), filterParams[2]);		
+		return new CapturedEventFilter(ItemToFilter.toItem(filterParams[0]), Operator.toOperator(filterParams[1]),
+				filterParams[2]);
 	}
 }

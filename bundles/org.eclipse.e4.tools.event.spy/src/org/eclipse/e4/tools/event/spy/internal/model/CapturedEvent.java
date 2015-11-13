@@ -56,7 +56,7 @@ public class CapturedEvent implements IEventItem {
 
 	@SuppressWarnings("unchecked")
 	public List<Parameter> getParameters() {
-		return parameters != null? parameters: Collections.EMPTY_LIST;
+		return parameters != null ? parameters : Collections.EMPTY_LIST;
 	}
 
 	public boolean hasParameters() {
@@ -68,14 +68,17 @@ public class CapturedEvent implements IEventItem {
 		return topic;
 	}
 
+	@Override
 	public String getName() {
 		return getTopic();
 	}
 
+	@Override
 	public String getParam1() {
 		return getPublisherClassName();
 	}
 
+	@Override
 	public String getParam2() {
 		return getChangedElementClassName();
 	}

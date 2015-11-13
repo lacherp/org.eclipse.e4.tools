@@ -7,9 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Olivier Prouvost <olivier.prouvost@opcoach.com> 
+ *     Olivier Prouvost <olivier.prouvost@opcoach.com>
  *       - Fix bug 428903 : transform this dialog into a part to be defined with spyPart extension
- *       - Fix Bug 428903 - Having a common debug window for all spies 
+ *       - Fix Bug 428903 - Having a common debug window for all spies
 
  *******************************************************************************/
 package org.eclipse.e4.tools.event.spy.internal.ui;
@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Composite;
 public class EventSpyPart implements EventMonitor.NewEventListener {
 	private final static String DIALOG_TITLE = "Event spy dialog";
 
-	private final static String[] SHOW_FILTER_LINK_TEXT = new String[]{"Show filters", "Hide filters"};
+	private final static String[] SHOW_FILTER_LINK_TEXT = new String[] { "Show filters", "Hide filters" };
 
 	private CapturedEventTree capturedEventTree;
 
@@ -59,40 +59,31 @@ public class EventSpyPart implements EventMonitor.NewEventListener {
 
 	@Inject
 	private MApplication appplication;
-	
 
-	/* Layout scheme:
+	/*
+	 * Layout scheme:
 	 *
-	 *  +-- Outer ----------------------------------------+
-	 *  | +-- actionBar --------------------------------+ |
-	 *  | |                                             | |
-	 *  | |  Start capturing events | ShowFiltersLink   | |
-	 *  | |                                             | |
-	 *  | +---------------------------------------------+ |
-	 *  +-------------------------------------------------+
-	 *  |                                                 |
-	 *  |  CapturedEventFilters                           |
-	 *  |                                                 |
-	 *  +-------------------------------------------------+
-	 *  |                                                 |
-	 *  |  CapturedEventTree                              |
-	 *  |                                                 |
-	 *  +-------------------------------------------------+
-	 *  |                                                 |
-	 *  |                                          Close  |
-	 *  |                                                 |
-	 *  +-------------------------------------------------+
+	 * +-- Outer ----------------------------------------+ | +-- actionBar
+	 * --------------------------------+ | | | | | | | Start capturing events |
+	 * ShowFiltersLink | | | | | | |
+	 * +---------------------------------------------+ |
+	 * +-------------------------------------------------+ | | |
+	 * CapturedEventFilters | | |
+	 * +-------------------------------------------------+ | | |
+	 * CapturedEventTree | | |
+	 * +-------------------------------------------------+ | | | Close | | |
+	 * +-------------------------------------------------+
 	 *
-	 * */
-
+	 */
 
 	@PostConstruct
 	protected void createDialogArea(Composite parent, @Optional SpyPartMemento memento) {
-		
-		// Bug 428903 : create now a part, and inject directly optional memento (set in saveDialogMemento).
-		
+
+		// Bug 428903 : create now a part, and inject directly optional memento
+		// (set in saveDialogMemento).
+
 		outer = parent;
-		
+
 		outer.setLayout(new GridLayout());
 		outer.setLayoutData(new GridData(GridData.FILL_BOTH));
 
@@ -101,14 +92,13 @@ public class EventSpyPart implements EventMonitor.NewEventListener {
 		createCapturedEventTree(outer);
 	}
 
-	
 	@PreDestroy
 	private void saveDialogMemento() {
 		SpyPartMemento memento = null;
 		String baseTopic = capturedEventFilters.getBaseTopic();
 		Collection<CapturedEventFilter> filters = capturedEventFilters.getFilters();
 		IEclipseContext context = appplication.getContext();
-		
+
 		if (!CapturedEventFilters.BASE_EVENT_TOPIC.equals(baseTopic)) {
 			memento = new SpyPartMemento();
 			memento.setBaseTopic(baseTopic);
@@ -125,7 +115,7 @@ public class EventSpyPart implements EventMonitor.NewEventListener {
 			context.remove(SpyPartMemento.class.getName());
 		}
 	}
-	
+
 	private void createActionBar(Composite parent) {
 		Composite actionBar = new Composite(parent, SWT.NONE);
 		GridData gridData = createDefaultGridData();
@@ -137,8 +127,9 @@ public class EventSpyPart implements EventMonitor.NewEventListener {
 		actionBar.setLayout(rowLayout);
 
 		ToggleLink link = new ToggleLink(actionBar);
-		link.setText(new String[]{"Start capturing events", "Stop capturing events"});
+		link.setText(new String[] { "Start capturing events", "Stop capturing events" });
 		link.setClickListener(new ToggleLink.ClickListener() {
+			@Override
 			public void clicked(boolean toggled) {
 				if (toggled) {
 					captureEvents();
@@ -149,9 +140,10 @@ public class EventSpyPart implements EventMonitor.NewEventListener {
 		});
 
 		showFiltersLink = new ToggleLink(actionBar);
-		showFiltersLink.setText(new String[]{SHOW_FILTER_LINK_TEXT[0], SHOW_FILTER_LINK_TEXT[1]});
+		showFiltersLink.setText(new String[] { SHOW_FILTER_LINK_TEXT[0], SHOW_FILTER_LINK_TEXT[1] });
 		showFiltersLink.getControl().setLayoutData(new RowData(130, SWT.DEFAULT));
 		showFiltersLink.setClickListener(new ToggleLink.ClickListener() {
+			@Override
 			public void clicked(boolean toggled) {
 				showFilters(toggled);
 			}
@@ -165,7 +157,7 @@ public class EventSpyPart implements EventMonitor.NewEventListener {
 		gridData.grabExcessVerticalSpace = false;
 		gridData.exclude = true;
 		capturedEventFilters.getControl().setLayoutData(gridData);
-		
+
 		if (memento != null) {
 			capturedEventFilters.setBaseTopic(memento.getBaseTopic());
 			capturedEventFilters.setFilters(memento.getFilters());
@@ -177,12 +169,12 @@ public class EventSpyPart implements EventMonitor.NewEventListener {
 		capturedEventTree = new CapturedEventTree(outer);
 		capturedEventTree.getControl().setLayoutData(createDefaultGridData());
 		capturedEventTree.setListener(new ICapturedEventTreeListener() {
+			@Override
 			public void treeItemWithClassNameClicked(String text) {
 				openResource(text);
 			}
 		});
 	}
-
 
 	public void captureEvents() {
 		capturedEventTree.removeAll();
@@ -201,6 +193,7 @@ public class EventSpyPart implements EventMonitor.NewEventListener {
 		// getShell().setText(DIALOG_TITLE);
 	}
 
+	@Override
 	public void newEvent(CapturedEvent event) {
 		capturedEventTree.addEvent(event);
 	}
@@ -209,7 +202,7 @@ public class EventSpyPart implements EventMonitor.NewEventListener {
 	private void openResource(String text) {
 		try {
 			JDTUtils.openClass(text);
-		} catch(ClassNotFoundException exc) {
+		} catch (ClassNotFoundException exc) {
 			logger.warn(exc.getMessage());
 		}
 	}
@@ -218,16 +211,18 @@ public class EventSpyPart implements EventMonitor.NewEventListener {
 		capturedEventFilters.getControl().setVisible(filtersVisible);
 		((GridData) capturedEventFilters.getControl().getLayoutData()).exclude = !filtersVisible;
 
-		//Filters have been set and filters UI is not visible so we have to mark it to user
+		// Filters have been set and filters UI is not visible so we have to
+		// mark it to user
 		if (!filtersVisible && capturedEventFilters.hasFilters()) {
-			showFiltersLink.setText(new String[] { String.format("%s (%d)", SHOW_FILTER_LINK_TEXT[0],
-				capturedEventFilters.getFiltersCount()), SHOW_FILTER_LINK_TEXT[1]});
+			showFiltersLink.setText(new String[] {
+					String.format("%s (%d)", SHOW_FILTER_LINK_TEXT[0], capturedEventFilters.getFiltersCount()),
+					SHOW_FILTER_LINK_TEXT[1] });
 		} else {
-			showFiltersLink.setText(new String[] {SHOW_FILTER_LINK_TEXT[0], SHOW_FILTER_LINK_TEXT[1]});
+			showFiltersLink.setText(new String[] { SHOW_FILTER_LINK_TEXT[0], SHOW_FILTER_LINK_TEXT[1] });
 		}
 
 		outer.layout(false);
-	}	
+	}
 
 	private GridData createDefaultGridData() {
 		GridData gridData = new GridData();

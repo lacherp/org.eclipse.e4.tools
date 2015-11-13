@@ -22,7 +22,7 @@ public class ToggleLink {
 
 	private ClickListener listener;
 
-	private String[] text = {"", ""};
+	private String[] text = { "", "" };
 
 	public interface ClickListener {
 		void clicked(boolean toggled);
@@ -31,7 +31,8 @@ public class ToggleLink {
 	public ToggleLink(Composite parent) {
 		link = new Link(parent, SWT.NONE);
 		link.setSize(SWT.DEFAULT, SWT.DEFAULT);
-		link.addListener (SWT.Selection, new Listener() {
+		link.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				updateText();
 				if (listener != null) {
@@ -42,7 +43,7 @@ public class ToggleLink {
 	}
 
 	private void updateText() {
-		String textToUpdate = link.getText().contains(text[0])? text[1]: text[0];
+		String textToUpdate = link.getText().contains(text[0]) ? text[1] : text[0];
 		setText(textToUpdate);
 	}
 
@@ -54,9 +55,9 @@ public class ToggleLink {
 		this.listener = listener;
 	}
 
-	public void setText(String[] text /*normal text, toggle text*/) {
+	public void setText(String[] text /* normal text, toggle text */) {
 		this.text = text;
-		setText(isToggled()? text[1]: text[0]);
+		setText(isToggled() ? text[1] : text[0]);
 	}
 
 	public Control getControl() {

@@ -17,5 +17,4 @@ import org.eclipse.e4.ui.bindings.EBindingService;
 public class Constants {
 	public static final String PLUGIN_ID = PluginUtils.getBundleId(Constants.class);
 
-
 }

@@ -25,6 +25,7 @@ public class Parameter implements IEventItem {
 		this.value = value;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -33,6 +34,7 @@ public class Parameter implements IEventItem {
 		return value;
 	}
 
+	@Override
 	public String getParam1() {
 		if (value == null) {
 			return SpecialValue.Null.toString();
@@ -43,6 +45,7 @@ public class Parameter implements IEventItem {
 		return formattedValue;
 	}
 
+	@Override
 	public String getParam2() {
 		return EMPTY_VALUE;
 	}

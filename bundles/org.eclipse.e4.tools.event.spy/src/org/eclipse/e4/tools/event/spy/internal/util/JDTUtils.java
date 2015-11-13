@@ -34,26 +34,26 @@ public class JDTUtils {
 			return;
 		}
 		try {
-			Class<?> cls =FrameworkUtil.getBundle(JDTUtils.class).loadClass(matcher.group(1).trim());
+			Class<?> cls = FrameworkUtil.getBundle(JDTUtils.class).loadClass(matcher.group(1).trim());
 			IProject project = findProjectFor(cls);
-			
+
 			if (project != null) {
 				openInEditor(JavaCore.create(project), cls.getName());
-			}						
-		} catch(ClassNotFoundException exc) {
+			}
+		} catch (ClassNotFoundException exc) {
 			throw new ClassNotFoundException("Class not found in the bundle classpath: " + clsName);
 		}
 	}
-	
+
 	private static IProject findProjectFor(Class<?> cls) {
-		for (IProject project: ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
+		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
 			if (project.getFile(cls.getName()) != null) {
 				return project;
 			}
 		}
 		return null;
 	}
-	
+
 	private static void openInEditor(IJavaProject project, String clazz) throws ClassNotFoundException {
 		if (project == null) {
 			return;

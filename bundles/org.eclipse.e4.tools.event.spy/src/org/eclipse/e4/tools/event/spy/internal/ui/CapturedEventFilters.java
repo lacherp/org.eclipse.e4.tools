@@ -50,9 +50,9 @@ import org.eclipse.swt.widgets.ToolTip;
 
 public class CapturedEventFilters {
 	private final static String NOT_SELECTED_VALUE = "-- expected value --";
-	
+
 	public final static String BASE_EVENT_TOPIC = UIEvents.UITopicBase + UIEvents.TOPIC_SEP + UIEvents.ALL_SUB_TOPICS;
-	
+
 	private final Composite control;
 
 	private Text valueText;
@@ -64,39 +64,34 @@ public class CapturedEventFilters {
 	private ToolTip validationErrorToolTip;
 
 	private Text baseTopicText;
-	
-	// For bug 428903 : cache the text value for predestroy to avoid widget disposed exception.
+
+	// For bug 428903 : cache the text value for predestroy to avoid widget
+	// disposed exception.
 	private String baseTopicTextValue = BASE_EVENT_TOPIC;
-	
+
 	private List filters;
 
 	private java.util.List<CapturedEventFilter> rawFilters;
-	
+
 	private final Clipboard clipboard;
 
-
-	/* Layout scheme:
+	/*
+	 * Layout scheme:
 	 *
-	 * +-- control --------------------------------------------+
-	 * | +-- New filter group -------------------------------+ |
-	 * | |                                                   | |
-	 * | | Base topic of... |text|reset to default           | |
-	 * | |                                                   | |	   	
-	 * | | Capture event when|combo|combo|text|add filter    | |
-	 * | |                                                   | |
-	 * | +---------------------------------------------------+ |
-	 * | +-- Defined filter group ---------------------------+ |
-	 * | |                                                   | |
-	 * | | List   |   +-- composite -----------------+       | |
-	 * | |        |   | remove selected | remove all |       | |
-	 * | |        |   +------------------------------+       | |
-	 * | |                                                   | |
-	 * | +---------------------------------------------------+ |
+	 * +-- control --------------------------------------------+ | +-- New
+	 * filter group -------------------------------+ | | | | | | | Base topic
+	 * of... |text|reset to default | | | | | | | | Capture event
+	 * when|combo|combo|text|add filter | | | | | | |
+	 * +---------------------------------------------------+ | | +-- Defined
+	 * filter group ---------------------------+ | | | | | | | List | +--
+	 * composite -----------------+ | | | | | | remove selected | remove all | |
+	 * | | | | +------------------------------+ | | | | | | |
+	 * +---------------------------------------------------+ |
 	 * +-------------------------------------------------------+
 	 *
-	 * */
+	 */
 
-	//TODO: Fix layout data for groups
+	// TODO: Fix layout data for groups
 	public CapturedEventFilters(Composite outer) {
 		control = new Composite(outer, SWT.NONE);
 		RowLayout layout = new RowLayout(SWT.VERTICAL);
@@ -104,16 +99,17 @@ public class CapturedEventFilters {
 		layout.fill = true;
 		control.setLayout(layout);
 		rawFilters = new ArrayList<CapturedEventFilter>();
-		
+
 		clipboard = new Clipboard(control.getDisplay());
-		control.addDisposeListener(new DisposeListener() {			
+		control.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				if (clipboard != null && !clipboard.isDisposed()) {
 					clipboard.dispose();
 				}
 			}
 		});
-		
+
 		createNewFilterGroup(control);
 		createDefinedFiltersGroup(control);
 	}
@@ -122,7 +118,7 @@ public class CapturedEventFilters {
 		Group newFilterGroup = new Group(parent, SWT.NONE);
 		newFilterGroup.setText("New filter:");
 		newFilterGroup.setLayout(new RowLayout(SWT.VERTICAL));
-		
+
 		createBaseTopicSection(newFilterGroup);
 		createAddFilterSection(newFilterGroup);
 	}
@@ -130,50 +126,52 @@ public class CapturedEventFilters {
 	private void createBaseTopicSection(Composite parent) {
 		parent = new Composite(parent, SWT.NONE);
 		parent.setLayout(new RowLayout(SWT.HORIZONTAL));
-		
+
 		Label label = new Label(parent, SWT.CENTER);
 		label.setText("Base topic of captured events:");
-		
+
 		baseTopicText = new Text(parent, SWT.BORDER);
 		baseTopicText.setLayoutData(new RowData(312, SWT.DEFAULT));
 		baseTopicText.setText(BASE_EVENT_TOPIC);
 		baseTopicText.addFocusListener(new FocusAdapter() {
 
+			@Override
 			public void focusLost(FocusEvent e) {
 				if (baseTopicText.getText().trim().length() == 0) {
 					baseTopicText.setText(BASE_EVENT_TOPIC);
 				}
 				baseTopicTextValue = baseTopicText.getText();
-			}			
+			}
 		});
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new RowLayout(SWT.HORIZONTAL));
-		
+
 		Link link = new Link(composite, SWT.NONE);
 		link.setText("<a>Reset to default</a>");
-		link.addListener (SWT.Selection, new Listener() {
+		link.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				baseTopicText.setText(BASE_EVENT_TOPIC);
 			}
 		});
 	}
-	
+
 	private void createAddFilterSection(Composite parent) {
 		parent = new Composite(parent, SWT.NONE);
 		parent.setLayout(new RowLayout(SWT.HORIZONTAL));
-		
+
 		Label label = new Label(parent, SWT.CENTER);
 		label.setText("Capture event when:");
 
 		itemToFilterCombo = new Combo(parent, SWT.READ_ONLY);
-		for (ItemToFilter item: ItemToFilter.values()) {
+		for (ItemToFilter item : ItemToFilter.values()) {
 			itemToFilterCombo.add(item.toString());
 		}
 		itemToFilterCombo.select(0);
 
 		operatorCombo = new Combo(parent, SWT.READ_ONLY);
-		for (Operator operator: Operator.values()) {
+		for (Operator operator : Operator.values()) {
 			operatorCombo.add(operator.toString());
 		}
 		operatorCombo.select(0);
@@ -182,11 +180,14 @@ public class CapturedEventFilters {
 		valueText.setLayoutData(new RowData(130, SWT.DEFAULT));
 		valueText.setText(NOT_SELECTED_VALUE);
 		valueText.addFocusListener(new FocusListener() {
+			@Override
 			public void focusLost(FocusEvent e) {
 				if (valueText.getText().trim().length() == 0) {
 					valueText.setText(NOT_SELECTED_VALUE);
 				}
 			}
+
+			@Override
 			public void focusGained(FocusEvent e) {
 				if (NOT_SELECTED_VALUE.equals(valueText.getText())) {
 					valueText.setText("");
@@ -196,13 +197,14 @@ public class CapturedEventFilters {
 
 		Link link = new Link(parent, SWT.NONE);
 		link.setText("<a>Add filter</a>");
-		link.addListener (SWT.Selection, new Listener() {
+		link.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				addFilter();
 			}
 		});
 	}
-	
+
 	private void createDefinedFiltersGroup(Composite parent) {
 		Group definedFiltersGroup = new Group(parent, SWT.NONE);
 		definedFiltersGroup.setText("Defined filters (relation between filters is AND):");
@@ -214,13 +216,13 @@ public class CapturedEventFilters {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				selectFilterAt(((List) e.widget).getSelectionIndex());
-			}			
+			}
 		});
 		filters.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				int index = ((List) e.widget).getSelectionIndex();
-				boolean ctrlPressed = (e.stateMask & SWT.CTRL) == SWT.CTRL; 
+				boolean ctrlPressed = (e.stateMask & SWT.CTRL) == SWT.CTRL;
 				if (ctrlPressed && e.keyCode == 'c') {
 					copyFilterAt(index);
 					e.doit = false;
@@ -235,15 +237,17 @@ public class CapturedEventFilters {
 
 		Link link = new Link(composite, SWT.NONE);
 		link.setText("<a>Update selected</a>");
-		link.addListener (SWT.Selection, new Listener() {
+		link.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				updateFilterAt(filters.getSelectionIndex());
 			}
 		});
-		
+
 		link = new Link(composite, SWT.NONE);
 		link.setText("<a>Remove selected</a>");
-		link.addListener (SWT.Selection, new Listener() {
+		link.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				removeFilterAt(filters.getSelectionIndex());
 			}
@@ -251,7 +255,8 @@ public class CapturedEventFilters {
 
 		link = new Link(composite, SWT.NONE);
 		link.setText("<a>Remove all</a>");
-		link.addListener (SWT.Selection, new Listener() {
+		link.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				removeAllFilters();
 			}
@@ -264,16 +269,16 @@ public class CapturedEventFilters {
 
 	public void setFilters(Collection<CapturedEventFilter> filters) {
 		if (filters != null) {
-			for (CapturedEventFilter filter: filters) {
+			for (CapturedEventFilter filter : filters) {
 				this.filters.add(filter.toString());
-				rawFilters.add(filter);				
+				rawFilters.add(filter);
 			}
 		}
 	}
-	
+
 	public Collection<CapturedEventFilter> getFilters() {
 		Map<Integer, CapturedEventFilter> result = new LinkedHashMap<Integer, CapturedEventFilter>();
-		for (CapturedEventFilter filter: rawFilters) {
+		for (CapturedEventFilter filter : rawFilters) {
 			result.put(filter.hashCode(), filter);
 		}
 		return result.values();
@@ -284,11 +289,11 @@ public class CapturedEventFilters {
 			baseTopicText.setText(baseTopic);
 		}
 	}
-	
+
 	public String getBaseTopic() {
 		return baseTopicTextValue;
 	}
-	
+
 	public boolean hasFilters() {
 		return !rawFilters.isEmpty();
 	}
@@ -298,8 +303,8 @@ public class CapturedEventFilters {
 	}
 
 	private CapturedEventFilter createFilter() {
-		ItemToFilter selectedItemToFilter =
-				ItemToFilter.toItem(itemToFilterCombo.getItem(itemToFilterCombo.getSelectionIndex()));
+		ItemToFilter selectedItemToFilter = ItemToFilter
+				.toItem(itemToFilterCombo.getItem(itemToFilterCombo.getSelectionIndex()));
 		if (ItemToFilter.NotSelected.equals(selectedItemToFilter)) {
 			getTooltip().setText(String.format("%s is not selected", getFieldName(ItemToFilter.NotSelected)));
 			getTooltip().setVisible(true);
@@ -322,13 +327,13 @@ public class CapturedEventFilters {
 
 		try {
 			return new CapturedEventFilter(selectedItemToFilter, selectedOperator, value);
-		} catch(IllegalArgumentException exc) {
+		} catch (IllegalArgumentException exc) {
 			getTooltip().setText(exc.getMessage());
-			getTooltip().setVisible(true);				
+			getTooltip().setVisible(true);
 		}
 		return null;
 	}
-	
+
 	private ToolTip getTooltip() {
 		if (validationErrorToolTip == null) {
 			validationErrorToolTip = new ToolTip(Display.getCurrent().getActiveShell(), SWT.BALLOON | SWT.ICON_WARNING);
@@ -339,7 +344,7 @@ public class CapturedEventFilters {
 	private void addFilter() {
 		addFilterAt(-1);
 	}
-	
+
 	private void addFilterAt(int index) {
 		CapturedEventFilter eventFilter = createFilter();
 		if (eventFilter == null) {
@@ -347,9 +352,9 @@ public class CapturedEventFilters {
 		}
 		String filterAsString = eventFilter.toString();
 
-		if (index  > -1 && index < rawFilters.size()) {
+		if (index > -1 && index < rawFilters.size()) {
 			filters.add(filterAsString, index);
-			rawFilters.add(index, eventFilter);		
+			rawFilters.add(index, eventFilter);
 		} else {
 			filters.add(filterAsString);
 			rawFilters.add(eventFilter);
@@ -377,7 +382,7 @@ public class CapturedEventFilters {
 			valueText.setText(filter.getValue());
 		}
 	}
-	
+
 	private void updateFilterAt(int index) {
 		if (index < 0) {
 			getTooltip().setText("Filter to update is not selected");
@@ -390,16 +395,16 @@ public class CapturedEventFilters {
 			filter.setItemToFilter(newFilter.getItemToFilter());
 			filter.setOperator(newFilter.getOperator());
 			filter.setValue(newFilter.getValue());
-		
+
 			filters.setItem(index, newFilter.toString());
 		}
 	}
-	
+
 	private void copyFilterAt(int index) {
-		clipboard.setContents(new Object[] {CapturedEventFilterSerializer
-			.serialize(rawFilters.get(index))}, new Transfer[] {TextTransfer.getInstance()});
+		clipboard.setContents(new Object[] { CapturedEventFilterSerializer.serialize(rawFilters.get(index)) },
+				new Transfer[] { TextTransfer.getInstance() });
 	}
-	
+
 	private void pasteFilterAt(int index) {
 		String pastedFilter = (String) clipboard.getContents(TextTransfer.getInstance());
 		CapturedEventFilter filter = CapturedEventFilterSerializer.deserialize(pastedFilter);
@@ -409,9 +414,9 @@ public class CapturedEventFilters {
 		} else if (filter != null) {
 			filters.add(filter.toString());
 			rawFilters.add(filter);
-		}			
+		}
 	}
-	
+
 	private void removeAllFilters() {
 		if (rawFilters == null || rawFilters.isEmpty()) {
 			getTooltip().setText("Filter list is empty");
@@ -427,7 +432,7 @@ public class CapturedEventFilters {
 		String fieldName = notSelectedName.toString().replaceAll("-", "").trim();
 		return Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
 	}
-	
+
 	private void clearFilterDefinition() {
 		itemToFilterCombo.select(0);
 		operatorCombo.select(0);

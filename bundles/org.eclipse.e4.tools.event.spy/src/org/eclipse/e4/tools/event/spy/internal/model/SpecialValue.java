@@ -11,9 +11,7 @@
 package org.eclipse.e4.tools.event.spy.internal.model;
 
 public enum SpecialValue {
-	Null("null"),
-	EmptyString("empty"),
-	NameAndValue("%s=%s");
+	Null("null"), EmptyString("empty"), NameAndValue("%s=%s");
 
 	private String text;
 

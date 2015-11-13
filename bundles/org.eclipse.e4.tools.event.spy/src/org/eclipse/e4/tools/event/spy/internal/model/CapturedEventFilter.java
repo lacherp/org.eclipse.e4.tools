@@ -28,7 +28,7 @@ public class CapturedEventFilter {
 	public ItemToFilter getItemToFilter() {
 		return itemToFilter;
 	}
-	
+
 	public void setItemToFilter(ItemToFilter itemToFilter) {
 		this.itemToFilter = itemToFilter;
 	}
@@ -36,7 +36,7 @@ public class CapturedEventFilter {
 	public Operator getOperator() {
 		return operator;
 	}
-	
+
 	public void setOperator(Operator operator) {
 		this.operator = operator;
 	}
@@ -48,13 +48,13 @@ public class CapturedEventFilter {
 	public void setValue(String value) {
 		this.value = value;
 	}
-	
+
 	private String normalize(ItemToFilter itemToFilter, String value) {
 		if (ItemToFilter.ParameterNameAndValue.equals(itemToFilter)) {
 			String[] splitted = value.split("=");
 			if (splitted.length != 2) {
-				throw new IllegalArgumentException("Invalid value format, it should be: " +
-						String.format(SpecialValue.NameAndValue.toString(), "Name", "Value"));
+				throw new IllegalArgumentException("Invalid value format, it should be: "
+						+ String.format(SpecialValue.NameAndValue.toString(), "Name", "Value"));
 			}
 			return String.format(SpecialValue.NameAndValue.toString(), splitted[0].trim(), splitted[1].trim());
 		}
@@ -65,12 +65,12 @@ public class CapturedEventFilter {
 	public String toString() {
 		return String.format(FILTER_AS_STRING_PATTERN, itemToFilter, operator, value);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return (value + itemToFilter + operator).hashCode();
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		return obj instanceof CapturedEventFilter && obj.hashCode() == hashCode();

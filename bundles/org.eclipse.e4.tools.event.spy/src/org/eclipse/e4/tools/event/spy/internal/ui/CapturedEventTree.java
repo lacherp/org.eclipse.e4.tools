@@ -57,24 +57,23 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 
-
 public class CapturedEventTree extends TreeViewer {
 	private ICapturedEventTreeListener listener;
 
 	private WritableList capturedEvents;
-	 
-	private  Clipboard clipboard;
+
+	private Clipboard clipboard;
 
 	private TreeItemCursor treeItemCursor;
-	
+
 	private TreeItemForeground treeItemForeground;
-	
+
 	private TreeItemBackground treeItemBackground;
 
 	private TreeItemFont treeItemFont;
 
 	private SelectedTreeItem selectedClassNameTreeItem;
-	
+
 	private SelectedTreeItem selectedTreeItem;
 
 	public CapturedEventTree(Composite parent) {
@@ -82,7 +81,7 @@ public class CapturedEventTree extends TreeViewer {
 
 		getTree().setHeaderVisible(true);
 		getTree().setLinesVisible(true);
-		
+
 		TreeColumn column = new TreeColumn(getTree(), SWT.LEFT);
 		column.setText(ItemToFilter.Topic.toString());
 		column.setWidth(350);
@@ -94,37 +93,37 @@ public class CapturedEventTree extends TreeViewer {
 		column = new TreeColumn(getTree(), SWT.LEFT);
 		column.setText(ItemToFilter.ChangedElement.toString());
 		column.setWidth(150);
-		
+
 		ObservableListTreeContentProvider contentProvider = new ObservableListTreeContentProvider(
 				new CapturedEventsObservableFactory(), new CapturedEventsTreeStructureAdvisor());
 		setContentProvider(contentProvider);
 
-		IObservableMap[] attributes = PojoObservables.observeMaps(
-				contentProvider.getKnownElements(), IEventItem.class,
-				new String[] {"name", "param1", "param2"});
+		IObservableMap[] attributes = PojoObservables.observeMaps(contentProvider.getKnownElements(), IEventItem.class,
+				new String[] { "name", "param1", "param2" });
 		setLabelProvider(new ObservableMapLabelProvider(attributes));
 
 		capturedEvents = new WritableList(new ArrayList<CapturedEvent>(), CapturedEvent.class);
 		setInput(capturedEvents);
-		
+
 		clipboard = new Clipboard(getTree().getDisplay());
 
 		createTreeItemResources();
-		
+
 		addTreeEventListeners();
 	}
-	
+
 	private static class CapturedEventsTreeStructureAdvisor extends TreeStructureAdvisor {
 		@Override
 		public Boolean hasChildren(Object element) {
 			if (element instanceof CapturedEvent) {
 				return !((CapturedEvent) element).getParameters().isEmpty();
-		 	}
+			}
 			return false;
 		}
 	}
 
 	private static class CapturedEventsObservableFactory implements IObservableFactory {
+		@Override
 		public IObservable createObservable(Object target) {
 			if (target instanceof IObservableList) {
 				return (IObservableList) target;
@@ -135,23 +134,22 @@ public class CapturedEventTree extends TreeViewer {
 			return null;
 		}
 	}
-	
+
 	private void createTreeItemResources() {
 		Display display = getTree().getDisplay();
-		
-		treeItemCursor = new TreeItemCursor(getTree().getCursor(),
-				display.getSystemCursor(SWT.CURSOR_HAND));
+
+		treeItemCursor = new TreeItemCursor(getTree().getCursor(), display.getSystemCursor(SWT.CURSOR_HAND));
 
 		treeItemForeground = new TreeItemForeground(new Color(display, new RGB(0, 0, 120)),
 				display.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT), display.getSystemColor(SWT.COLOR_BLACK));
-		
+
 		treeItemBackground = new TreeItemBackground(display.getSystemColor(SWT.COLOR_LIST_SELECTION),
 				getTree().getBackground());
 
 		Font currentFont = getTree().getFont();
 		FontData currentFontData = currentFont.getFontData()[0];
-		treeItemFont = new TreeItemFont(currentFont, new Font(display, currentFontData.getName(), 
-				currentFontData.getHeight(), SWT.ITALIC));
+		treeItemFont = new TreeItemFont(currentFont,
+				new Font(display, currentFontData.getName(), currentFontData.getHeight(), SWT.ITALIC));
 
 		selectedClassNameTreeItem = new SelectedTreeItem() {
 			@Override
@@ -165,7 +163,7 @@ public class CapturedEventTree extends TreeViewer {
 				}
 			}
 		};
-		
+
 		selectedTreeItem = new SelectedTreeItem() {
 			@Override
 			public void clear() {
@@ -176,35 +174,42 @@ public class CapturedEventTree extends TreeViewer {
 	}
 
 	private void addTreeEventListeners() {
-		getTree().addDisposeListener(new DisposeListener() {						
+		getTree().addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				if (clipboard != null && !clipboard.isDisposed()) {
 					clipboard.dispose();
 				}
 				disposeResource(treeItemForeground.getParamColor());
 				disposeResource(treeItemFont.getSelectedClassNameFont());
-			}			
+			}
+
 			private void disposeResource(Resource resource) {
 				if (resource != null && !resource.isDisposed()) {
 					resource.dispose();
 				}
 			}
 		});
-		
+
 		getTree().addMouseMoveListener(new MouseMoveListener() {
-			public void mouseMove(MouseEvent e) {				
+			@Override
+			public void mouseMove(MouseEvent e) {
 				selectedClassNameTreeItem.clear();
-				
-				//we can select and finally open the class only when 'ctrl' is pressed
+
+				// we can select and finally open the class only when 'ctrl' is
+				// pressed
 				if ((e.stateMask & SWT.CTRL) != SWT.CTRL) {
 					return;
 				}
-				
+
 				TreeItem item = getTree().getItem(new Point(e.x, e.y));
 				int index = getSelectedColumnIndex(item, e.x, e.y);
 
-				if (index > 0 /*we check the 2nd and 3rd column only*/ &&
-						item.getParentItem() == null /*we don't check parameters at this moment*/) {
+				if (index > 0 /* we check the 2nd and 3rd column only */ && item
+						.getParentItem() == null /*
+													 * we don't check parameters at
+													 * this moment
+													 */) {
 					String text = item.getText(index);
 					if (JDTUtils.containsClassName(text)) {
 						selectedClassNameTreeItem.setText(text);
@@ -216,23 +221,24 @@ public class CapturedEventTree extends TreeViewer {
 				}
 			}
 		});
-		
+
 		getTree().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				TreeItem item = getTree().getItem(new Point(e.x, e.y));		
+				TreeItem item = getTree().getItem(new Point(e.x, e.y));
 				updateSelectedTreeItem(item, getSelectedColumnIndex(item, e.x, e.y));
-				
-				if (listener != null && (e.stateMask & SWT.CTRL) == SWT.CTRL && 
-						selectedClassNameTreeItem.getText() != null) {
+
+				if (listener != null && (e.stateMask & SWT.CTRL) == SWT.CTRL
+						&& selectedClassNameTreeItem.getText() != null) {
 					listener.treeItemWithClassNameClicked(selectedClassNameTreeItem.getText());
 				}
 			}
 		});
-		
+
 		getTree().addListener(SWT.EraseItem, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
-				if((event.detail & SWT.FOREGROUND) == SWT.FOREGROUND){
+				if ((event.detail & SWT.FOREGROUND) == SWT.FOREGROUND) {
 					event.detail &= ~SWT.FOREGROUND;
 				}
 				if ((event.detail & SWT.SELECTED) == SWT.SELECTED) {
@@ -242,12 +248,13 @@ public class CapturedEventTree extends TreeViewer {
 		});
 
 		getTree().addListener(SWT.PaintItem, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				TreeItem item = (TreeItem) event.item;
 				String text = item.getText(event.index);
-				int xOffset = item.getParentItem() != null? 10: 2;
+				int xOffset = item.getParentItem() != null ? 10 : 2;
 				Rectangle rec = item.getBounds(event.index);
-				
+
 				event.gc.setFont(getFont(item, event.index));
 				event.gc.setForeground(getForeground(item, event.index));
 				event.gc.setBackground(getBackground(item, event.index));
@@ -255,38 +262,41 @@ public class CapturedEventTree extends TreeViewer {
 				event.gc.drawText(text, event.x + xOffset, event.y, true);
 			}
 		});
-		
+
 		getTree().addKeyListener(new KeyListener() {
+			@Override
 			public void keyPressed(KeyEvent e) {
 				String text = selectedTreeItem.getText();
 				if (text == null || (e.stateMask & SWT.CTRL) != SWT.CTRL) {
 					return;
 				}
-				if(e.keyCode == 'c' && text.trim().length() > 0) {
-					clipboard.setContents(new Object[] {text}, new Transfer[] {TextTransfer.getInstance()});
+				if (e.keyCode == 'c' && text.trim().length() > 0) {
+					clipboard.setContents(new Object[] { text }, new Transfer[] { TextTransfer.getInstance() });
 				} else if (e.keyCode == SWT.ARROW_LEFT) {
-					updateSelectedTreeItem(selectedTreeItem.getTreeItem(), 
-						Math.max(0, selectedTreeItem.getColumnIndex() - 1));
+					updateSelectedTreeItem(selectedTreeItem.getTreeItem(),
+							Math.max(0, selectedTreeItem.getColumnIndex() - 1));
 				} else if (e.keyCode == SWT.ARROW_RIGHT) {
-					updateSelectedTreeItem(selectedTreeItem.getTreeItem(), 
-						Math.min(getTree().getColumnCount() - 1, selectedTreeItem.getColumnIndex() + 1));
+					updateSelectedTreeItem(selectedTreeItem.getTreeItem(),
+							Math.min(getTree().getColumnCount() - 1, selectedTreeItem.getColumnIndex() + 1));
 				}
 			}
+
+			@Override
 			public void keyReleased(KeyEvent e) {
 				selectedClassNameTreeItem.clear();
 			}
 		});
-		
+
 		getTree().addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if ((e.stateMask & SWT.BUTTON1) != SWT.BUTTON1) {
-					updateSelectedTreeItem((TreeItem) e.item, 
-						selectedTreeItem.getText() != null? selectedTreeItem.getColumnIndex(): 0);
-				}			
+					updateSelectedTreeItem((TreeItem) e.item,
+							selectedTreeItem.getText() != null ? selectedTreeItem.getColumnIndex() : 0);
+				}
 			}
 		});
-				
+
 		getTree().addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(FocusEvent e) {
@@ -294,10 +304,10 @@ public class CapturedEventTree extends TreeViewer {
 			}
 		});
 	}
-	
+
 	private void updateSelectedTreeItem(TreeItem item, int columnIndex) {
 		if (columnIndex > -1) {
-			selectedTreeItem.clear(); //clear old selection
+			selectedTreeItem.clear(); // clear old selection
 			selectedTreeItem.setTreeItem(item);
 			selectedTreeItem.setColumnIndex(columnIndex);
 			selectedTreeItem.setText(item.getText(columnIndex));
@@ -314,7 +324,7 @@ public class CapturedEventTree extends TreeViewer {
 		}
 		return treeItemForeground.getDefaultColor();
 	}
-	
+
 	private Color getBackground(TreeItem item, int index) {
 		if (selectedTreeItem.getTreeItem() == item && selectedTreeItem.getColumnIndex() == index) {
 			return treeItemBackground.getSelectedColor();
@@ -323,8 +333,8 @@ public class CapturedEventTree extends TreeViewer {
 	}
 
 	private Font getFont(TreeItem item, int columnIndex) {
-		if (selectedClassNameTreeItem.getTreeItem() == item && 
-				selectedClassNameTreeItem.getColumnIndex() == columnIndex) {
+		if (selectedClassNameTreeItem.getTreeItem() == item
+				&& selectedClassNameTreeItem.getColumnIndex() == columnIndex) {
 			return treeItemFont.getSelectedClassNameFont();
 		}
 		return treeItemFont.getDefaultFont();
@@ -336,9 +346,9 @@ public class CapturedEventTree extends TreeViewer {
 			getTree().redraw(rec.x, rec.y, rec.width, rec.height, true);
 		}
 	}
-	
+
 	private int getSelectedColumnIndex(TreeItem item, int mouseX, int mouseY) {
-		for (int i=0; item != null && i<getTree().getColumnCount(); i++) {
+		for (int i = 0; item != null && i < getTree().getColumnCount(); i++) {
 			Rectangle rec = item.getBounds(i);
 			if (mouseX >= rec.x && mouseX <= rec.x + rec.width) {
 				return i;
@@ -346,7 +356,7 @@ public class CapturedEventTree extends TreeViewer {
 		}
 		return -1;
 	}
-	
+
 	public void addEvent(CapturedEvent event) {
 		capturedEvents.add(event);
 	}
@@ -358,12 +368,12 @@ public class CapturedEventTree extends TreeViewer {
 	public void removeAll() {
 		capturedEvents.clear();
 	}
-	
+
 	private static class TreeItemForeground {
 		private final Color paramColor;
 
 		private final Color selectedColor;
-		
+
 		private final Color defaultColor;
 
 		public TreeItemForeground(Color paramColor, Color selectedColor, Color defaultColor) {
@@ -379,26 +389,26 @@ public class CapturedEventTree extends TreeViewer {
 		public Color getSelectedColor() {
 			return selectedColor;
 		}
-		
+
 		public Color getDefaultColor() {
 			return defaultColor;
 		}
 	}
-	
+
 	private static class TreeItemBackground {
 		private final Color selectedColor;
 
 		private final Color defaultColor;
-		
+
 		public TreeItemBackground(Color selectedColor, Color defaultColor) {
 			this.selectedColor = selectedColor;
 			this.defaultColor = defaultColor;
 		}
-		
+
 		public Color getSelectedColor() {
 			return selectedColor;
 		}
-		
+
 		public Color getDefaultColor() {
 			return defaultColor;
 		}
@@ -406,28 +416,28 @@ public class CapturedEventTree extends TreeViewer {
 
 	private static class TreeItemCursor {
 		private final Cursor defaultCursor;
-		
+
 		private final Cursor pointerCursor;
-		
+
 		public TreeItemCursor(Cursor defaultCursor, Cursor pointerCursor) {
 			this.defaultCursor = defaultCursor;
 			this.pointerCursor = pointerCursor;
 		}
-		
+
 		public Cursor getDefaultCursor() {
 			return defaultCursor;
 		}
-		
+
 		public Cursor getPointerCursor() {
 			return pointerCursor;
 		}
 	}
-	
+
 	private static class TreeItemFont {
 		private final Font defaultFont;
-		
+
 		private final Font selectedClassNameFont;
-		
+
 		public TreeItemFont(Font defaultFont, Font selectedClassNameFont) {
 			this.defaultFont = defaultFont;
 			this.selectedClassNameFont = selectedClassNameFont;
@@ -436,23 +446,23 @@ public class CapturedEventTree extends TreeViewer {
 		public Font getDefaultFont() {
 			return defaultFont;
 		}
-		
+
 		public Font getSelectedClassNameFont() {
 			return selectedClassNameFont;
 		}
 	}
-	
-	private static class SelectedTreeItem {		
+
+	private static class SelectedTreeItem {
 		private TreeItem treeItem;
-		
+
 		private int columnIndex;
-		
+
 		private String text;
-		
+
 		public SelectedTreeItem() {
 			clear();
 		}
-		
+
 		public void setTreeItem(TreeItem treeItem) {
 			this.treeItem = treeItem;
 		}
@@ -460,23 +470,23 @@ public class CapturedEventTree extends TreeViewer {
 		public TreeItem getTreeItem() {
 			return treeItem;
 		}
-		
+
 		public void setColumnIndex(int columnIndex) {
 			this.columnIndex = columnIndex;
 		}
-		
+
 		public int getColumnIndex() {
 			return columnIndex;
 		}
-		
+
 		public void setText(String text) {
 			this.text = text;
 		}
-		
+
 		public String getText() {
 			return text;
 		}
-		
+
 		public void clear() {
 			treeItem = null;
 			columnIndex = -1;

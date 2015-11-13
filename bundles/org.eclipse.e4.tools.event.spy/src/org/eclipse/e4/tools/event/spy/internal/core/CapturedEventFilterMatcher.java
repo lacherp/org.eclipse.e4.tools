@@ -26,7 +26,7 @@ public class CapturedEventFilterMatcher {
 
 		if (value instanceof List) {
 			List<?> list = (List<?>) value;
-			for (Object item: list) {
+			for (Object item : list) {
 				if (matches(filter.getValue(), item, filter.getOperator())) {
 					return true;
 				}
@@ -48,23 +48,23 @@ public class CapturedEventFilterMatcher {
 		}
 		if (itemToFilter.equals(ItemToFilter.ParameterName)) {
 			List<String> names = new ArrayList<String>();
-			for (Parameter parameter: event.getParameters()) {
+			for (Parameter parameter : event.getParameters()) {
 				names.add(parameter.getName());
 			}
 			return names;
 		}
 		if (itemToFilter.equals(ItemToFilter.ParameterValue)) {
 			List<Object> values = new ArrayList<Object>();
-			for (Parameter parameter: event.getParameters()) {
+			for (Parameter parameter : event.getParameters()) {
 				values.add(parameter.getValue());
 			}
 			return values;
 		}
 		if (itemToFilter.equals(ItemToFilter.ParameterNameAndValue)) {
 			List<String> nameAndValues = new ArrayList<String>();
-			for (Parameter parameter: event.getParameters()) {
+			for (Parameter parameter : event.getParameters()) {
 				String nameAndValue = String.format(SpecialValue.NameAndValue.toString(), parameter.getName().trim(),
-						(parameter.getValue() == null? SpecialValue.Null: parameter.getValue().toString().trim()));
+						(parameter.getValue() == null ? SpecialValue.Null : parameter.getValue().toString().trim()));
 				nameAndValues.add(nameAndValue);
 			}
 			return nameAndValues;
@@ -75,10 +75,10 @@ public class CapturedEventFilterMatcher {
 
 	private boolean matches(String expected, Object current, Operator operator) {
 		if (SpecialValue.Null.toString().equalsIgnoreCase(expected)) {
-			return operator.isPositive()? matchesToNull(current): !matchesToNull(current);
+			return operator.isPositive() ? matchesToNull(current) : !matchesToNull(current);
 		}
-		if ( SpecialValue.EmptyString.toString().equalsIgnoreCase(expected)) {
-			return operator.isPositive()? matchesToEmptyString(current): !matchesToEmptyString(current);
+		if (SpecialValue.EmptyString.toString().equalsIgnoreCase(expected)) {
+			return operator.isPositive() ? matchesToEmptyString(current) : !matchesToEmptyString(current);
 		}
 		if (Operator.Equals.equals(operator)) {
 			return equalsTo(expected, current);

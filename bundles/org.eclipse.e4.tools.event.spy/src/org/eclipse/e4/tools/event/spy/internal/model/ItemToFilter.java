@@ -10,15 +10,10 @@
  *******************************************************************************/
 package org.eclipse.e4.tools.event.spy.internal.model;
 
-
 public enum ItemToFilter {
-	NotSelected("-- item to filter --"),
-	Topic("Topic"),
-	ParameterName("Parameter name"),
-	ParameterNameAndValue("Parameter name and value"),
-	ParameterValue("Some parameter value"),
-	Publisher("Event publisher"),
-	ChangedElement("Changed element");
+	NotSelected("-- item to filter --"), Topic("Topic"), ParameterName("Parameter name"), ParameterNameAndValue(
+			"Parameter name and value"), ParameterValue("Some parameter value"), Publisher(
+					"Event publisher"), ChangedElement("Changed element");
 
 	private String text;
 
@@ -32,12 +27,12 @@ public enum ItemToFilter {
 	}
 
 	public static ItemToFilter toItem(String text) {
-		for (ItemToFilter item: values()) {
+		for (ItemToFilter item : values()) {
 			if (item.text.equals(text)) {
 				return item;
 			}
 		}
-		throw new IllegalArgumentException(String.format("%s not found for: %s",
-			ItemToFilter.class.getSimpleName(), text));
+		throw new IllegalArgumentException(
+				String.format("%s not found for: %s", ItemToFilter.class.getSimpleName(), text));
 	}
 }

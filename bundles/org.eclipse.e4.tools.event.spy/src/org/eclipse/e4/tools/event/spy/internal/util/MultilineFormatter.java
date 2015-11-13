@@ -16,15 +16,22 @@ import java.util.Set;
 
 public class MultilineFormatter {
 	@SuppressWarnings("serial")
-	private static Set<Character> LINE_DELIMITERS = new HashSet<Character>() {{
-		add(','); add('('); add(')'); add(';'); add('-'); add('=');
-	}};
+	private static Set<Character> LINE_DELIMITERS = new HashSet<Character>() {
+		{
+			add(',');
+			add('(');
+			add(')');
+			add(';');
+			add('-');
+			add('=');
+		}
+	};
 
 	public static String format(String value, int lineLength) {
 		StringBuilder result = new StringBuilder();
 		int counter = 0;
 
-		for (int i=0; i<value.length(); i++) {
+		for (int i = 0; i < value.length(); i++) {
 			char c = value.charAt(i);
 			result.append(c);
 

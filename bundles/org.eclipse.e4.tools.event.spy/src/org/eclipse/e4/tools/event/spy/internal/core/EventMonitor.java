@@ -31,11 +31,13 @@ public class EventMonitor {
 		void newEvent(CapturedEvent event);
 	}
 
-	@SuppressWarnings({"serial"})
-	private static Set<Integer> EVENT_HELPER_CLASSES = new HashSet<Integer>() {{
-		add(UIEvents.class.getName().hashCode());
-		add(UIEventPublisher.class.getName().hashCode());
-	}};
+	@SuppressWarnings({ "serial" })
+	private static Set<Integer> EVENT_HELPER_CLASSES = new HashSet<Integer>() {
+		{
+			add(UIEvents.class.getName().hashCode());
+			add(UIEventPublisher.class.getName().hashCode());
+		}
+	};
 
 	private Collection<CapturedEventFilter> filters;
 
@@ -46,6 +48,7 @@ public class EventMonitor {
 	private CapturedEventFilterMatcher eventFilterMatcher;
 
 	private final EventHandler eventHandler = new EventHandler() {
+		@Override
 		public void handleEvent(Event event) {
 			if (listener == null) {
 				return;
@@ -55,7 +58,7 @@ public class EventMonitor {
 			capturedEvent.setTopic(event.getTopic());
 			capturedEvent.setPublisherClassName(getPublisherClassName());
 
-			for (String propertyName: event.getPropertyNames()) {
+			for (String propertyName : event.getPropertyNames()) {
 				Object value = event.getProperty(propertyName);
 				capturedEvent.addParameter(propertyName, value);
 				if (value != null && UIEvents.EventTags.ELEMENT.equals(propertyName)) {
@@ -102,7 +105,7 @@ public class EventMonitor {
 		StackTraceElement items[] = Thread.currentThread().getStackTrace();
 		boolean foundEventBroker = false;
 
-		for (int i=0; i<items.length; i++) {
+		for (int i = 0; i < items.length; i++) {
 			String clsName = items[i].getClassName();
 			if (!foundEventBroker && clsName.equals(EventBroker.class.getName())) {
 				foundEventBroker = true;
