@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Olivier Prouvost <olivier.prouvost@opcoach.com> - initial API and implementation
- *     Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 428903 - Having a common 'debug' window for all spies 
+ *     Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 428903 - Having a common 'debug' window for all spies
  *******************************************************************************/
 package org.eclipse.e4.tools.spy;
 
@@ -35,8 +35,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
 /** A base class for all spies processors */
-public class SpyProcessor
-{
+public class SpyProcessor {
 	static final String SPY_TAG = "Spy";
 
 	public static final String SPY_COMMAND = "org.eclipse.e4.tools.spy.command";
@@ -53,8 +52,7 @@ public class SpyProcessor
 	Logger log;
 
 	@Execute
-	public void process(IExtensionRegistry extRegistry)
-	{
+	public void process(IExtensionRegistry extRegistry) {
 		// This processor will read all spy extensions and automatically create
 		// the command, handler and binding
 		// to open this spy in the dedicated spy window.
@@ -63,8 +61,7 @@ public class SpyProcessor
 		// the part to display) and default handler for this command.
 		MCommand command = getOrCreateSpyCommand();
 
-		for (IConfigurationElement e : extRegistry.getConfigurationElementsFor("org.eclipse.e4.tools.spy.spyPart"))
-		{
+		for (IConfigurationElement e : extRegistry.getConfigurationElementsFor("org.eclipse.e4.tools.spy.spyPart")) {
 			String partName = e.getAttribute("name");
 			String shortCut = e.getAttribute("shortcut");
 			String iconPath = e.getAttribute("icon");
@@ -72,8 +69,7 @@ public class SpyProcessor
 
 			Bundle b = Platform.getBundle(e.getNamespaceIdentifier());
 			String partID = e.getAttribute("part");
-			try
-			{
+			try {
 				Class<?> partClass = b.loadClass(partID);
 				// Bind the command with the binding, and add the view ID as
 				// parameter.
@@ -83,11 +79,9 @@ public class SpyProcessor
 				// Add the descriptor in application
 				addSpyPartDescriptor(partID, partName, iconPath, partClass);
 
-			} catch (InvalidRegistryObjectException e1)
-			{
+			} catch (InvalidRegistryObjectException e1) {
 				e1.printStackTrace();
-			} catch (ClassNotFoundException e1)
-			{
+			} catch (ClassNotFoundException e1) {
 				log.error("The class '" + partID + "' can not be instantiated. Check name or launch config");
 				e1.printStackTrace();
 			}
@@ -98,13 +92,11 @@ public class SpyProcessor
 
 	}
 
-	public MCommand getOrCreateSpyCommand()
-	{
-		// DO NOT USE findElement on ModelService (it searches only in MUIElements)
-		for (MCommand cmd : application.getCommands())
-		{
-			if (SPY_COMMAND.equals(cmd.getElementId()))
-			{
+	public MCommand getOrCreateSpyCommand() {
+		// DO NOT USE findElement on ModelService (it searches only in
+		// MUIElements)
+		for (MCommand cmd : application.getCommands()) {
+			if (SPY_COMMAND.equals(cmd.getElementId())) {
 				// Do nothing if command exists
 				return cmd;
 			}
@@ -130,10 +122,8 @@ public class SpyProcessor
 
 		// Create the default handler for this command
 		// (will receive the parameter)
-		for (MHandler hdl : application.getHandlers())
-		{
-			if (SPY_HANDLER.equals(hdl.getElementId()))
-			{
+		for (MHandler hdl : application.getHandlers()) {
+			if (SPY_HANDLER.equals(hdl.getElementId())) {
 				// Do nothing if handler exists, return the command
 				return command;
 			}
@@ -157,15 +147,14 @@ public class SpyProcessor
 	 * spies will add their key binding). Bind this table with the
 	 * org.eclipse.ui.contexts.dialogAndWindow binding context which should be
 	 * present (create it if not)
-	 * 
+	 *
 	 * This method will probably move to the common spy plugin providing common
 	 * spy stuff (see bug #428903)
-	 * 
+	 *
 	 * @param application
 	 * @return
 	 */
-	public void bindSpyKeyBinding(String keySequence, MCommand cmd, String paramViewId)
-	{
+	public void bindSpyKeyBinding(String keySequence, MCommand cmd, String paramViewId) {
 		// This method must :
 		// search for a binding table having the binding context 'dialog and
 		// window'
@@ -174,33 +163,27 @@ public class SpyProcessor
 
 		MBindingTable spyBindingTable = null;
 		for (MBindingTable bt : application.getBindingTables())
-			if (E4_SPIES_BINDING_TABLE.equals(bt.getElementId()))
-			{
+			if (E4_SPIES_BINDING_TABLE.equals(bt.getElementId())) {
 				spyBindingTable = bt;
 			}
 
 		// Binding table has not been yet added... Create it and bind it to
 		// org.eclipse.ui.contexts.dialogAndWindow binding context
 		// If this context does not yet exist, create it also.
-		if (spyBindingTable == null)
-		{
+		if (spyBindingTable == null) {
 
 			MBindingContext bc = null;
 			final List<MBindingContext> bindingContexts = application.getBindingContexts();
-			if (bindingContexts.size() == 0)
-			{
+			if (bindingContexts.size() == 0) {
 				bc = modelService.createModelElement(MBindingContext.class);
 				bc.setElementId("org.eclipse.ui.contexts.window");
-			} else
-			{
+			} else {
 				// Prefer org.eclipse.ui.contexts.dialogAndWindow but randomly
 				// select another one
 				// if org.eclipse.ui.contexts.dialogAndWindow cannot be found
-				for (MBindingContext aBindingContext : bindingContexts)
-				{
+				for (MBindingContext aBindingContext : bindingContexts) {
 					bc = aBindingContext;
-					if ("org.eclipse.ui.contexts.dialogAndWindow".equals(aBindingContext.getElementId()))
-					{
+					if ("org.eclipse.ui.contexts.dialogAndWindow".equals(aBindingContext.getElementId())) {
 						break;
 					}
 				}
@@ -217,18 +200,17 @@ public class SpyProcessor
 
 		// Search for the key binding if already present
 		for (MKeyBinding kb : spyBindingTable.getBindings())
-			if (keySequence.equals(kb.getKeySequence()))
-			{
+			if (keySequence.equals(kb.getKeySequence())) {
 				// A binding with this key sequence is already present. Check if
 				// command is the same
 				if (kb.getCommand().getElementId().equals(cmd.getElementId()))
 					return;
-				else
-				{
+				else {
 					// Must log an error : key binding already exists in this
 					// table but with another command
-					System.out.println("WARNING : Cannot bind the command '" + cmd.getElementId() + "' to the keySequence : "
-							+ keySequence + " because the command " + kb.getCommand().getElementId() + " is already bound !");
+					System.out.println("WARNING : Cannot bind the command '" + cmd.getElementId()
+							+ "' to the keySequence : " + keySequence + " because the command "
+							+ kb.getCommand().getElementId() + " is already bound !");
 					return;
 				}
 			}
@@ -249,12 +231,9 @@ public class SpyProcessor
 
 	}
 
-	public void addSpyPartDescriptor(String partId, String partLabel, String iconPath, Class<?> spyPartClass)
-	{
-		for (MPartDescriptor mp : application.getDescriptors())
-		{
-			if (partId.equals(mp.getElementId()))
-			{
+	public void addSpyPartDescriptor(String partId, String partLabel, String iconPath, Class<?> spyPartClass) {
+		for (MPartDescriptor mp : application.getDescriptors()) {
+			if (partId.equals(mp.getElementId())) {
 				// Already added, do nothing
 				return;
 			}

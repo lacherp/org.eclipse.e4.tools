@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Olivier Prouvost <olivier.prouvost@opcoach.com> - initial API and implementation
- *     Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 428903 - Having a common 'debug' window for all spies 
+ *     Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 428903 - Having a common 'debug' window for all spies
  *******************************************************************************/
 package org.eclipse.e4.tools.spy;
 
@@ -32,8 +32,7 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.osgi.framework.FrameworkUtil;
 
-public class SpyHandler
-{
+public class SpyHandler {
 	private static final int DEFAULT_SPY_WINDOW_HEIGHT = 600;
 	private static final int DEFAULT_SPY_WINDOW_WIDTH = 1000;
 	private static final String E4_SPIES_WINDOW_LABEL = "E4 Spies window";
@@ -47,7 +46,7 @@ public class SpyHandler
 	 * never been opened, it add this spy in the E4 window - if it is already
 	 * opened, just activate it - if it has already opened and closed, find it,
 	 * and open it at the same location
-	 * 
+	 *
 	 * @param ps
 	 *            part Service to manage parts elements
 	 * @param viewID
@@ -59,30 +58,27 @@ public class SpyHandler
 	 */
 	@Execute
 	public void run(EPartService ps, @Optional @Named(SpyProcessor.SPY_COMMAND_PARAM) String viewID, MApplication appli,
-			EModelService modelService)
-	{
+			EModelService modelService) {
 		MWindow spyWindow = getOrCreateSpyWindow(appli, modelService);
-	
+
 		MPartStack partStack = (MPartStack) modelService.find(E4_SPIES_PART_STACK, spyWindow);
 
 		MPart p = ps.findPart(viewID);
-		if (p == null)
-		{
+		if (p == null) {
 			// Create the part in the spyWindow...
 			p = ps.createPart(viewID);
 			partStack.getChildren().add(p);
 			partStack.setSelectedElement(p);
 		}
-		
+
 		p.setVisible(true);
-		
+
 		// modelService.bringToTop(spyWindow);
 		ps.activate(p, true);
 
 	}
 
-	private MWindow getOrCreateSpyWindow(MApplication appli, EModelService modelService)
-	{
+	private MWindow getOrCreateSpyWindow(MApplication appli, EModelService modelService) {
 		List<MWindow> existingWindow = modelService.findElements(appli, E4_SPIES_WINDOW, MWindow.class, null);
 		if (existingWindow.size() >= 1)
 			return existingWindow.get(0);
@@ -106,20 +102,16 @@ public class SpyHandler
 		trimBar.getChildren().add(toolbar);
 
 		// Create one toolbar element for each 'spy' tagged descriptor
-		for (MPartDescriptor mp : appli.getDescriptors())
-		{
-			if (mp.getTags().contains(SpyProcessor.SPY_TAG))
-			{
+		for (MPartDescriptor mp : appli.getDescriptors()) {
+			if (mp.getTags().contains(SpyProcessor.SPY_TAG)) {
 				// Create a toolitem bound to the command.
-				MHandledToolItem  toolItem = modelService.createModelElement(MHandledToolItem.class);
+				MHandledToolItem toolItem = modelService.createModelElement(MHandledToolItem.class);
 				toolItem.setContributorURI(contributorURI);
-			
-				// Search for spy command  (added by processor)
+
+				// Search for spy command (added by processor)
 				MCommand spyCmd = null;
-				for (MCommand cmd : appli.getCommands())
-				{
-					if (SpyProcessor.SPY_COMMAND.equals(cmd.getElementId()))
-					{
+				for (MCommand cmd : appli.getCommands()) {
+					if (SpyProcessor.SPY_COMMAND.equals(cmd.getElementId())) {
 						// Do nothing if command exists
 						spyCmd = cmd;
 						break;
@@ -135,8 +127,8 @@ public class SpyHandler
 				MParameter p = modelService.createModelElement(MParameter.class);
 				p.setName(SpyProcessor.SPY_COMMAND_PARAM);
 				p.setValue(mp.getElementId());
-				toolItem.getParameters().add(p);				
-				
+				toolItem.getParameters().add(p);
+
 			}
 		}
 
