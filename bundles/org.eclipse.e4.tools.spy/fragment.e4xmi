@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_Yv7zwLnQEeWXX4KE4W3FyQ">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_ZeXAALnQEeWXX4KE4W3FyQ" featurename="menuContributions" parentElementId="xpath:/" positionInList="">
+    <elements xsi:type="menu:MenuContribution" xmi:id="_br97sLn_EeWJoqtWvx7b2g" elementId="org.eclipse.e4.tools.spy.menucontribution.0" positionInParent="after=additions" parentId="org.eclipse.ui.main.menu">
+      <children xsi:type="menu:Menu" xmi:id="_fUHHELn_EeWJoqtWvx7b2g" elementId="window" label="Window"/>
+    </elements>
+    <elements xsi:type="menu:MenuContribution" xmi:id="_dFxLkLnQEeWXX4KE4W3FyQ" elementId="org.eclipse.e4.tools.spy.menucontribution" positionInParent="after=additions" parentId="window">
+      <children xsi:type="menu:MenuSeparator" xmi:id="_Xncg4LoAEeWJoqtWvx7b2g" elementId="org.eclipse.e4.tools.spy.menuseparator.0"/>
+      <children xsi:type="menu:Menu" xmi:id="_9DJHILnQEeWXX4KE4W3FyQ" elementId="org.eclipse.e4.tools.spy.menu.e4spies" label="Spies" tooltip="">
+        <children xsi:type="menu:DynamicMenuContribution" xmi:id="_iCu00LnQEeWXX4KE4W3FyQ" elementId="org.eclipse.e4.tools.spy.dynamicmenucontribution.0" label="E4 Spies" contributionURI="bundleclass://org.eclipse.e4.tools.spy/org.eclipse.e4.tools.spy.SpyProcessor"/>
+      </children>
+    </elements>
+  </fragments>
+</fragment:ModelFragments>

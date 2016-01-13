@@ -8,6 +8,10 @@
             beforefragment="false"
             class="org.eclipse.e4.tools.spy.SpyProcessor">
       </processor>
+      <fragment
+            apply="initial"
+            uri="fragment.e4xmi">
+      </fragment>
    </extension>
   
 

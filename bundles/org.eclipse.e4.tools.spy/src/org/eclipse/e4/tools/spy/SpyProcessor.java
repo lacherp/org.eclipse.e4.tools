@@ -8,6 +8,7 @@
  * Contributors:
  *     Olivier Prouvost <olivier.prouvost@opcoach.com> - initial API and implementation
  *     Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 428903 - Having a common 'debug' window for all spies
+ *     Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 482250 - Add a menu 'E4 Spies' to access to the spies
  *******************************************************************************/
 package org.eclipse.e4.tools.spy;
 
@@ -21,6 +22,7 @@ import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.di.AboutToShow;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
@@ -30,6 +32,8 @@ import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
@@ -77,7 +81,7 @@ public class SpyProcessor {
 				bindSpyKeyBinding(shortCut, command, partID);
 
 				// Add the descriptor in application
-				addSpyPartDescriptor(partID, partName, iconPath, partClass);
+				addSpyPartDescriptor(partID, partName, iconPath, partClass, desc);
 
 			} catch (InvalidRegistryObjectException e1) {
 				e1.printStackTrace();
@@ -85,8 +89,6 @@ public class SpyProcessor {
 				log.error("The class '" + partID + "' can not be instantiated. Check name or launch config");
 				e1.printStackTrace();
 			}
-
-			// Can create the command in model
 
 		}
 
@@ -231,7 +233,8 @@ public class SpyProcessor {
 
 	}
 
-	public void addSpyPartDescriptor(String partId, String partLabel, String iconPath, Class<?> spyPartClass) {
+	public void addSpyPartDescriptor(String partId, String partLabel, String iconPath, Class<?> spyPartClass,
+			String desc) {
 		for (MPartDescriptor mp : application.getDescriptors()) {
 			if (partId.equals(mp.getElementId())) {
 				// Already added, do nothing
@@ -243,6 +246,7 @@ public class SpyProcessor {
 		MPartDescriptor descriptor = modelService.createModelElement(MPartDescriptor.class);
 		descriptor.setCategory("Eclipse runtime spies");
 		descriptor.setElementId(partId);
+		descriptor.setDescription(desc);
 		descriptor.getTags().add("View");
 		descriptor.getTags().add(SPY_TAG);
 		descriptor.getTags().add("categoryTag:Eclipse runtime spies");
@@ -255,6 +259,29 @@ public class SpyProcessor {
 		descriptor.setContributorURI(contributorURI);
 		descriptor.setIconURI(contributorURI + "/" + iconPath);
 		application.getDescriptors().add(descriptor);
+	}
+
+
+	@AboutToShow
+	public void fillE4SpyMenu(List<MMenuElement> items) {
+
+		MCommand command = getOrCreateSpyCommand();
+		for (MPartDescriptor mp : application.getDescriptors()) {
+			if (mp.getTags().contains(SPY_TAG)) {
+				MHandledMenuItem hi = modelService.createModelElement(MHandledMenuItem.class);
+				hi.setCommand(command);
+				hi.setLabel(mp.getLabel());
+				hi.setContributorURI(mp.getContributorURI());
+				hi.setIconURI(mp.getIconURI());
+				hi.setTooltip(mp.getDescription());
+
+				MParameter p = modelService.createModelElement(MParameter.class);
+				p.setName(SPY_COMMAND_PARAM);
+				p.setValue(mp.getElementId());
+				hi.getParameters().add(p);
+				items.add(hi);
+			}
+		}
 
 	}
 }
