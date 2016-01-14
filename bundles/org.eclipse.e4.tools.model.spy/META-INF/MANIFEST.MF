@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
-Bundle-SymbolicName: org.eclipse.e4.tools.emf.liveeditor;singleton:=true
+Bundle-SymbolicName: org.eclipse.e4.tools.model.spy;singleton:=true
 Bundle-Version: 0.12.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.e4.ui.services;bundle-version="0.9.1",
@@ -23,4 +23,4 @@ Bundle-Vendor: %Bundle-Vendor
 Service-Component: OSGI-INF/extensionlookup.xml
 Bundle-ActivationPolicy: lazy
 Import-Package: javax.inject;version="1.0.0"
-Export-Package: org.eclipse.e4.tools.emf.liveeditor;x-internal:=true
+Export-Package: org.eclipse.e4.tools.model.spy;x-internal:=true

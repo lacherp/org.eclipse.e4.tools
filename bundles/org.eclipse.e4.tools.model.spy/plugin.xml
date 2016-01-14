@@ -4,10 +4,10 @@
    <extension
          point="org.eclipse.e4.tools.spy.spyPart">
       <spyPart
-            description="Open the live model editor"
+            description="Open the live model spy"
             icon="icons/full/obj16/application_lightning.png"
             name="Model Spy"
-            part="org.eclipse.e4.tools.emf.liveeditor.LivePartDelegator"
+            part="org.eclipse.e4.tools.model.spy.ModelSpyPart"
             shortcut="M2+M3+F9">
       </spyPart>
    </extension>

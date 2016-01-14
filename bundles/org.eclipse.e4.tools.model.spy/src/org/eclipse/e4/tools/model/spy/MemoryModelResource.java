@@ -8,7 +8,7 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  ******************************************************************************/
-package org.eclipse.e4.tools.emf.liveeditor;
+package org.eclipse.e4.tools.model.spy;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;

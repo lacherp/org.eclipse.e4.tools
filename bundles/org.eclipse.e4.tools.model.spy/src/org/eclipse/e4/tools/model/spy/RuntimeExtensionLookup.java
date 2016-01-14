@@ -1,4 +1,4 @@
-package org.eclipse.e4.tools.emf.liveeditor;
+package org.eclipse.e4.tools.model.spy;
 
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionRegistry;

@@ -8,7 +8,7 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  ******************************************************************************/
-package org.eclipse.e4.tools.emf.liveeditor;
+package org.eclipse.e4.tools.model.spy;
 
 import javax.inject.Inject;
 
@@ -19,12 +19,12 @@ import org.eclipse.e4.tools.emf.ui.internal.wbm.ApplicationModelEditor;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.MApplication;
 
-public class LivePartDelegator {
+public class ModelSpyPart {
 	private ApplicationModelEditor instance;
 	private IEclipseContext childContext;
 
 	@Inject
-	public LivePartDelegator(IEclipseContext context, MApplication application) {
+	public ModelSpyPart(IEclipseContext context, MApplication application) {
 		childContext = context.createChild("EditorContext");
 		MemoryModelResource resource = new MemoryModelResource(application);
 		childContext.set(IModelResource.class, resource);

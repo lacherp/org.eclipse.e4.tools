@@ -1,4 +1,4 @@
-org.eclipse.e4.tools.emf.liveeditor
+org.eclipse.e4.tools.model.spy
 ===================================
 
 Registers the e4 application model editor via a processor. See the ModelProcessor class.
