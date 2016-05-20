@@ -37,6 +37,7 @@ public class SpyHandler {
 	private static final int DEFAULT_SPY_WINDOW_WIDTH = 1000;
 	private static final String E4_SPIES_WINDOW_LABEL = "E4 Spies window";
 	private static final String E4_SPIES_WINDOW = "org.eclipse.e4.tools.spy.window";
+	private static final String E4_SPIES_ICON = "platform:/plugin/org.eclipse.e4.tools.spy/icons/spyicon.png";
 	private static final String E4_SPIES_TRIMBAR = "org.eclipse.e4.tools.spy.trimbar";
 	private static final String E4_SPIES_TOOLBAR = "org.eclipse.e4.tools.spy.toolbar";
 	private static final String E4_SPIES_PART_STACK = "org.eclipse.e4.tools.spy.partStack";
@@ -89,6 +90,7 @@ public class SpyHandler {
 		MTrimmedWindow tw = modelService.createModelElement(MTrimmedWindow.class);
 		tw.setElementId(E4_SPIES_WINDOW);
 		tw.setLabel(E4_SPIES_WINDOW_LABEL);
+		tw.setIconURI(E4_SPIES_ICON);
 		tw.setContributorURI(contributorURI);
 
 		MTrimBar trimBar = modelService.createModelElement(MTrimBar.class);

@@ -6,7 +6,7 @@
     </elements>
     <elements xsi:type="menu:MenuContribution" xmi:id="_dFxLkLnQEeWXX4KE4W3FyQ" elementId="org.eclipse.e4.tools.spy.menucontribution" positionInParent="after=additions" parentId="window">
       <children xsi:type="menu:MenuSeparator" xmi:id="_Xncg4LoAEeWJoqtWvx7b2g" elementId="org.eclipse.e4.tools.spy.menuseparator.0"/>
-      <children xsi:type="menu:Menu" xmi:id="_9DJHILnQEeWXX4KE4W3FyQ" elementId="org.eclipse.e4.tools.spy.menu.e4spies" label="Spies" tooltip="">
+      <children xsi:type="menu:Menu" xmi:id="_9DJHILnQEeWXX4KE4W3FyQ" elementId="org.eclipse.e4.tools.spy.menu.e4spies" label="Spies" iconURI="platform:/plugin/org.eclipse.e4.tools.spy/icons/spyicon.png" tooltip="">
         <children xsi:type="menu:DynamicMenuContribution" xmi:id="_iCu00LnQEeWXX4KE4W3FyQ" elementId="org.eclipse.e4.tools.spy.dynamicmenucontribution.0" label="E4 Spies" contributionURI="bundleclass://org.eclipse.e4.tools.spy/org.eclipse.e4.tools.spy.SpyProcessor"/>
       </children>
     </elements>
