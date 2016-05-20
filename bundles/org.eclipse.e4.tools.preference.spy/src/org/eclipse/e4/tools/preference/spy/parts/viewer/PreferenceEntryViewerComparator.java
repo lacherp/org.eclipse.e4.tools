@@ -21,7 +21,7 @@ public class PreferenceEntryViewerComparator extends ViewerComparator {
 	public PreferenceEntryViewerComparator() {
 	}
 
-	public PreferenceEntryViewerComparator(Comparator<?> comparator) {
+	public PreferenceEntryViewerComparator(Comparator<? super String> comparator) {
 		super(comparator);
 	}
 

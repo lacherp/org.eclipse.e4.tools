@@ -16,6 +16,14 @@
             name="Preference Spy">
       </page>
    </extension>
+   <extension
+         point="org.eclipse.e4.tools.spy.spyPart">
+      <spyPart
+            name="Preference Spy"
+            part="org.eclipse.e4.tools.preference.spy.parts.PreferenceSpyPart"
+            shortcut="M2+M3+F11">
+      </spyPart>
+   </extension>
    <!--extension
          point="org.eclipse.e4.tools.spy.spyPart">
       <spyPart
