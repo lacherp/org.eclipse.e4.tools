@@ -19,6 +19,8 @@
    <extension
          point="org.eclipse.e4.tools.spy.spyPart">
       <spyPart
+            description="Spy to display preferences"
+            icon="icons/preference_spy.png"
             name="Preference Spy"
             part="org.eclipse.e4.tools.preference.spy.parts.PreferenceSpyPart"
             shortcut="M2+M3+F11">
