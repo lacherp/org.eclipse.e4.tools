@@ -5,13 +5,13 @@
          point="org.eclipse.e4.tools.spy.spyPart">
       <spyPart
             description="Open Css Spy"
-            icon="icons/cssspy.gif"
+            icon="icons/cssspy.png"
             name="CSS Spy"
             part="org.eclipse.e4.tools.css.spy.CssSpyPart"
             shortcut="M2+M3+F5"></spyPart>
       <spyPart
             description="Open Css Scratch Pad"
-            icon="icons/css_scratchpad.gif"
+            icon="icons/css_scratchpad.png"
             name="CSS Scratch pad"
             part="org.eclipse.e4.tools.css.spy.CSSScratchPadPart"
             shortcut="M2+M3+F6">

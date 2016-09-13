@@ -5,7 +5,7 @@
          point="org.eclipse.e4.tools.spy.spyPart">
       <spyPart
             description="Open the Event Spy"
-            icon="icons/eventspy.gif"
+            icon="icons/eventspy.png"
             name="Event Spy"
             part="org.eclipse.e4.tools.event.spy.internal.ui.EventSpyPart"
             shortcut="M2+M3+F8">

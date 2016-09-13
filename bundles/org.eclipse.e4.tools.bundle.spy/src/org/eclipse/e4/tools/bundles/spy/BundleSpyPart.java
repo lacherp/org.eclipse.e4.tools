@@ -58,15 +58,15 @@ import org.osgi.framework.FrameworkUtil;
  */
 public class BundleSpyPart {
 
-	private static final String ICON_REFRESH = "icons/refresh.gif";
-	public static final String ICON_STATE_ACTIVE = "icons/state_active.gif";
-	public static final String ICON_STATE_STARTING = "icons/state_starting.gif";
-	public static final String ICON_STATE_STOPPING = "icons/state_stopping.gif";
-	public static final String ICON_STATE_RESOLVED = "icons/state_resolved.gif";
-	public static final String ICON_STATE_INSTALLED = "icons/state_installed.gif";
-	public static final String ICON_STATE_UNINSTALLED = "icons/state_uninstalled.gif";
-	public static final String ICON_START = "icons/start.gif";
-	public static final String ICON_STOP = "icons/stop.gif";
+	private static final String ICON_REFRESH = "icons/refresh.png";
+	public static final String ICON_STATE_ACTIVE = "icons/state_active.png";
+	public static final String ICON_STATE_STARTING = "icons/state_starting.png";
+	public static final String ICON_STATE_STOPPING = "icons/state_stopping.png";
+	public static final String ICON_STATE_RESOLVED = "icons/state_resolved.png";
+	public static final String ICON_STATE_INSTALLED = "icons/state_installed.png";
+	public static final String ICON_STATE_UNINSTALLED = "icons/state_uninstalled.png";
+	public static final String ICON_START = "icons/start.png";
+	public static final String ICON_STOP = "icons/stop.png";
 
 	private TableViewer bundlesTableViewer;
 
