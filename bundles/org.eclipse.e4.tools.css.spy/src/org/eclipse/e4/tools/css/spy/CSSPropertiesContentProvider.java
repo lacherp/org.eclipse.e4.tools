@@ -45,7 +45,7 @@ public class CSSPropertiesContentProvider implements IStructuredContentProvider 
 	@Override
 	public Object[] getElements(Object inputElement) {
 		Collection<String> propertyNames = cssEngine.getCSSProperties(input);
-		List<CSSPropertyProvider> properties = new ArrayList<CSSPropertyProvider>(propertyNames.size());
+		List<CSSPropertyProvider> properties = new ArrayList<>(propertyNames.size());
 		for (String propertyName : propertyNames) {
 			properties.add(new CSSPropertyProvider(propertyName, input, cssEngine));
 		}

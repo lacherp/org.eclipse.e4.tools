@@ -153,8 +153,8 @@ public class CssSpyPart {
 	private TableViewer cssPropertiesViewer;
 	private Text cssRules;
 
-	private List<Shell> highlights = new LinkedList<Shell>();
-	private List<Region> highlightRegions = new LinkedList<Region>();
+	private List<Shell> highlights = new LinkedList<>();
+	private List<Region> highlightRegions = new LinkedList<>();
 	private Text cssSearchBox;
 	private Button showUnsetProperties;
 	private Button showCssFragment;
@@ -807,7 +807,7 @@ public class CssSpyPart {
 		// we first check the viewCSS and then the property values
 		CSSStyleDeclaration decl = engine.getViewCSS().getComputedStyle(element, null);
 
-		List<String> propertyNames = new ArrayList<String>(engine.getCSSProperties(element));
+		List<String> propertyNames = new ArrayList<>(engine.getCSSProperties(element));
 		Collections.sort(propertyNames);
 
 		int count = 0;
@@ -873,7 +873,7 @@ public class CssSpyPart {
 	}
 
 	protected void performCSSSearch(IProgressMonitor progress) {
-		List<Widget> widgets = new ArrayList<Widget>();
+		List<Widget> widgets = new ArrayList<>();
 		performCSSSearch(progress, cssSearchBox.getText(), widgets);
 		if (!progress.isCanceled()) {
 			revealAndSelect(widgets);

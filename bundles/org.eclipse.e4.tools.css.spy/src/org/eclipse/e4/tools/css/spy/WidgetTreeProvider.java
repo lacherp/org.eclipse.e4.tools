@@ -44,7 +44,7 @@ public class WidgetTreeProvider implements ITreeContentProvider {
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof Display) {
-			List<Shell> shells = new ArrayList<Shell>();
+			List<Shell> shells = new ArrayList<>();
 			for (Shell s : ((Display) parentElement).getShells()) {
 				if (!s.isDisposed()) {
 					shells.add(s);
@@ -57,7 +57,7 @@ public class WidgetTreeProvider implements ITreeContentProvider {
 			return EMPTY_ARRAY;
 		}
 		NodeList kids = element.getChildNodes();
-		ArrayList<Object> children = new ArrayList<Object>(kids.getLength());
+		ArrayList<Object> children = new ArrayList<>(kids.getLength());
 		for (int i = 0; i < kids.getLength(); i++) {
 			children.add(((CSSStylableElement) kids.item(i)).getNativeWidget());
 		}

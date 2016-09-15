@@ -58,7 +58,7 @@ public class CSSScratchPadPart {
 	/**
 	 * Collection of buttons created by the <code>createButton</code> method.
 	 */
-	private HashMap<Integer, Button> buttons = new HashMap<Integer, Button>();
+	private HashMap<Integer, Button> buttons = new HashMap<>();
 
 	private Text cssText;
 	private Text exceptions;
@@ -145,7 +145,7 @@ public class CSSScratchPadPart {
 			}
 			sb.append("Engine[").append(engine.getClass().getSimpleName()).append("]");
 			ExtendedDocumentCSS doc = (ExtendedDocumentCSS) engine.getDocumentCSS();
-			List<StyleSheet> sheets = new ArrayList<StyleSheet>();
+			List<StyleSheet> sheets = new ArrayList<>();
 			StyleSheetList list = doc.getStyleSheets();
 			for (int i = 0; i < list.getLength(); i++) {
 				sheets.add(list.item(i));
