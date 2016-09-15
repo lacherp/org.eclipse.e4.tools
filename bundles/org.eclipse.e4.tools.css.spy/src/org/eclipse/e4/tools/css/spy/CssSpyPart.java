@@ -298,6 +298,11 @@ public class CssSpyPart {
 			Activator.join(sb, element.getCSSClass().split(" +"), "\n  ");
 		}
 
+		if (element.getCSSId() != null) {
+			sb.append("\n\nCSS ID:\n  ");
+			Activator.join(sb, element.getCSSId().split(" +"), "\n  ");
+		}
+
 		if (element.getAttribute("style") != null) {
 			sb.append("\n\nSWT Style Bits:\n  ");
 			Activator.join(sb, element.getAttribute("style").split(" +"), "\n  ");
