@@ -720,20 +720,6 @@ public class CssSpyPart {
 			}
 		});
 
-		/*
-		 * if ((specimen != null) && !specimen.isDisposed()) { // Reopen this
-		 * part from a toolbar and widget always displayed. update(); } else {
-		 * if ((specimen != null) && !specimen.isDisposed()) { // Reopen this
-		 * part from a toolbar and widget always displayed. update(); } else {
-		 * // Must set a specimen from application. Control control =
-		 * display.getCursorControl(); // it may be that only the shell was
-		 * selected if (control == null) { control = display.getActiveShell();
-		 * if (control.getParent() != null) { // Take the main shell of this
-		 * window (spy window) control = control.getParent(); } }
-		 * setSpecimen(control); } }
-		 */
-
-		// update(); (called twice)
 		sashForm.setWeights(new int[] { 50, 50 });
 		widgetTreeViewer.getControl().setFocus();
 
