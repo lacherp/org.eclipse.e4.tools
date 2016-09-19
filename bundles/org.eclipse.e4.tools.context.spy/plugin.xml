@@ -3,7 +3,7 @@
    <extension point="org.eclipse.e4.tools.spy.spyPart">
       <spyPart
             description="Context Spy to understand what is behind the scene of injection"
-            icon="icons/annotation_obj.gif"
+            icon="icons/annotation_obj.png"
             name="Context spy"
             part="org.eclipse.e4.tools.context.spy.ContextSpyPart"
             shortcut="M2+M3+F10">

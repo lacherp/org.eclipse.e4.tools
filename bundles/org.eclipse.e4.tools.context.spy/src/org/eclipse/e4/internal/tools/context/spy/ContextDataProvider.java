@@ -58,13 +58,13 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 	private static final String INJECTED_IN_METHOD = "Injected in method :";
 
 	// Image keys constants
-	private static final String PUBLIC_METHOD_IMG_KEY = "icons/methpub_obj.gif";
-	private static final String PUBLIC_FIELD_IMG_KEY = "icons/field_public_obj.gif";
-	private static final String VALUE_IN_CONTEXT_IMG_KEY = "icons/valueincontext.gif";
-	private static final String INHERITED_VARIABLE_IMG_KEY = "icons/inher_co.gif";
+	private static final String PUBLIC_METHOD_IMG_KEY = "icons/methpub_obj.png";
+	private static final String PUBLIC_FIELD_IMG_KEY = "icons/field_public_obj.png";
+	private static final String VALUE_IN_CONTEXT_IMG_KEY = "icons/valueincontext.png";
+	private static final String INHERITED_VARIABLE_IMG_KEY = "icons/inher_co.png";
 	private static final String LOCAL_VARIABLE_IMG_KEY = "icons/letter-l-icon.png";
-	private static final String CONTEXT_FUNCTION_IMG_KEY = "icons/contextfunction.gif";
-	private static final String INJECT_IMG_KEY = "icons/annotation_obj.gif";
+	private static final String CONTEXT_FUNCTION_IMG_KEY = "icons/contextfunction.png";
+	private static final String INJECT_IMG_KEY = "icons/annotation_obj.png";
 
 	private ImageRegistry imgReg;
 
@@ -259,7 +259,7 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 					+ "Expand nodes to see where values are injected or updated";
 		} else if (isAContextKeyFunction(element)) {
 			String key = (String) ((Map.Entry<?, ?>) element).getKey();
-			String fname = (String) selectedContext.localContextFunction().get(key).getClass().getCanonicalName();
+			String fname = selectedContext.localContextFunction().get(key).getClass().getCanonicalName();
 
 			return "This value is created by the Context Function : " + fname;
 		} else {
