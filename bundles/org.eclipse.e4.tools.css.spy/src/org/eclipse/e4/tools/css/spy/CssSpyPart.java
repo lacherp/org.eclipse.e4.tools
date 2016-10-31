@@ -26,7 +26,7 @@ import javax.inject.Named;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
@@ -877,8 +877,12 @@ public class CssSpyPart {
 		}
 		widgetTreeViewer.collapseAll();
 		Object[] roots = widgetTreeProvider.getElements(widgetTreeViewer.getInput());
-		SubMonitor subMonitor = SubMonitor.convert(monitor, "Searching for \"" + text + "\"", roots.length * 10);
+		monitor.beginTask("Searching for \"" + text + "\"", roots.length * 10);
 		for (Object root : roots) {
+			if (monitor.isCanceled()) {
+				return;
+			}
+
 			CSSStylableElement element = getCSSElement(root);
 			if (element == null) {
 				continue;
@@ -887,20 +891,24 @@ public class CssSpyPart {
 			CSSEngine engine = getCSSEngine(root);
 			try {
 				SelectorList selectors = engine.parseSelectors(text);
-				subMonitor.split(2);
-				processCSSSearch(subMonitor.split(8), engine, selectors, element, null, results);
+				monitor.worked(2);
+				processCSSSearch(new SubProgressMonitor(monitor, 8), engine, selectors, element, null, results);
 			} catch (CSSParseException e) {
 				System.out.println(e.toString());
 			} catch (IOException e) {
 				System.out.println(e.toString());
 			}
 		}
+		monitor.done();
 	}
 
 	private void processCSSSearch(IProgressMonitor monitor, CSSEngine engine, SelectorList selectors,
 			CSSStylableElement element, String pseudo, Collection<Widget> results) {
+		if (monitor.isCanceled()) {
+			return;
+		}
 		NodeList children = element.getChildNodes();
-		SubMonitor subMonitor = SubMonitor.convert(monitor, "Searching", 5 + 5 * children.getLength());
+		monitor.beginTask("Searching", 5 + 5 * children.getLength());
 		boolean matched = false;
 		for (int i = 0; i < selectors.getLength(); i++) {
 			if (matched = engine.matches(selectors.item(i), element, pseudo)) {
@@ -910,11 +918,15 @@ public class CssSpyPart {
 		if (matched) {
 			results.add((Widget) element.getNativeWidget());
 		}
-		subMonitor.split(5);
+		monitor.worked(5);
 		for (int i = 0; i < children.getLength(); i++) {
-			processCSSSearch(subMonitor.split(5), engine, selectors,
+			if (monitor.isCanceled()) {
+				return;
+			}
+			processCSSSearch(new SubProgressMonitor(monitor, 5), engine, selectors,
 					(CSSStylableElement) children.item(i), pseudo, results);
 		}
+		monitor.done();
 	}
 
 	protected void dispose() {
