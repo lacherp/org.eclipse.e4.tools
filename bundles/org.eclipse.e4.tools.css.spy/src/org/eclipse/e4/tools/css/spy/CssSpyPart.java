@@ -265,7 +265,7 @@ public class CssSpyPart {
 
 		if (element.getCSSStyle() != null) {
 			sb.append("\nCSS Inline Style(s):\n  ");
-			Activator.join(sb, element.getCSSStyle().split(";"), ";\n  ");
+			Util.join(sb, element.getCSSStyle().split(";"), ";\n  ");
 		}
 
 		if (decl != null) {
@@ -280,22 +280,22 @@ public class CssSpyPart {
 		}
 		if (element.getStaticPseudoInstances().length > 0) {
 			sb.append("\n\nStatic Pseudoinstances:\n  ");
-			Activator.join(sb, element.getStaticPseudoInstances(), "\n  ");
+			Util.join(sb, element.getStaticPseudoInstances(), "\n  ");
 		}
 
 		if (element.getCSSClass() != null) {
 			sb.append("\n\nCSS Classes:\n  ");
-			Activator.join(sb, element.getCSSClass().split(" +"), "\n  ");
+			Util.join(sb, element.getCSSClass().split(" +"), "\n  ");
 		}
 
 		if (element.getCSSId() != null) {
 			sb.append("\n\nCSS ID:\n  ");
-			Activator.join(sb, element.getCSSId().split(" +"), "\n  ");
+			Util.join(sb, element.getCSSId().split(" +"), "\n  ");
 		}
 
 		if (element.getAttribute("style") != null) {
 			sb.append("\n\nSWT Style Bits:\n  ");
-			Activator.join(sb, element.getAttribute("style").split(" +"), "\n  ");
+			Util.join(sb, element.getAttribute("style").split(" +"), "\n  ");
 		}
 
 		sb.append("\n\nCSS Class Element:\n  ").append(element.getClass().getName());
@@ -483,7 +483,7 @@ public class CssSpyPart {
 				sb.append(element.getLocalName()).append(" (").append(element.getNamespaceURI()).append(")");
 				if (element.getCSSClass() != null) {
 					sb.append("\nClasses:\n  ");
-					Activator.join(sb, element.getCSSClass().split(" +"), "\n  ");
+					Util.join(sb, element.getCSSClass().split(" +"), "\n  ");
 				}
 				return sb.toString();
 			}

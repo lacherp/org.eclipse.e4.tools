@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Manumitting Technologies, Inc.
+ * Copyright (c) 2011, 2016 Manumitting Technologies, Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,31 +7,11 @@
  *
  * Contributors:
  *     Brian de Alwis (MT) - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 509506
  *******************************************************************************/
 package org.eclipse.e4.tools.css.spy;
 
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
-
-public class Activator implements BundleActivator {
-
-	private static BundleContext context;
-
-	@Override
-	public void start(BundleContext bundleContext) throws Exception {
-		Activator.context = bundleContext;
-	}
-
-	@Override
-	public void stop(BundleContext bundleContext) throws Exception {
-		Activator.context = null;
-	}
-
-	public static String join(String[] elements, String glue) {
-		StringBuilder sb = new StringBuilder();
-		join(sb, elements, glue);
-		return sb.toString();
-	}
+public class Util {
 
 	public static void join(StringBuilder sb, String[] elements, String glue) {
 		for (int i = 0; i < elements.length; i++) {
@@ -41,5 +21,4 @@ public class Activator implements BundleActivator {
 			}
 		}
 	}
-
 }
