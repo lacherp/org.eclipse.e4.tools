@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -26,10 +25,6 @@ import org.w3c.dom.NodeList;
 
 public class WidgetTreeProvider implements ITreeContentProvider {
 	private static final Object[] EMPTY_ARRAY = new Object[0];
-
-	@Override
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-	}
 
 	@Override
 	public Object[] getElements(Object inputElement) {
@@ -80,10 +75,6 @@ public class WidgetTreeProvider implements ITreeContentProvider {
 	@Override
 	public boolean hasChildren(Object element) {
 		return getChildren(element).length > 0;
-	}
-
-	@Override
-	public void dispose() {
 	}
 
 }
