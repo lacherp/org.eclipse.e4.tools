@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Manumitting Technologies, Inc.
+ * Copyright (c) 2011, 2016 Manumitting Technologies, Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,7 @@
  *
  * Contributors:
  *     Brian de Alwis (MT) - initial API and implementation
- *     Olivier Prouvost <olivier.prouvost@opcoach.com>
- *       - Fix bug 428903 : transform the 'old' dialog into a part to be defined with spyPart extension
+ *     Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 428903
  *******************************************************************************/
 package org.eclipse.e4.tools.css.spy;
 
@@ -65,16 +64,10 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Rectangle;
@@ -149,6 +142,7 @@ public class CssSpyPart {
 
 	private TreeViewer widgetTreeViewer;
 	private WidgetTreeProvider widgetTreeProvider;
+	private Button followSelection;
 	private Button showAllShells;
 	private TableViewer cssPropertiesViewer;
 	private Text cssRules;
@@ -194,10 +188,6 @@ public class CssSpyPart {
 			return specimen;
 		}
 		return display.getCursorControl();
-	}
-
-	protected boolean shouldDismissOnLostFocus() {
-		return false;
 	}
 
 	protected void update() {
@@ -427,15 +417,21 @@ public class CssSpyPart {
 		outer.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Composite top = new Composite(outer, SWT.NONE);
-		GridLayoutFactory.swtDefaults().numColumns(2).applyTo(top);
+		GridLayoutFactory.swtDefaults().numColumns(3).applyTo(top);
 		cssSearchBox = new Text(top, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH | SWT.ICON_CANCEL);
 		cssSearchBox.setMessage("CSS Selector");
 		cssSearchBox.setToolTipText("Highlight matching widgets");
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(cssSearchBox);
 
+		followSelection = new Button(top, SWT.CHECK);
+		followSelection.setSelection(true);
+		followSelection.setText("Follow UI Selection");
+		GridDataFactory.swtDefaults().applyTo(followSelection);
+
 		showAllShells = new Button(top, SWT.CHECK);
 		showAllShells.setText("All shells");
 		GridDataFactory.swtDefaults().applyTo(showAllShells);
+
 		GridDataFactory.fillDefaults().applyTo(top);
 
 		SashForm sashForm = new SashForm(outer, SWT.VERTICAL);
@@ -663,30 +659,14 @@ public class CssSpyPart {
 			}
 		});
 		if (isLive()) {
-			container.addMouseMoveListener(new MouseMoveListener() {
-				@Override
-				public void mouseMove(MouseEvent e) {
+			container.addMouseMoveListener(e -> {
+				if (followSelection.getSelection()) {
 					update();
 				}
-			});
+			}
+			);
 		}
 
-		if (shouldDismissOnLostFocus()) {
-			container.addFocusListener(new FocusAdapter() {
-				@Override
-				public void focusLost(FocusEvent e) {
-					// setReturnCode(Window.OK);
-					// close();
-				}
-			});
-		}
-		/*
-		 * container.addKeyListener(new KeyAdapter() {
-		 *
-		 * @Override public void keyPressed(KeyEvent e) { if (e.character ==
-		 * SWT.ESC) { cancelPressed(); } else if (e.character == SWT.CR |
-		 * e.character == SWT.LF) { okPressed(); } } });
-		 */
 		showAllShells.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -694,12 +674,7 @@ public class CssSpyPart {
 			}
 		});
 
-		outer.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				dispose();
-			}
-		});
+		outer.addDisposeListener(e -> dispose());
 
 		showUnsetProperties.setSelection(true);
 		showUnsetProperties.addSelectionListener(new SelectionAdapter() {
@@ -737,6 +712,9 @@ public class CssSpyPart {
 	@Inject
 	protected void reactOnActivate(@Named(IServiceConstants.ACTIVE_PART) MPart p, MPart cssPart,
 			@Named(IServiceConstants.ACTIVE_SHELL) Shell s) {
+		if (followSelection == null || !followSelection.getSelection()) {
+			return;
+		}
 		if (outer == null) {
 			// Do nothing if no UI created.
 			return;
