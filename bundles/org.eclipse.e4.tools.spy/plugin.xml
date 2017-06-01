@@ -9,7 +9,7 @@
             class="org.eclipse.e4.tools.spy.SpyProcessor">
       </processor>
       <fragment
-            apply="initial"
+            apply="notexists"
             uri="fragment.e4xmi">
       </fragment>
    </extension>
