@@ -128,7 +128,7 @@ public class ContextSpyPart {
 
 		});
 
-		filterText = new Text(comp, SWT.SEARCH | SWT.ICON_SEARCH);
+		filterText = new Text(comp, SWT.SEARCH | SWT.ICON_SEARCH | SWT.ICON_CANCEL);
 		GridDataFactory.fillDefaults().hint(200, SWT.DEFAULT).applyTo(filterText);
 		filterText.setMessage("Search data");
 		filterText.setToolTipText("Highlight the contexts where the contained objects contains this string pattern.\n"

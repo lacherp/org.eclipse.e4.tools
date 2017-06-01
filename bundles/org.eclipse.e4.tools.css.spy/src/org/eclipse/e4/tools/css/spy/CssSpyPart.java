@@ -418,7 +418,7 @@ public class CssSpyPart {
 
 		Composite top = new Composite(outer, SWT.NONE);
 		GridLayoutFactory.swtDefaults().numColumns(3).applyTo(top);
-		cssSearchBox = new Text(top, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH | SWT.ICON_CANCEL);
+		cssSearchBox = new Text(top, SWT.SEARCH | SWT.ICON_SEARCH | SWT.ICON_CANCEL);
 		cssSearchBox.setMessage("CSS Selector");
 		cssSearchBox.setToolTipText("Highlight matching widgets");
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(cssSearchBox);

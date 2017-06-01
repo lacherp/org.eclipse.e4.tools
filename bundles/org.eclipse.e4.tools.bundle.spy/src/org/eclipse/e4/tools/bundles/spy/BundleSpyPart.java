@@ -109,7 +109,7 @@ public class BundleSpyPart {
 			}
 		});
 
-		filterText = new Text(comp, SWT.SEARCH | SWT.ICON_SEARCH);
+		filterText = new Text(comp, SWT.SEARCH | SWT.ICON_SEARCH | SWT.ICON_CANCEL);
 		GridDataFactory.fillDefaults().hint(200, SWT.DEFAULT).applyTo(filterText);
 		filterText.setMessage("Search data");
 		filterText.setToolTipText(
