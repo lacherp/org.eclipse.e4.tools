@@ -9,12 +9,11 @@
  *     Olivier Prouvost <olivier.prouvost@opcoach.com> - initial API and implementation
  *     Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 428903 - Having a common 'debug' window for all spies
  *     Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 482250 - Add a menu 'E4 Spies' to access to the spies
+ *     Marco Descher <marco@descher.at> - Bug 519136
  *******************************************************************************/
 package org.eclipse.e4.tools.spy;
 
 import java.util.List;
-
-import javax.inject.Inject;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -48,21 +47,24 @@ public class SpyProcessor {
 	private static final String SPY_HANDLER = "org.eclipse.e4.tools.spy.handler";
 	private static final String E4_SPIES_BINDING_TABLE = "org.eclipse.e4.tools.spy.bindings";
 
-	@Inject
 	MApplication application;
-	@Inject
 	EModelService modelService;
-	@Inject
 	Logger log;
 
 	@Execute
-	public void process(IExtensionRegistry extRegistry) {
+	public void process(IExtensionRegistry extRegistry, MApplication application, EModelService modelService,
+			Logger log) {
 		// This processor will read all spy extensions and automatically create
 		// the command, handler and binding
 		// to open this spy in the dedicated spy window.
 
 		// First of all, it creates the spyCommand having one parameter (Id of
 		// the part to display) and default handler for this command.
+
+		this.application = application;
+		this.modelService = modelService;
+		this.log = log;
+
 		MCommand command = getOrCreateSpyCommand();
 
 		for (IConfigurationElement e : extRegistry.getConfigurationElementsFor("org.eclipse.e4.tools.spy.spyPart")) {
@@ -153,8 +155,9 @@ public class SpyProcessor {
 	 * This method will probably move to the common spy plugin providing common
 	 * spy stuff (see bug #428903)
 	 *
-	 * @param application
-	 * @return
+	 * @param keySequence
+	 * @param cmd
+	 * @param paramViewId
 	 */
 	public void bindSpyKeyBinding(String keySequence, MCommand cmd, String paramViewId) {
 		// This method must :
