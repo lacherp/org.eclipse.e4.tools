@@ -9,11 +9,14 @@
  *     Olivier Prouvost <olivier.prouvost@opcoach.com> - initial API and implementation
  *     Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 428903 - Having a common 'debug' window for all spies
  *     Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 482250 - Add a menu 'E4 Spies' to access to the spies
+ *     Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 528877 - NPE when using the windows Spies menu with version 0.18
  *     Marco Descher <marco@descher.at> - Bug 519136
  *******************************************************************************/
 package org.eclipse.e4.tools.spy;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -51,9 +54,15 @@ public class SpyProcessor {
 	EModelService modelService;
 	Logger log;
 
+	@Inject
+	public SpyProcessor(MApplication application, EModelService modelService, Logger log) {
+		this.application = application;
+		this.modelService = modelService;
+		this.log = log;
+	}
+
 	@Execute
-	public void process(IExtensionRegistry extRegistry, MApplication application, EModelService modelService,
-			Logger log) {
+	public void process(IExtensionRegistry extRegistry) {
 		// This processor will read all spy extensions and automatically create
 		// the command, handler and binding
 		// to open this spy in the dedicated spy window.
@@ -61,9 +70,7 @@ public class SpyProcessor {
 		// First of all, it creates the spyCommand having one parameter (Id of
 		// the part to display) and default handler for this command.
 
-		this.application = application;
-		this.modelService = modelService;
-		this.log = log;
+
 
 		MCommand command = getOrCreateSpyCommand();
 
@@ -147,13 +154,13 @@ public class SpyProcessor {
 	}
 
 	/**
-	 * Helper method to get or create the binding table for all spies (where
-	 * spies will add their key binding). Bind this table with the
+	 * Helper method to get or create the binding table for all spies (where spies
+	 * will add their key binding). Bind this table with the
 	 * org.eclipse.ui.contexts.dialogAndWindow binding context which should be
 	 * present (create it if not)
 	 *
-	 * This method will probably move to the common spy plugin providing common
-	 * spy stuff (see bug #428903)
+	 * This method will probably move to the common spy plugin providing common spy
+	 * stuff (see bug #428903)
 	 *
 	 * @param keySequence
 	 * @param cmd
@@ -263,7 +270,6 @@ public class SpyProcessor {
 		descriptor.setIconURI(contributorURI + "/" + iconPath);
 		application.getDescriptors().add(descriptor);
 	}
-
 
 	@AboutToShow
 	public void fillE4SpyMenu(List<MMenuElement> items) {
