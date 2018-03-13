@@ -29,6 +29,7 @@
 		<tycho.scmUrl>scm:git:http://git.eclipse.org/gitroot/e4/org.eclipse.e4.tools</tycho.scmUrl>
 	</properties>
 
+
  <repositories>
     <repository>
       <releases>
@@ -41,7 +42,17 @@
       <url>https://repo.eclipse.org/content/repositories/eclipse/</url>
     </repository>
   </repositories>
+  
+    <pluginRepositories>
+    <pluginRepository>
+      <id>repo.eclipse.org.cbi-releases</id>
+      <url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
+    </pluginRepository>
+  </pluginRepositories>
 
+	
+	
+  
    <modules>
     <module>./bundles/org.eclipse.e4.tools.model.spy</module>
     <module>./bundles/org.eclipse.e4.tools.css.spy</module>
@@ -82,5 +93,31 @@
 			</plugin>
 		</plugins>
 	</build>
+	
+	  <profiles>
+      <profile>
+        <id>sign</id>
+        <build>
+          <plugins>
+            <plugin>
+              <groupId>org.eclipse.cbi.maven.plugins</groupId>
+              <artifactId>eclipse-jarsigner-plugin</artifactId>
+              <version>1.1.4</version>
+              <executions>
+                <execution>
+                  <id>sign</id>
+                  <phase>verify</phase>
+                  <goals>
+                    <goal>sign</goal>
+                  </goals>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </build>
+      </profile>
+    </profiles>
+  
+  
 
 </project>
