@@ -21,6 +21,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
+import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
@@ -30,16 +31,9 @@ import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
-import org.osgi.framework.FrameworkUtil;
 
 public class SpyHandler {
-	private static final int DEFAULT_SPY_WINDOW_HEIGHT = 600;
-	private static final int DEFAULT_SPY_WINDOW_WIDTH = 1000;
-	private static final String E4_SPIES_WINDOW_LABEL = "E4 Spies window";
 	private static final String E4_SPIES_WINDOW = "org.eclipse.e4.tools.spy.window";
-	private static final String E4_SPIES_ICON = "platform:/plugin/org.eclipse.e4.tools.spy/icons/spyicon.png";
-	private static final String E4_SPIES_TRIMBAR = "org.eclipse.e4.tools.spy.trimbar";
-	private static final String E4_SPIES_TOOLBAR = "org.eclipse.e4.tools.spy.toolbar";
 	private static final String E4_SPIES_PART_STACK = "org.eclipse.e4.tools.spy.partStack";
 
 	/**
@@ -60,7 +54,8 @@ public class SpyHandler {
 	@Execute
 	public void run(EPartService ps, @Optional @Named(SpyProcessor.SPY_COMMAND_PARAM) String viewID, MApplication appli,
 			EModelService modelService) {
-		MWindow spyWindow = getOrCreateSpyWindow(appli, modelService);
+
+		MWindow spyWindow = prepareSpyWindow(appli, modelService);
 
 		MPartStack partStack = (MPartStack) modelService.find(E4_SPIES_PART_STACK, spyWindow);
 
@@ -79,46 +74,46 @@ public class SpyHandler {
 
 	}
 
-	private MWindow getOrCreateSpyWindow(MApplication appli, EModelService modelService) {
+	/**
+	 * Prepare the spy window : add the toolbar Item to be called for each spies
+	 * in the tool bar The structure is defined in the fragment.
+	 *
+	 * @param appli
+	 * @param modelService
+	 * @return the model Spies window found in fragment.
+	 */
+
+	private MWindow prepareSpyWindow(MApplication appli, EModelService modelService) {
+
+		// If window already in application, it is already prepared -> Return it
 		List<MWindow> existingWindow = modelService.findElements(appli, E4_SPIES_WINDOW, MWindow.class, null);
 		if (existingWindow.size() >= 1)
 			return existingWindow.get(0);
 
-		// Now spy window for the moment... add one...
-		String contributorURI = "platform:/plugin/" + FrameworkUtil.getBundle(getClass()).getSymbolicName();
+		// No spy window in main windows for the moment... extract the structure
+		// from the
+		// snippet.
+		MTrimmedWindow tw = (MTrimmedWindow) modelService.findSnippet(appli, E4_SPIES_WINDOW);
+		MTrimBar trimBar = tw.getTrimBars().stream().filter((t) -> t.getSide() == SideValue.TOP).findFirst().get();
+		MToolBar toolbar = (MToolBar) trimBar.getChildren().get(0);
 
-		MTrimmedWindow tw = modelService.createModelElement(MTrimmedWindow.class);
-		tw.setElementId(E4_SPIES_WINDOW);
-		tw.setLabel(E4_SPIES_WINDOW_LABEL);
-		tw.setIconURI(E4_SPIES_ICON);
-		tw.setContributorURI(contributorURI);
-
-		MTrimBar trimBar = modelService.createModelElement(MTrimBar.class);
-		trimBar.setElementId(E4_SPIES_TRIMBAR);
-		trimBar.setContributorURI(contributorURI);
-		tw.getTrimBars().add(trimBar);
-
-		MToolBar toolbar = modelService.createModelElement(MToolBar.class);
-		toolbar.setElementId(E4_SPIES_TOOLBAR);
-		toolbar.setContributorURI(contributorURI);
-		trimBar.getChildren().add(toolbar);
+		// Get the spy command (added by fragment)
+		MCommand spyCmd = null;
+		for (MCommand cmd : appli.getCommands()) {
+			if (SpyProcessor.SPY_COMMAND.equals(cmd.getElementId())) {
+				// Do nothing if command exists
+				spyCmd = cmd;
+				break;
+			}
+		}
 
 		// Create one toolbar element for each 'spy' tagged descriptor
 		for (MPartDescriptor mp : appli.getDescriptors()) {
 			if (mp.getTags().contains(SpyProcessor.SPY_TAG)) {
 				// Create a toolitem bound to the command.
 				MHandledToolItem toolItem = modelService.createModelElement(MHandledToolItem.class);
-				toolItem.setContributorURI(contributorURI);
+				toolItem.setContributorURI(mp.getContributorURI());
 
-				// Search for spy command (added by processor)
-				MCommand spyCmd = null;
-				for (MCommand cmd : appli.getCommands()) {
-					if (SpyProcessor.SPY_COMMAND.equals(cmd.getElementId())) {
-						// Do nothing if command exists
-						spyCmd = cmd;
-						break;
-					}
-				}
 				toolItem.setCommand(spyCmd);
 				toolItem.setIconURI(mp.getIconURI());
 				toolItem.setLabel(mp.getLabel());
@@ -134,15 +129,33 @@ public class SpyHandler {
 			}
 		}
 
-		tw.setWidth(DEFAULT_SPY_WINDOW_WIDTH);
-		tw.setHeight(DEFAULT_SPY_WINDOW_HEIGHT);
+		// Can not use move here because it is only for MWindowElement
+		centerSpyWindow(appli, tw);
 		appli.getChildren().get(0).getWindows().add(tw);
-
-		MPartStack partStack = modelService.createModelElement(MPartStack.class);
-		partStack.setElementId(E4_SPIES_PART_STACK);
-		tw.getChildren().add(partStack);
 
 		return tw;
 
 	}
+
+	/**
+	 * Make the spy window centered on top of main window.
+	 * 
+	 * @param appli
+	 *            current appli
+	 * @param tw
+	 *            main trim window
+	 */
+	private void centerSpyWindow(MApplication appli, MTrimmedWindow tw) {
+		MWindow mainWindow = appli.getChildren().get(0);
+		float ratio = 0.75f;
+		int spyW = (int) (mainWindow.getWidth() * ratio);
+		int spyH = (int) (mainWindow.getHeight() * ratio);
+
+		tw.setX(mainWindow.getX() + (mainWindow.getWidth() - spyW) / 2);
+		tw.setY(mainWindow.getY() + (mainWindow.getHeight() - spyH) / 2);
+		tw.setWidth(spyW);
+		tw.setHeight(spyH);
+	}
+
+
 }
