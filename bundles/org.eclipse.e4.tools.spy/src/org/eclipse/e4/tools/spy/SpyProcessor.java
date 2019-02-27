@@ -37,6 +37,7 @@ import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
+import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
@@ -160,6 +161,7 @@ public class SpyProcessor {
 		binding.setElementId(paramViewId + ".binding");
 		binding.setContributorURI(cmd.getContributorURI());
 		binding.setKeySequence(keySequence);
+		binding.getPersistedState().put(IWorkbench.PERSIST_STATE, "false");
 
 		MParameter p = modelService.createModelElement(MParameter.class);
 		p.setName(SPY_COMMAND_PARAM);
