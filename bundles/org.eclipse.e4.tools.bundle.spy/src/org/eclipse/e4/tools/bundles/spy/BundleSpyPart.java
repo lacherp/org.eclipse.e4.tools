@@ -215,7 +215,7 @@ public class BundleSpyPart {
 		bundlesTableViewer.setContentProvider(ArrayContentProvider.getInstance());
 
 		// Get the list of bundles in platform using bundle context...
-		BundleContext bc = BundleSpyActivator.getContext();
+		BundleContext bc = FrameworkUtil.getBundle(BundleSpyPart.class).getBundleContext();
 		bundlesTableViewer.setInput(bc.getBundles());
 
 		bundlesTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
