@@ -73,7 +73,7 @@ public class PreferenceSpyPart implements TreeViewerPart {
 		PreferenceEntryPatternFilter patternFilter = new PreferenceEntryPatternFilter();
 		patternFilter.setIncludeLeadingWildcard(true);
 		filteredTree = new FilteredTree(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER, patternFilter,
-				true);
+				true, true);
 
 		Tree table = filteredTree.getViewer().getTree();
 		table.setHeaderVisible(true);
