@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="ASCII"?>
 <fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_YKjYcGxMEeSQ7v0akw7aRA">
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_wcDNcGxMEeSQ7v0akw7aRA" featurename="addons" parentElementId="xpath:/">
-    <elements xsi:type="application:Addon" xmi:id="_ztg-MGxMEeSQ7v0akw7aRA" elementId="org.eclipse.e4.tools.preference.spy.addon" contributionURI="bundleclass://org.eclipse.e4.tools.preference.spy/org.eclipse.e4.tools.preference.spy.addon.PreferenceSpyAddon"/>
+    <elements xsi:type="application:Addon" xmi:id="_ztg-MGxMEeSQ7v0akw7aRA" elementId="org.eclipse.e4.tools.preference.spy.addon" contributionURI="bundleclass://org.eclipse.e4.tools.preference.spy/org.eclipse.e4.tools.preference.spy.addon.PreferenceSpyAddon">
+      <persistedState key="persistState" value="false"/>
+    </elements>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_P3fYQGxbEeSQ7v0akw7aRA" featurename="descriptors" parentElementId="xpath:/">
     <elements xsi:type="basic:PartDescriptor" xmi:id="_T4iy4GxbEeSQ7v0akw7aRA" elementId="org.eclipse.e4.tools.preference.spy.parts.PreferenceSpyPart" label="Preference Spy" iconURI="platform:/plugin/org.eclipse.e4.tools.preference.spy/icons/preference_spy.png" category="Eclipse runtime spies" closeable="true" contributionURI="bundleclass://org.eclipse.e4.tools.preference.spy/org.eclipse.e4.tools.preference.spy.parts.PreferenceSpyPart">
@@ -23,17 +25,38 @@
     </elements>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_YcT00GxiEeSQ7v0akw7aRA" featurename="commands" parentElementId="xpath:/">
-    <elements xsi:type="commands:Command" xmi:id="_eBGTEGxiEeSQ7v0akw7aRA" elementId="org.eclipse.e4.tools.preference.spy.command.removeAll" commandName="Remove All"/>
-    <elements xsi:type="commands:Command" xmi:id="_iGEkYGxiEeSQ7v0akw7aRA" elementId="org.eclipse.e4.tools.preference.spy.command.removeEntry" commandName="Remove Entry"/>
-    <elements xsi:type="commands:Command" xmi:id="_ufxRsHY2EeSuTdKDH5hMwg" elementId="org.eclipse.e4.tools.preference.spy.command.showAllPreferences" commandName="Show All Preferences"/>
-    <elements xsi:type="commands:Command" xmi:id="_4NM_IH_gEeSk-4v3KnNHPw" elementId="org.eclipse.e4.tools.preference.spy.command.expandAll" commandName="Expand All"/>
-    <elements xsi:type="commands:Command" xmi:id="_68UQwH_gEeSk-4v3KnNHPw" elementId="org.eclipse.e4.tools.preference.spy.command.collapseAll" commandName="Collapse All"/>
+    <elements xsi:type="commands:Command" xmi:id="_eBGTEGxiEeSQ7v0akw7aRA" elementId="org.eclipse.e4.tools.preference.spy.command.removeAll" commandName="Remove All">
+      <persistedState key="persistState" value="false"/>
+      <parameters xmi:id="_ujUuENlxEemSlqvMhebMxQ" elementId="org.eclipse.e4.tools.preference.spy.commandparameter.0" name="Command Parameter 0"/>
+    </elements>
+    <elements xsi:type="commands:Command" xmi:id="_iGEkYGxiEeSQ7v0akw7aRA" elementId="org.eclipse.e4.tools.preference.spy.command.removeEntry" commandName="Remove Entry">
+      <persistedState key="persistState" value="false"/>
+    </elements>
+    <elements xsi:type="commands:Command" xmi:id="_ufxRsHY2EeSuTdKDH5hMwg" elementId="org.eclipse.e4.tools.preference.spy.command.showAllPreferences" commandName="Show All Preferences">
+      <persistedState key="persistState" value="false"/>
+    </elements>
+    <elements xsi:type="commands:Command" xmi:id="_4NM_IH_gEeSk-4v3KnNHPw" elementId="org.eclipse.e4.tools.preference.spy.command.expandAll" commandName="Expand All">
+      <persistedState key="persistState" value="false"/>
+    </elements>
+    <elements xsi:type="commands:Command" xmi:id="_68UQwH_gEeSk-4v3KnNHPw" elementId="org.eclipse.e4.tools.preference.spy.command.collapseAll" commandName="Collapse All">
+      <persistedState key="persistState" value="false"/>
+    </elements>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_k-5ysGxiEeSQ7v0akw7aRA" featurename="handlers" parentElementId="xpath:/">
-    <elements xsi:type="commands:Handler" xmi:id="_oq-b0GxiEeSQ7v0akw7aRA" elementId="org.eclipse.e4.tools.preference.spy.handler.removeall" contributionURI="bundleclass://org.eclipse.e4.tools.preference.spy/org.eclipse.e4.tools.preference.spy.handler.RemoveAllHandler" command="_eBGTEGxiEeSQ7v0akw7aRA"/>
-    <elements xsi:type="commands:Handler" xmi:id="_xiIpwGxiEeSQ7v0akw7aRA" elementId="org.eclipse.e4.tools.preference.spy.handler.removeentry" contributionURI="bundleclass://org.eclipse.e4.tools.preference.spy/org.eclipse.e4.tools.preference.spy.handler.RemoveEntryHandler" command="_iGEkYGxiEeSQ7v0akw7aRA"/>
-    <elements xsi:type="commands:Handler" xmi:id="_zPHVsHY2EeSuTdKDH5hMwg" elementId="org.eclipse.e4.tools.preference.spy.handler.showall" contributionURI="bundleclass://org.eclipse.e4.tools.preference.spy/org.eclipse.e4.tools.preference.spy.handler.ShowAllPreferencesHandler" command="_ufxRsHY2EeSuTdKDH5hMwg"/>
-    <elements xsi:type="commands:Handler" xmi:id="_3S1ooH_gEeSk-4v3KnNHPw" elementId="org.eclipse.e4.tools.preference.spy.handler.expandall" contributionURI="bundleclass://org.eclipse.e4.tools.preference.spy/org.eclipse.e4.tools.preference.spy.handler.ExpandAllHandler" command="_4NM_IH_gEeSk-4v3KnNHPw"/>
-    <elements xsi:type="commands:Handler" xmi:id="_9SoA0H_gEeSk-4v3KnNHPw" elementId="org.eclipse.e4.tools.preference.spy.handler.collapseall" contributionURI="bundleclass://org.eclipse.e4.tools.preference.spy/org.eclipse.e4.tools.preference.spy.handler.CollapseAllHandler" command="_68UQwH_gEeSk-4v3KnNHPw"/>
+    <elements xsi:type="commands:Handler" xmi:id="_oq-b0GxiEeSQ7v0akw7aRA" elementId="org.eclipse.e4.tools.preference.spy.handler.removeall" contributionURI="bundleclass://org.eclipse.e4.tools.preference.spy/org.eclipse.e4.tools.preference.spy.handler.RemoveAllHandler" command="_eBGTEGxiEeSQ7v0akw7aRA">
+      <persistedState key="persistState" value="false"/>
+    </elements>
+    <elements xsi:type="commands:Handler" xmi:id="_xiIpwGxiEeSQ7v0akw7aRA" elementId="org.eclipse.e4.tools.preference.spy.handler.removeentry" contributionURI="bundleclass://org.eclipse.e4.tools.preference.spy/org.eclipse.e4.tools.preference.spy.handler.RemoveEntryHandler" command="_iGEkYGxiEeSQ7v0akw7aRA">
+      <persistedState key="persistState" value="false"/>
+    </elements>
+    <elements xsi:type="commands:Handler" xmi:id="_zPHVsHY2EeSuTdKDH5hMwg" elementId="org.eclipse.e4.tools.preference.spy.handler.showall" contributionURI="bundleclass://org.eclipse.e4.tools.preference.spy/org.eclipse.e4.tools.preference.spy.handler.ShowAllPreferencesHandler" command="_ufxRsHY2EeSuTdKDH5hMwg">
+      <persistedState key="persistState" value="false"/>
+    </elements>
+    <elements xsi:type="commands:Handler" xmi:id="_3S1ooH_gEeSk-4v3KnNHPw" elementId="org.eclipse.e4.tools.preference.spy.handler.expandall" contributionURI="bundleclass://org.eclipse.e4.tools.preference.spy/org.eclipse.e4.tools.preference.spy.handler.ExpandAllHandler" command="_4NM_IH_gEeSk-4v3KnNHPw">
+      <persistedState key="persistState" value="false"/>
+    </elements>
+    <elements xsi:type="commands:Handler" xmi:id="_9SoA0H_gEeSk-4v3KnNHPw" elementId="org.eclipse.e4.tools.preference.spy.handler.collapseall" contributionURI="bundleclass://org.eclipse.e4.tools.preference.spy/org.eclipse.e4.tools.preference.spy.handler.CollapseAllHandler" command="_68UQwH_gEeSk-4v3KnNHPw">
+      <persistedState key="persistState" value="false"/>
+    </elements>
   </fragments>
 </fragment:ModelFragments>
