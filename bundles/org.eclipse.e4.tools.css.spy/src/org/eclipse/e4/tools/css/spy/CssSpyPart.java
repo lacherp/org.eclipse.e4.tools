@@ -874,9 +874,7 @@ public class CssSpyPart {
 				SelectorList selectors = engine.parseSelectors(text);
 				monitor.worked(2);
 				processCSSSearch(new SubProgressMonitor(monitor, 8), engine, selectors, element, null, results);
-			} catch (CSSParseException e) {
-				System.out.println(e.toString());
-			} catch (IOException e) {
+			} catch (CSSParseException | IOException e) {
 				System.out.println(e.toString());
 			}
 		}
