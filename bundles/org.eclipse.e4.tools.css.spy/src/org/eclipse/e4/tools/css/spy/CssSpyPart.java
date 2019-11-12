@@ -361,6 +361,8 @@ public class CssSpyPart {
 		// create the highlight; want it to appear on top
 		Shell highlight = new Shell(selectedShell, SWT.NO_TRIM | SWT.MODELESS | SWT.NO_FOCUS | SWT.ON_TOP);
 		highlight.setBackground(display.getSystemColor(SWT.COLOR_RED));
+		// set CSS ID for the dark theme
+		highlight.setData("org.eclipse.e4.ui.css.id", "css-spy");
 		Region highlightRegion = new Region();
 		highlightRegion.add(0, 0, 1, bounds.height + 2);
 		highlightRegion.add(0, 0, bounds.width + 2, 1);
