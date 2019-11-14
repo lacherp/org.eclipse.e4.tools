@@ -142,7 +142,7 @@ public class SpyHandler {
 
 	/**
 	 * Make the spy window centered on top of main window.
-	 * 
+	 *
 	 * @param appli
 	 *            current appli
 	 * @param tw

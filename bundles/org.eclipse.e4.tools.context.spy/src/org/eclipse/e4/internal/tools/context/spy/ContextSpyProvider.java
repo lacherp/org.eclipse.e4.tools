@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Display;
 /**
  * This label and treecontent provider is used by ContextSpyPart to display
  * available contexts.
- * 
+ *
  * @author olivier
  *
  */
