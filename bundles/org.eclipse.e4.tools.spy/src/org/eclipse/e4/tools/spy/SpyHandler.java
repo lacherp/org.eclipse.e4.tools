@@ -42,17 +42,13 @@ public class SpyHandler {
 	/**
 	 * This method open the spy view part at the correct location : - if it has
 	 * never been opened, it add this spy in the E4 window - if it is already
-	 * opened, just activate it - if it has already opened and closed, find it,
-	 * and open it at the same location
+	 * opened, just activate it - if it has already opened and closed, find it, and
+	 * open it at the same location
 	 *
-	 * @param ps
-	 *            part Service to manage parts elements
-	 * @param viewID
-	 *            the spy view to be displayed
-	 * @param appli
-	 *            current application
-	 * @param modelService
-	 *            model service to create elements
+	 * @param ps           part Service to manage parts elements
+	 * @param viewID       the spy view to be displayed
+	 * @param appli        current application
+	 * @param modelService model service to create elements
 	 */
 	@Execute
 	public void run(EPartService ps, @Optional @Named(SpyProcessor.SPY_COMMAND_PARAM) String viewID, MApplication appli,
