@@ -20,7 +20,7 @@ public class PreferenceConstants {
 	 * @since 2.1
 	 */
 	public static final String EDITOR_BOLD_SUFFIX= "_bold"; //$NON-NLS-1$
-	
+
 	/**
 	 * Preference key suffix for italic text style preference keys.
 	 *
@@ -41,7 +41,7 @@ public class PreferenceConstants {
 	 * @since 3.1
 	 */
 	public static final String EDITOR_UNDERLINE_SUFFIX= "_underline"; //$NON-NLS-1$
-	
+
 	/**
 	 * A named preference prefix for semantic highlighting preferences.
 	 *
@@ -61,7 +61,7 @@ public class PreferenceConstants {
 	 * @since 3.0
 	 */
 	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_COLOR_SUFFIX=".color"; //$NON-NLS-1$
-	
+
 	/**
 	 * A named preference suffix that controls if semantic highlighting has the text attribute bold.
 	 * <p>

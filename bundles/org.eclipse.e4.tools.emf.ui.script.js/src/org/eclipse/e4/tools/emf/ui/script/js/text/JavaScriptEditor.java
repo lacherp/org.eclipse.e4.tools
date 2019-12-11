@@ -34,48 +34,48 @@ import org.eclipse.swt.widgets.Control;
 
 public class JavaScriptEditor {
 	private static final int VERTICAL_RULER_WIDTH = 12;
-	
+
 	private static PreferenceStore store = new PreferenceStore();
-	
+
 	private Document document;
 
 	private SourceViewer viewer;
-	
+
 	static {
 		store.setDefault(ResourceProvider.JAVADOC_KEYWORD+PreferenceConstants.EDITOR_BOLD_SUFFIX, true);
 		store.setDefault(ResourceProvider.JAVA_KEYWORD+PreferenceConstants.EDITOR_BOLD_SUFFIX, true);
 		store.setDefault(ResourceProvider.JAVA_KEYWORD_RETURN+PreferenceConstants.EDITOR_BOLD_SUFFIX, true);
 	}
-	
+
 	@Inject
 	public JavaScriptEditor(Composite parent, IResourcePool pool) {
 		this.document = new Document();
 		VerticalRuler verticalRuler = new VerticalRuler(VERTICAL_RULER_WIDTH);
-		
+
 		int styles= SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION;
 		viewer = new SourceViewer(parent, verticalRuler, styles);
-		
+
 		Font f = null;
 		if( ! JFaceResources.getFontRegistry().hasValueFor("JavaEditorFont") ) {
 			if( SWT.getPlatform().equals("carbon") || SWT.getPlatform().equals("cocoa") ) {
 				JFaceResources.getFontRegistry().put("JavaEditorFont", new FontData[] {new FontData("Monaco",11,SWT.NONE)});
 			}
 		}
-		
+
 		f = JFaceResources.getFontRegistry().get("JavaEditorFont");
 		viewer.getTextWidget().setFont(f);
-		
+
 		JavaScriptTextTools textTools = new JavaScriptTextTools(pool, store);
 		viewer.configure(new JavaScriptSourceViewerConfiguration(textTools));
-		
-		textTools.setupJavaDocumentPartitioner(document, IJavaScriptPartitions.JAVA_PARTITIONING); 
+
+		textTools.setupJavaDocumentPartitioner(document, IJavaScriptPartitions.JAVA_PARTITIONING);
 		viewer.setDocument(document);
 	}
-	
+
 	public Control getControl() {
 		return viewer.getControl();
 	}
-	
+
 	public String getContent() {
 		return document.get();
 	}

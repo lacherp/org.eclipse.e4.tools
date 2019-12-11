@@ -44,7 +44,7 @@ public class JavaScriptTextTools {
 //			adaptToPreferenceChange(event);
 //		}
 //	}
-	
+
 	/** The Java source code scanner. */
 	private JavaScriptCodeScanner fCodeScanner;
 	/** The Java multi-line comment scanner. */
@@ -57,7 +57,7 @@ public class JavaScriptTextTools {
 	private JavaScriptDocScanner fJavaDocScanner;
 //	/** The preference store. */
 //	private IPreferenceStore fPreferenceStore;
-	
+
 	/**
 	 * The core preference store.
 	 * @since 2.1
@@ -68,34 +68,34 @@ public class JavaScriptTextTools {
 	public JavaScriptTextTools(IResourcePool resourcePool, IPreferenceStore store) {
 //		fPreferenceStore = store;
 //		fPreferenceStore.addPropertyChangeListener(fPreferenceListener);
-		
+
 		fCodeScanner= new JavaScriptCodeScanner(resourcePool, store);
 		fMultilineCommentScanner= new JavaScriptCommentScanner(resourcePool, store, ResourceProvider.JAVA_MULTI_LINE_COMMENT);
 		fSinglelineCommentScanner= new JavaScriptCommentScanner(resourcePool, store, ResourceProvider.JAVA_SINGLE_LINE_COMMENT);
 		fStringScanner= new SingleTokenJavaScanner(resourcePool, store, ResourceProvider.JAVA_STRING);
 		fJavaDocScanner= new JavaScriptDocScanner(resourcePool, store);
 	}
-	
+
 	public ITokenScanner getMultilineCommentScanner() {
 		return fMultilineCommentScanner;
 	}
-	
+
 	public ITokenScanner getSinglelineCommentScanner() {
 		return fSinglelineCommentScanner;
 	}
-	
+
 	public ITokenScanner getStringScanner() {
 		return fStringScanner;
 	}
-	
+
 	public ITokenScanner getJavaDocScanner() {
 		return fJavaDocScanner;
 	}
-	
+
 	public ITokenScanner getCodeScanner() {
 		return fCodeScanner;
 	}
-	
+
 	/**
 	 * Sets up the Java document partitioner for the given document for the given partitioning.
 	 *
@@ -113,7 +113,7 @@ public class JavaScriptTextTools {
 		}
 		partitioner.connect(document);
 	}
-	
+
 	/**
 	 * Returns a scanner which is configured to scan
 	 * Java-specific partitions, which are multi-line comments,
@@ -135,7 +135,7 @@ public class JavaScriptTextTools {
 	public IDocumentPartitioner createDocumentPartitioner() {
 		return new FastPartitioner(getPartitionScanner(), LEGAL_CONTENT_TYPES);
 	}
-	
+
 //	/**
 //	 * Adapts the behavior of the contained components to the change
 //	 * encoded in the given event.

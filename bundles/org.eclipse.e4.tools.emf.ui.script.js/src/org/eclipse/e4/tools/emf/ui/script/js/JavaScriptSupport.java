@@ -58,11 +58,11 @@ import org.osgi.service.packageadmin.PackageAdmin;
 public class JavaScriptSupport implements IScriptingSupport {
 	public void openEditor(Shell shell, final Object mainElement, final IEclipseContext context) {
 		final IEclipseContext childContext = context.createChild();
-		
+
 		TitleAreaDialog dialog = new TitleAreaDialog(shell) {
 			private JavaScriptEditor editor;
 			private Logger logger;
-			
+
 			@Override
 			protected Control createDialogArea(Composite parent) {
 				Composite container = (Composite) super.createDialogArea(parent);
@@ -71,9 +71,9 @@ public class JavaScriptSupport implements IScriptingSupport {
 				setTitle("Execute JavaScript");
 				setMessage("Enter some JavaScript and execute it");
 				setTitleImage(childContext.get(IResourcePool.class).getImageUnchecked(ResourceProvider.IMG_WIZBAN_JAVASCRIPT));
-				
+
 				childContext.set(Composite.class, container);
-				
+
 				editor = ContextInjectionFactory.make(JavaScriptEditor.class, childContext);
 				GridData gd = new GridData(GridData.FILL_BOTH);
 				gd.minimumHeight = 350;
@@ -81,20 +81,20 @@ public class JavaScriptSupport implements IScriptingSupport {
 				editor.getControl().setLayoutData(gd);
 				return container;
 			}
-			
+
 			@Override
 			protected void okPressed() {
 				execute(logger, mainElement, context, editor.getContent());
 			}
-			
-			
+
+
 			@Override
 			protected Button createButton(Composite parent, int id,
 					String label, boolean defaultButton) {
 				return super.createButton(parent, id, id == IDialogConstants.OK_ID ? "Execute" : label, defaultButton);
 			}
 		};
-		
+
 		dialog.open();
 		childContext.dispose();
 	}
@@ -102,16 +102,16 @@ public class JavaScriptSupport implements IScriptingSupport {
 	private void execute(Logger logger, Object mainElement, IEclipseContext context, String script) {
 		Context cx = Context.enter();
 		Scriptable sc = cx.initStandardObjects();
-		
+
 		ScriptableObject.putProperty(sc, "mainObject", mainElement);
 		ScriptableObject.putProperty(sc, "eclipseContext", context);
 		ScriptableObject.putProperty(sc, "swt", new SWTSupport(Display.getCurrent()));
 		ScriptableObject.putProperty(sc, "service", new ServiceProvider(context));
 		ScriptableObject.putProperty(sc, "di", new DiProvider(context));
 		ScriptableObject.putProperty(sc, "log", logger);
-		
+
 		try {
-			cx.evaluateString(sc, script, "<cmd>", 1, null);	
+			cx.evaluateString(sc, script, "<cmd>", 1, null);
 		} catch (Exception e) {
 			try {
 				logger.error(e);
@@ -119,15 +119,15 @@ public class JavaScriptSupport implements IScriptingSupport {
 			}
 		}
 	}
-	
+
 	public static class DiProvider {
 		private IEclipseContext context;
 		private PackageAdmin packageAdmin;
-		
+
 		public DiProvider(IEclipseContext context) {
 			this.context = context;
 		}
-		
+
 		public Object newInstance(String bundlename, String className) throws ClassNotFoundException {
 			Bundle bundle = getBundle(bundlename);
 			if( bundle != null ) {
@@ -136,11 +136,11 @@ public class JavaScriptSupport implements IScriptingSupport {
 			}
 			return new IllegalArgumentException("Bundle '"+bundlename+"' is not known");
 		}
-		
+
 		public Object execute(Object object) {
 			return ContextInjectionFactory.invoke(object, Execute.class, context);
 		}
-		
+
 		public Object invokeByAnnotation(Object object, String bundlename, String className) throws ClassNotFoundException {
 			Bundle bundle = getBundle(bundlename);
 			if( bundle != null ) {
@@ -150,7 +150,7 @@ public class JavaScriptSupport implements IScriptingSupport {
 			}
 			return new IllegalArgumentException("Bundle '"+bundlename+"' is not known");
 		}
-		
+
 		private Bundle getBundle(String bundlename) {
 			if( packageAdmin == null ) {
 				Bundle bundle =  FrameworkUtil.getBundle(getClass());
@@ -158,7 +158,7 @@ public class JavaScriptSupport implements IScriptingSupport {
 				ServiceReference<PackageAdmin> reference = context.getServiceReference(PackageAdmin.class);
 				packageAdmin = context.getService(reference);
 			}
-			
+
 			Bundle[] bundles = packageAdmin.getBundles(bundlename, null);
 			if (bundles == null)
 				return null;
@@ -171,39 +171,39 @@ public class JavaScriptSupport implements IScriptingSupport {
 			return null;
 		}
 	}
-	
+
 	public static class ServiceProvider {
 		private IEclipseContext context;
-		
+
 		public ServiceProvider(IEclipseContext context) {
 			this.context = context;
 		}
-		
+
 		public Object getStyleEngine() {
 			return context.get(IStylingEngine.class);
 		}
-		
+
 		public Object getPartService() {
 			return context.get("org.eclipse.e4.ui.workbench.modeling.EPartService");
 		}
-		
+
 		public Object getModelService() {
 			return context.get("org.eclipse.e4.ui.workbench.modeling.EModelService");
 		}
 	}
-	
+
 	public static class Logger {
 		private Shell parentShell;
-		
+
 		private Shell shell;
 		private Text text;
-		
+
 		private static SimpleDateFormat DATEFORMAT = new SimpleDateFormat("hh:mm:ss.SSS");
-		
+
 		public Logger(Shell parentShell) {
 			this.parentShell = parentShell;
 		}
-		
+
 		public void openLog() {
 			if( shell == null ) {
 				shell = new Shell(parentShell,SWT.SHELL_TRIM);
@@ -214,7 +214,7 @@ public class JavaScriptSupport implements IScriptingSupport {
 				text.setEditable(false);
 				shell.setVisible(true);
 				shell.addDisposeListener(new DisposeListener() {
-					
+
 					@Override
 					public void widgetDisposed(DisposeEvent e) {
 						shell = null;
@@ -223,15 +223,15 @@ public class JavaScriptSupport implements IScriptingSupport {
 				});
 			}
 		}
-		
+
 		public void error(Object data) throws Exception {
 			_log(1, data);
 		}
-		
+
 		public void debug(Object data) throws Exception {
 			_log(0, data);
 		}
-		
+
 		private void _log(int type, Object data) throws Exception {
 			if( shell == null ) {
 				openLog();
@@ -245,33 +245,33 @@ public class JavaScriptSupport implements IScriptingSupport {
 				pw.close();
 				w.close();
 			} else {
-				text.append(DATEFORMAT.format(new Date()) + " - " + data + "\n");	
+				text.append(DATEFORMAT.format(new Date()) + " - " + data + "\n");
 			}
-			
+
 		}
-		
+
 		public void clearLog() {
 			if( text != null ) {
 				text.setText("");
 			}
 		}
-		
+
 		public void closeLog() {
 			shell.dispose();
 			shell = null;
 			text = null;
 		}
 	}
-	
+
 	public static class SWTSupport {
 		private Display d;
-		
+
 		public static SWT SWT = new SWT();
-		
+
 		public SWTSupport(Display d) {
 			this.d = d;
 		}
-		
+
 		public Color newColor(String color) {
 			if( color.startsWith("#") ) {
 				if( color.length() == 7 ) {
@@ -288,19 +288,19 @@ public class JavaScriptSupport implements IScriptingSupport {
 			}
 			return null;
 		}
-		
+
 		public Text newText(Composite parent, int style) {
 			return new Text(parent, style);
 		}
-		
+
 		public Widget newLabel(Composite parent, int style) {
 			return new Label(parent, style);
 		}
-		
+
 		public GridData newGridData() {
 			return new GridData();
 		}
-		
+
 		public Combo newCombo(Composite parent, int style) {
 			return new Combo(parent, style);
 		}

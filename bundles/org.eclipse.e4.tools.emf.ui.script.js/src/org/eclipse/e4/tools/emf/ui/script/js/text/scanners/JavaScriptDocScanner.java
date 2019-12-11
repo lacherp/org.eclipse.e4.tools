@@ -176,7 +176,7 @@ public final class JavaScriptDocScanner extends JavaScriptCommentScanner {
 
 		// Add word rule for keywords.
 		final IToken token= getToken(ResourceProvider.JAVADOC_KEYWORD);
-		WordMatcher matcher= new WordMatcher() { 
+		WordMatcher matcher= new WordMatcher() {
 			public IToken evaluate(ICharacterScanner scanner, CharacterBuffer word) {
 				int length= word.length();
 				if (length > 1 && word.charAt(0) == '@') {

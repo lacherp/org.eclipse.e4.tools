@@ -26,10 +26,10 @@ public class JavaScriptSourceViewerConfiguration extends SourceViewerConfigurati
 	public JavaScriptSourceViewerConfiguration(JavaScriptTextTools textTools) {
 		this.textTools = textTools;
 	}
-	
+
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
 		return new String[] {
-				IDocument.DEFAULT_CONTENT_TYPE, 
+				IDocument.DEFAULT_CONTENT_TYPE,
 				IJavaScriptPartitions.JAVA_DOC,
 				IJavaScriptPartitions.JAVA_MULTI_LINE_COMMENT,
 				IJavaScriptPartitions.JAVA_SINGLE_LINE_COMMENT,
@@ -37,17 +37,17 @@ public class JavaScriptSourceViewerConfiguration extends SourceViewerConfigurati
 				IJavaScriptPartitions.JAVA_CHARACTER
 		};
 	}
-	
+
 	@Override
 	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
 		return IJavaScriptPartitions.JAVA_PARTITIONING;
 	}
-	
+
 	@Override
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 		PresentationReconciler reconciler= new JavaScriptPresentationReconciler();
 		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
-		
+
 		DefaultDamagerRepairer dr= new DefaultDamagerRepairer(textTools.getCodeScanner());
 		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);

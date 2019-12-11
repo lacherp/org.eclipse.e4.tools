@@ -363,7 +363,7 @@ public final class JavaScriptCodeScanner extends AbstractJavaScanner {
 		"volatile", //$NON-NLS-1$
 		"while" //$NON-NLS-1$
 	};*/
-	
+
 	static String[] fgKeywords= {
 		"break",
     	"case",
@@ -399,7 +399,7 @@ public final class JavaScriptCodeScanner extends AbstractJavaScanner {
         "super"
 
 	};
-	
+
 
 //	private static final String INTERFACE= "interface";  //$NON-NLS-1$
 	private static final String RETURN= "return"; //$NON-NLS-1$
@@ -456,7 +456,7 @@ public final class JavaScriptCodeScanner extends AbstractJavaScanner {
 
 
 		Token defaultToken= getToken(ResourceProvider.JAVA_DEFAULT);
-		
+
 		// Add generic whitespace rule.
 		rules.add(new WhitespaceRule(new JavaScriptWhitespaceDetector(), defaultToken));
 
@@ -482,7 +482,7 @@ public final class JavaScriptCodeScanner extends AbstractJavaScanner {
 //		fVersionDependentRules.add(j14Matcher);
 //
 //		VersionedWordMatcher j15Matcher= new VersionedWordMatcher(defaultToken, JavaCore.VERSION_1_5, version);
-//		
+//
 //		token= getToken(IJavaScriptColorConstants.JAVA_KEYWORD);
 //		for (int i=0; i<fgJava15Keywords.length; i++)
 //			j15Matcher.addWord(fgJava15Keywords[i], token);
