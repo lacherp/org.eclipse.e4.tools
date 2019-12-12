@@ -48,6 +48,7 @@ public final class JavaScriptDocScanner extends JavaScriptCommentScanner {
 		/**
 		 * @see IWordDetector#isWordStart(char)
 		 */
+		@Override
 		public boolean isWordStart(char c) {
 			return (c == '<' || c == '-');
 		}
@@ -55,6 +56,7 @@ public final class JavaScriptDocScanner extends JavaScriptCommentScanner {
 		/**
 		 * @see IWordDetector#isWordPart(char)
 		 */
+		@Override
 		public boolean isWordPart(char c) {
 			return (c == '-' || c == '!' || c == '>');
 		}
@@ -107,6 +109,7 @@ public final class JavaScriptDocScanner extends JavaScriptCommentScanner {
 		/*
 		 * @see PatternRule#evaluate(ICharacterScanner)
 		 */
+		@Override
 		public IToken evaluate(ICharacterScanner scanner) {
 			IToken result= super.evaluate(scanner);
 			if (result == fToken)
@@ -136,6 +139,7 @@ public final class JavaScriptDocScanner extends JavaScriptCommentScanner {
 	/*
 	 * @see AbstractJavaScanner#createRules()
 	 */
+	@Override
 	protected List<IRule> createRules() {
 
 		List<IRule> list= new ArrayList<IRule>();
@@ -171,12 +175,14 @@ public final class JavaScriptDocScanner extends JavaScriptCommentScanner {
 	/*
 	 * @see org.eclipse.jdt.internal.ui.text.JavaCommentScanner#createMatchers()
 	 */
+	@Override
 	protected List<WordMatcher> createMatchers() {
 		List<WordMatcher> list= super.createMatchers();
 
 		// Add word rule for keywords.
 		final IToken token= getToken(ResourceProvider.JAVADOC_KEYWORD);
 		WordMatcher matcher= new WordMatcher() {
+			@Override
 			public IToken evaluate(ICharacterScanner scanner, CharacterBuffer word) {
 				int length= word.length();
 				if (length > 1 && word.charAt(0) == '@') {

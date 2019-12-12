@@ -27,6 +27,7 @@ public class JavaScriptSourceViewerConfiguration extends SourceViewerConfigurati
 		this.textTools = textTools;
 	}
 
+	@Override
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
 		return new String[] {
 				IDocument.DEFAULT_CONTENT_TYPE,

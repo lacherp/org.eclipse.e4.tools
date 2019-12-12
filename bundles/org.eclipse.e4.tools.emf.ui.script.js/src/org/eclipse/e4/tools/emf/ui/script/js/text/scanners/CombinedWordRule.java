@@ -154,6 +154,7 @@ public class CombinedWordRule implements IRule {
 		 *
 		 * @return the content
 		 */
+		@Override
 		public String toString() {
 			return new String(fContent, 0, fLength);
 		}
@@ -171,6 +172,7 @@ public class CombinedWordRule implements IRule {
 		/*
 		 * @see java.lang.Object#hashCode()
 		 */
+		@Override
 		public int hashCode() {
 			if (fIsHashCached)
 				return fHashCode;
@@ -187,6 +189,7 @@ public class CombinedWordRule implements IRule {
 		/*
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
+		@Override
 		public boolean equals(Object obj) {
 			if (obj == this)
 				return true;
@@ -324,6 +327,7 @@ public class CombinedWordRule implements IRule {
 	/*
 	 * @see IRule#evaluate(ICharacterScanner)
 	 */
+	@Override
 	public IToken evaluate(ICharacterScanner scanner) {
 		int c= scanner.read();
 		if (fDetector.isWordStart((char) c)) {

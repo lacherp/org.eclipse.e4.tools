@@ -24,6 +24,7 @@ public class JavaScriptWhitespaceDetector implements IWhitespaceDetector {
 	/**
 	 * @see IWhitespaceDetector#isWhitespace
 	 */
+	@Override
 	public boolean isWhitespace(char c) {
 		return Character.isWhitespace(c);
 	}

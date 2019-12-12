@@ -72,6 +72,7 @@ public final class JavaScriptCodeScanner extends AbstractJavaScanner {
 		/*
 		 * @see org.eclipse.jface.text.rules.IRule#evaluate(org.eclipse.jface.text.rules.ICharacterScanner)
 		 */
+		@Override
 		public IToken evaluate(ICharacterScanner scanner) {
 
 			int character= scanner.read();
@@ -126,6 +127,7 @@ public final class JavaScriptCodeScanner extends AbstractJavaScanner {
 		/*
 		 * @see org.eclipse.jface.text.rules.IRule#evaluate(org.eclipse.jface.text.rules.ICharacterScanner)
 		 */
+		@Override
 		public IToken evaluate(ICharacterScanner scanner) {
 
 			int character= scanner.read();
@@ -439,6 +441,7 @@ public final class JavaScriptCodeScanner extends AbstractJavaScanner {
 	/*
 	 * @see AbstractJavaScanner#getTokenProperties()
 	 */
+	@Override
 	protected String[] getTokenProperties() {
 		return fgTokenProperties;
 	}
@@ -446,6 +449,7 @@ public final class JavaScriptCodeScanner extends AbstractJavaScanner {
 	/*
 	 * @see AbstractJavaScanner#createRules()
 	 */
+	@Override
 	protected List<IRule> createRules() {
 
 		List<IRule> rules= new ArrayList<IRule>();

@@ -56,6 +56,7 @@ import org.osgi.service.packageadmin.PackageAdmin;
 
 @SuppressWarnings({ "restriction", "deprecation" })
 public class JavaScriptSupport implements IScriptingSupport {
+	@Override
 	public void openEditor(Shell shell, final Object mainElement, final IEclipseContext context) {
 		final IEclipseContext childContext = context.createChild();
 

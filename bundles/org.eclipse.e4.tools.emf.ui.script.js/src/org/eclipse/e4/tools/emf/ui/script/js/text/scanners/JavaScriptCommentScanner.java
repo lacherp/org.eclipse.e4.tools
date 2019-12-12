@@ -32,10 +32,12 @@ public class JavaScriptCommentScanner extends AbstractJavaScanner{
 
 	private static class AtJavaIdentifierDetector implements IWordDetector {
 
+		@Override
 		public boolean isWordStart(char c) {
 			return c == '@' || Character.isJavaIdentifierStart(c);
 		}
 
+		@Override
 		public boolean isWordPart(char c) {
 			return c == '.' || Character.isJavaIdentifierPart(c);
 		}
@@ -163,6 +165,7 @@ public class JavaScriptCommentScanner extends AbstractJavaScanner{
 	/*
 	 * @see AbstractJavaScanner#createRules()
 	 */
+	@Override
 	protected List<IRule> createRules() {
 		List<IRule> list= new ArrayList<IRule>();
 		Token defaultToken= getToken(fDefaultTokenProperty);
@@ -235,6 +238,7 @@ public class JavaScriptCommentScanner extends AbstractJavaScanner{
 	/*
 	 * @see org.eclipse.jdt.internal.ui.text.AbstractJavaScanner#getTokenProperties()
 	 */
+	@Override
 	protected String[] getTokenProperties() {
 		return fTokenProperties;
 	}

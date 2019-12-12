@@ -23,6 +23,7 @@ public class JavaScriptWordDetector implements IWordDetector {
 	/*
 	 * @see IWordDetector#isWordStart
 	 */
+	@Override
 	public boolean isWordStart(char c) {
 		return Character.isJavaIdentifierStart(c);
 	}
@@ -30,6 +31,7 @@ public class JavaScriptWordDetector implements IWordDetector {
 	/*
 	 * @see IWordDetector#isWordPart
 	 */
+	@Override
 	public boolean isWordPart(char c) {
 		return Character.isJavaIdentifierPart(c);
 	}

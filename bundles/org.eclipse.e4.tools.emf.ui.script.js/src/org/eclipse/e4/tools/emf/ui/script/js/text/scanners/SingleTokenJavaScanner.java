@@ -39,6 +39,7 @@ public final class SingleTokenJavaScanner extends AbstractJavaScanner{
 	/*
 	 * @see AbstractJavaScanner#getTokenProperties()
 	 */
+	@Override
 	protected String[] getTokenProperties() {
 		return fProperty;
 	}
@@ -46,6 +47,7 @@ public final class SingleTokenJavaScanner extends AbstractJavaScanner{
 	/*
 	 * @see AbstractJavaScanner#createRules()
 	 */
+	@Override
 	protected List<IRule> createRules() {
 		setDefaultReturnToken(getToken(fProperty[0]));
 		return null;

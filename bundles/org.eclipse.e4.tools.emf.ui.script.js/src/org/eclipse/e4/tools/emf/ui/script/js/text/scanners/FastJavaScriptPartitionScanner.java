@@ -84,6 +84,7 @@ public class FastJavaScriptPartitionScanner implements IPartitionTokenScanner, I
 	/*
 	 * @see org.eclipse.jface.text.rules.ITokenScanner#nextToken()
 	 */
+	@Override
 	public IToken nextToken() {
 
 		// emulate JavaPartitionScanner
@@ -478,6 +479,7 @@ public class FastJavaScriptPartitionScanner implements IPartitionTokenScanner, I
 	/*
 	 * @see IPartitionTokenScanner#setPartialRange(IDocument, int, int, String, int)
 	 */
+	@Override
 	public void setPartialRange(IDocument document, int offset, int length, String contentType, int partitionOffset) {
 
 		fScanner.setRange(document, offset, length);
@@ -503,6 +505,7 @@ public class FastJavaScriptPartitionScanner implements IPartitionTokenScanner, I
 	/*
 	 * @see ITokenScanner#setRange(IDocument, int, int)
 	 */
+	@Override
 	public void setRange(IDocument document, int offset, int length) {
 
 		fScanner.setRange(document, offset, length);
@@ -522,6 +525,7 @@ public class FastJavaScriptPartitionScanner implements IPartitionTokenScanner, I
 	/*
 	 * @see ITokenScanner#getTokenLength()
 	 */
+	@Override
 	public int getTokenLength() {
 		return fTokenLength;
 	}
@@ -529,6 +533,7 @@ public class FastJavaScriptPartitionScanner implements IPartitionTokenScanner, I
 	/*
 	 * @see ITokenScanner#getTokenOffset()
 	 */
+	@Override
 	public int getTokenOffset() {
 		return fTokenOffset;
 	}
