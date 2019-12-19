@@ -96,7 +96,7 @@ public class CSSScratchPadPart {
 		Button button = new Button(parent, SWT.PUSH);
 		button.setText(label);
 		button.setFont(JFaceResources.getDialogFont());
-		button.setData(new Integer(id));
+		button.setData(Integer.valueOf(id));
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
@@ -109,7 +109,7 @@ public class CSSScratchPadPart {
 				shell.setDefaultButton(button);
 			}
 		}
-		buttons.put(new Integer(id), button);
+		buttons.put(Integer.valueOf(id), button);
 		// setButtonLayoutData(button);
 		return button;
 	}
