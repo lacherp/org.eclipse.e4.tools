@@ -292,7 +292,7 @@ public class BundleSpyPart {
 	public void setFilter() {
 
 		if (showOnlyFilteredElements.isEnabled() && showOnlyFilteredElements.getSelection()) {
-			bundlesTableViewer.setFilters(new ViewerFilter[] { bundleFilter });
+			bundlesTableViewer.setFilters(bundleFilter);
 		} else {
 			bundlesTableViewer.setFilters(NO_FILTER);
 		}

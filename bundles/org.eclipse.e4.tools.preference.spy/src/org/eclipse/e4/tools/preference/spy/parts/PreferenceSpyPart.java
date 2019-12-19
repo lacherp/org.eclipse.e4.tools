@@ -108,8 +108,7 @@ public class PreferenceSpyPart implements TreeViewerPart {
 		contentProvider.setHierarchicalLayout(hierarchicalLayoutPreference);
 		filteredTree.getViewer().setContentProvider(contentProvider);
 		filteredTree.getViewer().setLabelProvider(new PreferenceMapLabelProvider(fontDescriptor,
-				Properties.observeEach(contentProvider.getKnownElements(), BeanProperties.values(PreferenceEntry.class,
-						new String[] { "nodePath", "key", "oldValue", "newValue" }))));
+				Properties.observeEach(contentProvider.getKnownElements(), BeanProperties.values(PreferenceEntry.class, "nodePath", "key", "oldValue", "newValue"))));
 		filteredTree.getViewer().setInput(preferenceEntryManager);
 	}
 
