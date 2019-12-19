@@ -30,9 +30,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
@@ -218,12 +216,7 @@ public class BundleSpyPart {
 		BundleContext bc = FrameworkUtil.getBundle(BundleSpyPart.class).getBundleContext();
 		bundlesTableViewer.setInput(bc.getBundles());
 
-		bundlesTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				updateButtonStatuses((IStructuredSelection) event.getSelection());
-			}
-		});
+		bundlesTableViewer.addSelectionChangedListener(event -> updateButtonStatuses((IStructuredSelection) event.getSelection()));
 
 		ColumnViewerToolTipSupport.enableFor(bundlesTableViewer);
 

@@ -50,9 +50,7 @@ import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.FocusCellOwnerDrawHighlighter;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
@@ -656,12 +654,9 @@ public class CssSpyPart {
 			}
 		});
 
-		widgetTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				updateForWidgetSelection(event.getSelection());
-				showCssFragment.setEnabled(!event.getSelection().isEmpty());
-			}
+		widgetTreeViewer.addSelectionChangedListener(event -> {
+			updateForWidgetSelection(event.getSelection());
+			showCssFragment.setEnabled(!event.getSelection().isEmpty());
 		});
 		if (isLive()) {
 			container.addMouseMoveListener(e -> {
