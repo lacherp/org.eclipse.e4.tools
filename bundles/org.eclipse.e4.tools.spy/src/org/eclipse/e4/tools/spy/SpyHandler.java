@@ -93,7 +93,7 @@ public class SpyHandler {
 		// from the
 		// snippet.
 		MTrimmedWindow tw = (MTrimmedWindow) modelService.findSnippet(appli, E4_SPIES_WINDOW);
-		MTrimBar trimBar = tw.getTrimBars().stream().filter((t) -> t.getSide() == SideValue.TOP).findFirst().get();
+		MTrimBar trimBar = tw.getTrimBars().stream().filter(t -> t.getSide() == SideValue.TOP).findFirst().get();
 		MToolBar toolbar = (MToolBar) trimBar.getChildren().get(0);
 
 		// Get the spy command (added by fragment)
