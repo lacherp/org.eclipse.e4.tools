@@ -18,3 +18,4 @@ Import-Package: javax.annotation;version="1.2.0"
 Bundle-Vendor: Eclipse Foundation
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.e4.tools.spy;x-internal:=true
+Automatic-Module-Name: org.eclipse.e4.tools.spy

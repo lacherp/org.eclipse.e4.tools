@@ -32,3 +32,4 @@ Export-Package: org.eclipse.e4.tools.event.spy,
  org.eclipse.e4.tools.event.spy.internal.model;x-internal:=true,
  org.eclipse.e4.tools.event.spy.internal.ui;x-internal:=true,
  org.eclipse.e4.tools.event.spy.internal.util;x-internal:=true
+Automatic-Module-Name: org.eclipse.e4.tools.event.spy
