@@ -33,7 +33,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.KeyAdapter;
@@ -178,7 +178,7 @@ public class ContextSpyPart {
 		treeContentProvider = ContextInjectionFactory.make(ContextSpyProvider.class, ctx);
 		contextTreeViewer.setContentProvider(treeContentProvider);
 		contextTreeViewer.setLabelProvider(treeContentProvider);
-		contextTreeViewer.setSorter(new ViewerSorter());
+		contextTreeViewer.setComparator(new ViewerComparator());
 
 		// tv.setInput(a);
 		contextTreeViewer.setInput(ContextSpyHelper.getAllBundleContexts());
