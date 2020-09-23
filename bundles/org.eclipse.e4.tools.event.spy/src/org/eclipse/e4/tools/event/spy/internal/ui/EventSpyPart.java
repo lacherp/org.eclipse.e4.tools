@@ -40,7 +40,6 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 
 public class EventSpyPart implements EventMonitor.NewEventListener {
-	private final static String DIALOG_TITLE = "Event spy dialog";
 
 	private final static String[] SHOW_FILTER_LINK_TEXT = new String[] { "Show filters", "Hide filters" };
 
