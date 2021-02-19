@@ -1,10 +1,12 @@
 package org.eclipse.e4.tools.adapter.spy.tools;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.internal.services.EclipseAdapter;
 import org.eclipse.e4.core.services.adapter.Adapter;
 import org.eclipse.e4.tools.adapter.spy.hook.EclipseAdapterHook;
+import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 
 @SuppressWarnings("restriction")
@@ -46,4 +48,12 @@ public final class AdapterHelper {
 			serviceContext.set(Adapter.class,originalEclipseAdpater);
 		}
 	}
+	
+	
+	public static IEclipseContext getServicesContext() {
+		return EclipseContextFactory.getServiceContext(Activator.getDefault().getContext());
+	}
+	
+	
+	
 }

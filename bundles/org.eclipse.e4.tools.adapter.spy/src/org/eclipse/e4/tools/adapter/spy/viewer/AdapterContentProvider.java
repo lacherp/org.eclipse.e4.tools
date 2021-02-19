@@ -29,6 +29,8 @@ public class AdapterContentProvider extends ColumnLabelProvider implements ITree
 	private ImageRegistry imgReg;
 	
 	private int columnIndex;
+	
+	private boolean displayPackage;
 	/**
 	 * Ctor
 	 */
@@ -94,15 +96,11 @@ public class AdapterContentProvider extends ColumnLabelProvider implements ITree
 	public Image getImage(Object element) {
 		if(columnIndex ==0) {
 			AdapterElementType elemType = ((AdapterData)element).getAdapterElementType();
-			if( elemType.equals(AdapterElementType.PLUGIN))
-			{
-				return imgReg.get(BUNDLE_IMG_KEY);
-			}
-			if( elemType.equals(AdapterElementType.FROM_TYPE))
+			if( elemType.equals(AdapterElementType.SOURCE_TYPE))
 			{
 				return imgReg.get(FROM_TYPE_IMG_KEY);
 			}
-			if( elemType.equals(AdapterElementType.TO_TYPE))
+			if( elemType.equals(AdapterElementType.DESTINATION_TYPE))
 			{
 				return imgReg.get(TO_TYPE_IMG_KEY);
 			}	

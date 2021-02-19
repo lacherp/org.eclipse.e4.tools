@@ -21,11 +21,17 @@ public class AdapterFilter extends ViewerFilter {
 	public static final String UPDATE_CTX_FILTER ="updateCtxfilter";
 	
 	private String  txtSeachFilter;
-	
+	private Boolean showPackageFilter = Boolean.TRUE;
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
-		if (txtSeachFilter != null && !txtSeachFilter.isEmpty() &&  element instanceof AdapterData) {
-			checkFilteredplugin((AdapterData) element);
+		
+		if(element instanceof AdapterData) {
+			
+			((AdapterData)element).setShowPackage(showPackageFilter);
+		}
+		
+		if (txtSeachFilter != null && !txtSeachFilter.isEmpty()) {
+			doFilter((AdapterData) element);
 		}
 		if(txtSeachFilter != null && txtSeachFilter.isEmpty())
 		{
@@ -37,17 +43,19 @@ public class AdapterFilter extends ViewerFilter {
 	
 	@Inject
 	@Optional
-	public void updateTextSearchFilter(@Named(UPDATE_CTX_FILTER) String txtSeachFilter) {
-		if( txtSeachFilter == null )
+	public void updateTextSearchFilter(@Named(UPDATE_CTX_FILTER) FilterData filterData) {
+		if( filterData == null )
 		{
 			return;
 		}
-		this.txtSeachFilter = txtSeachFilter;
+		this.txtSeachFilter = filterData.getTxtSeachFilter();
+		this.showPackageFilter= filterData.getShowPackage();
 	}
 
-	private void checkFilteredplugin(AdapterData adapterData)
+	
+	private void doFilter(AdapterData adapterData)
 	{
-		if( adapterData.getAdapterElementType().equals(AdapterElementType.PLUGIN))
+		if( adapterData.getAdapterElementType().equals(AdapterElementType.SOURCE_TYPE))
 		{
 			AtomicBoolean bfound = new AtomicBoolean(false);
 			adapterData.textSearch(txtSeachFilter, bfound);

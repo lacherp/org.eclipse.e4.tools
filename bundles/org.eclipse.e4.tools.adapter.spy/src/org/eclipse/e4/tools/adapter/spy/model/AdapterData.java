@@ -6,42 +6,29 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.tools.adapter.spy.tools.AdapterHelper;
-import org.eclipse.emf.ecore.util.EcoreUtil;
-
 
 /**
- * Adapter data model Object
- * This class is used to store ConfigarationElement elements
- * which use an adapter
+ * Adapter data model Object This class is used to store ConfigarationElement
+ * elements which use an adapter
+ * 
  * @author pascal
  *
  */
 public class AdapterData {
 
 	IConfigurationElement configElem;
+
 	AdapterData parent;
 	List<AdapterData> children = new ArrayList<>();
 	AdapterElementType elemType;
 	boolean visibilityFilter = true;
-	final String uid;
-	
+	Boolean showPackage ;
+	AdapterData hasSourceType;
+
 	public AdapterData(IConfigurationElement elem, AdapterElementType elemType) {
 		this.elemType = elemType;
 		configElem = elem;
-		uid=EcoreUtil.generateUUID();
-	}
-
-	public void buildchilds() {
-		AdapterData adapter = new AdapterData(configElem, AdapterElementType.FROM_TYPE);
-		adapter.setParent(this);
-		children.add(adapter);
-
-		IConfigurationElement[] childs = configElem.getChildren("adapter");
-		for (IConfigurationElement child : childs) {
-			AdapterData adaptdata = new AdapterData(child, AdapterElementType.TO_TYPE);
-			adaptdata.setParent(adapter);
-			adapter.getChildrenList().add(adaptdata);
-		}
+		showPackage = Boolean.TRUE;
 	}
 
 	public void propagateVisibility() {
@@ -59,9 +46,6 @@ public class AdapterData {
 		String txt = this.toString();
 		bfound.set(txt.contains(txtSearch));
 		// check in adapter class
-		if (parent == null) {
-			bfound.set(getAdaterClass().contains(txtSearch));
-		}
 		children.forEach(d -> {
 			d.textSearch(txtSearch, bfound);
 		});
@@ -69,19 +53,20 @@ public class AdapterData {
 	}
 
 	public String getPluginName() {
-		return configElem.getContributor().getName();
+		return checkNull(configElem.getContributor().getName());
 	}
 
-	public String fromType() {
-		return configElem.getAttribute(AdapterHelper.EXT_POINT_ATTR_ADAPTABLE_TYPE);
+	public String sourceType() {
+		return checkNull(configElem.getAttribute(AdapterHelper.EXT_POINT_ATTR_ADAPTABLE_TYPE));
 	}
 
 	public String getAdaterClass() {
-		return configElem.getAttribute(AdapterHelper.EXT_POINT_ATTR_CLASS);
+
+		return checkNull(configElem.getAttribute(AdapterHelper.EXT_POINT_ATTR_CLASS));
 	}
 
-	public String toType() {
-		return configElem.getAttribute(AdapterHelper.EXT_POINT_ATTR_TYPE);
+	public String destinationType() {
+		return checkNull(configElem.getAttribute(AdapterHelper.EXT_POINT_ATTR_TYPE));
 	}
 
 	public boolean hasChildren() {
@@ -111,12 +96,59 @@ public class AdapterData {
 		return this.elemType;
 	}
 
+	public IConfigurationElement getConfigurationElement() {
+		return this.configElem;
+	}
+
+	/**
+	 * @return the hasSourceType
+	 */
+	public AdapterData isHasSourceType() {
+		return hasSourceType;
+	}
+
+	/**
+	 * @param hasSourceType the hasSourceType to set
+	 */
+	public void setHasSourceType(AdapterData hasSourceType) {
+		this.hasSourceType = hasSourceType;
+	}
+
+	
+	/**
+	 * @return the showPackage
+	 */
+	public boolean isShowPackage() {
+		return showPackage;
+	}
+
+	/**
+	 * @param showPackage the showPackage to set
+	 */
+	public void setShowPackage(boolean showPackage) {
+		this.showPackage = showPackage;
+	}
+
 	public String getText(int colIndex) {
 		if (colIndex == 0) {
-			return toString();
+			String result = "";
+			switch (elemType) {
+			case SOURCE_TYPE:
+				result = displayPackage(sourceType());
+				break;
+			case DESTINATION_TYPE:
+				result = displayPackage(destinationType());
+				break;
+			default:
+				result = "";
+			}
+			return result;
 		}
 		if (parent == null) {
 			return getAdaterClass();
+		}
+		if (hasSourceType != null) {
+			return hasSourceType.getAdaterClass();
 		}
 		return "";
 	}
@@ -137,21 +169,17 @@ public class AdapterData {
 
 	@Override
 	public String toString() {
-		String result = "";
-		switch (elemType) {
-		case FROM_TYPE:
-			result = fromType();
-			break;
-		case PLUGIN:
-			result = getPluginName();
-			break;
-		case TO_TYPE:
-			result = toType();
-			break;
-		default:
-			throw new IllegalArgumentException("Unexpected value: " + elemType);
-		}
-		return result;
+		return getPluginName() + "@" + sourceType() + "@" + destinationType() + getAdaterClass();
 	}
 
+	private String checkNull(String val) {
+		return (val == null) ? "" : val;
+	}
+	
+	private String displayPackage(String value) {
+		if(showPackage) {
+			return value;
+		}
+		return value.substring(value.lastIndexOf(".")+1, value.length());
+	}
 }
