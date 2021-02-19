@@ -111,7 +111,7 @@ public class AdapterSpyPart {
 		comp.setLayout(new GridLayout(3, false));
 		Text filterText = new Text(comp, SWT.SEARCH | SWT.ICON_SEARCH | SWT.ICON_CANCEL);
 		GridDataFactory.fillDefaults().hint(200, SWT.DEFAULT).applyTo(filterText);
-		filterText.setMessage("Search contributor");
+		filterText.setMessage("Search data");
 		filterText.setToolTipText("Find contributor name with plugin id");
 		
 		filterText.addModifyListener( e -> {
