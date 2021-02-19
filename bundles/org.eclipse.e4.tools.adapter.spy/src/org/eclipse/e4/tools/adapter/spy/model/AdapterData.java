@@ -18,7 +18,7 @@ public class AdapterData {
 
 	IConfigurationElement configElem;
 
-	AdapterData parent;
+	AdapterData parent ;
 	List<AdapterData> children = new ArrayList<>();
 	AdapterElementType elemType;
 	boolean visibilityFilter = true;
@@ -144,11 +144,12 @@ public class AdapterData {
 			}
 			return result;
 		}
-		if (parent == null) {
-			return getAdaterClass();
-		}
-		if (hasSourceType != null) {
-			return hasSourceType.getAdaterClass();
+		
+		if(colIndex == 1) {
+			if(parent == null) {
+				return "";//etAdaterClass();
+			}
+			return parent.getAdaterClass();
 		}
 		return "";
 	}

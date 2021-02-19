@@ -163,11 +163,7 @@ public class AdapterSpyPart {
 		for( IConfigurationElement elem:configElement)
 		{
 			AdapterData adata = adapter.adapt(elem, AdapterData.class);
-			if( !result.contains(adata))
-			{
-				result.add(adata);	
-			}
-			
+			result.add(adata);
 		}
 		uisync.syncExec(()->{
 			if( adapterTreeViewer != null)

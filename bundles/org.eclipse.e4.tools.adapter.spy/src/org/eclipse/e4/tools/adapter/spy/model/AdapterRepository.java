@@ -42,9 +42,7 @@ public class AdapterRepository {
 
 	public AdapterData getSourceType(IConfigurationElement element) {
 		String sourceType = element.getAttribute(AdapterHelper.EXT_POINT_ATTR_ADAPTABLE_TYPE);
-		if (sourceTypeToAdapterDataMap.containsKey(sourceType)) {
-			return sourceTypeToAdapterDataMap.get(sourceType);
-		}
+		
 		AdapterData adapterData = new AdapterData(element, AdapterElementType.SOURCE_TYPE);
 		sourceTypeToAdapterDataMap.put(sourceType, adapterData);
 		buildDestinationType(adapterData);
@@ -60,11 +58,7 @@ public class AdapterRepository {
 			for (IConfigurationElement target : destinationTypes) {
 				String destType = target.getAttribute(AdapterHelper.EXT_POINT_ATTR_TYPE);
 				AdapterData adapterData = null;
-				if(destinationTypeToAdapterDataMap.containsKey(destType)) {
-					adapterData = destinationTypeToAdapterDataMap.get(destType);
-				}else {
-					adapterData = new AdapterData(target, AdapterElementType.DESTINATION_TYPE);
-				}
+				adapterData = new AdapterData(target, AdapterElementType.DESTINATION_TYPE);
 				adapterData.setParent(source);
 				destinationTypeToAdapterDataMap.put(adapterData.destinationType(), adapterData);
 				checkTargetIsSource(adapterData);
