@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.e4.tools.spy.spyPart">
+      <spyPart
+            description="registered adapters "
+            icon="icons/ext_point_obj.png"
+            name="Adapter Spy"
+            part="org.eclipse.e4.tools.adapter.spy.part.AdapterSpyPart"
+            shortcut="M2+M3+F7">
+      </spyPart>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.core.internal.registry.ConfigurationElementHandle"
+            class="org.eclipse.e4.tools.adapter.spy.adapterfactory.AdapterDataFactory">
+         <adapter
+               type="org.eclipse.e4.tools.adapter.spy.model.AdapterData">
+         </adapter>
+      </factory>
+   </extension>
+
+</plugin>
