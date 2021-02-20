@@ -139,7 +139,6 @@ public class AdapterSpyPart {
 		adapterFactoryClassTvc.getColumn().setWidth(700);
 		adapterFactoryClassTvc.setLabelProvider(adapterContentProvider);
 
-			// update treeViewer
 		context.set(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION, extp);
 
 	}
