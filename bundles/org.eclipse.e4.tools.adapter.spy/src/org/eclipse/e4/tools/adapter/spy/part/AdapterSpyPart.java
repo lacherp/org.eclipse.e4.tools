@@ -176,10 +176,11 @@ public class AdapterSpyPart {
 	
 		ToolBar toolBar = new ToolBar(comp, SWT.NONE);
 		ToolItem toolItem = new ToolItem(toolBar, SWT.CHECK);
-		toolItem.setImage(imgr.get(AdapterHelper.FROM_TYPE_IMG_KEY));
+		toolItem.setImage(imgr.get(AdapterHelper.DESTINATION_TYPE_IMG_KEY));
 		toolItem.setToolTipText("Toggle to destination type");
+		// sourceToType event
 		toolItem.addSelectionListener(new SelectionAdapter() {
-			
+		
 			@Override
 			public void widgetSelected(SelectionEvent event) {
 				Object source = event.getSource();
@@ -187,7 +188,7 @@ public class AdapterSpyPart {
 					FilterData fdata = getFilterData();
 					sourceToDestination = !sourceToDestination;
 					String tooltiptext = sourceToDestination ? "Toggle to destination type" : "Toggle to source type";
-					String imageKey = sourceToDestination ? AdapterHelper.FROM_TYPE_IMG_KEY:AdapterHelper.TO_TYPE_IMG_KEY;
+					String imageKey = sourceToDestination ? AdapterHelper.DESTINATION_TYPE_IMG_KEY:AdapterHelper.SOURCE_TYPE_IMG_KEY;
 					toolItem.setToolTipText(tooltiptext);
 					toolItem.setImage(imgr.get(imageKey));
 					

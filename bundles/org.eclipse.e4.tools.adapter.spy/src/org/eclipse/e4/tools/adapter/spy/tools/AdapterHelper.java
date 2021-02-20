@@ -18,8 +18,8 @@ public final class AdapterHelper {
 
 	// Image keys constants
 	public static final String BUNDLE_IMG_KEY = "icons/osgi.png";
-	public static final String FROM_TYPE_IMG_KEY = "icons/from_type.png";
-	public static final String TO_TYPE_IMG_KEY = "icons/to_type.png";
+	public static final String SOURCE_TYPE_IMG_KEY = "icons/from_type.png";
+	public static final String DESTINATION_TYPE_IMG_KEY = "icons/to_type.png";
 	
 	// extension constant string 
 	public static final String EXT_POINT_ID = "org.eclipse.core.runtime.adapters";
@@ -66,8 +66,8 @@ public final class AdapterHelper {
 		Bundle b = FrameworkUtil.getBundle(instance.getClass());
 		ImageRegistry imgReg = new ImageRegistry();
 		imgReg.put(BUNDLE_IMG_KEY, ImageDescriptor.createFromURL(b.getEntry(BUNDLE_IMG_KEY)));
-		imgReg.put(FROM_TYPE_IMG_KEY, ImageDescriptor.createFromURL(b.getEntry(FROM_TYPE_IMG_KEY)));
-		imgReg.put(TO_TYPE_IMG_KEY, ImageDescriptor.createFromURL(b.getEntry(TO_TYPE_IMG_KEY)));
+		imgReg.put(SOURCE_TYPE_IMG_KEY, ImageDescriptor.createFromURL(b.getEntry(SOURCE_TYPE_IMG_KEY)));
+		imgReg.put(DESTINATION_TYPE_IMG_KEY, ImageDescriptor.createFromURL(b.getEntry(DESTINATION_TYPE_IMG_KEY)));
 		return imgReg;
 	}
 

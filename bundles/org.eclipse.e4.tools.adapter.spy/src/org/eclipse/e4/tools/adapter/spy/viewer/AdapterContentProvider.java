@@ -86,11 +86,11 @@ public class AdapterContentProvider extends ColumnLabelProvider implements ITree
 			AdapterElementType elemType = ((AdapterData)element).getAdapterElementType();
 			if( elemType.equals(AdapterElementType.SOURCE_TYPE))
 			{
-				return imgReg.get(AdapterHelper.FROM_TYPE_IMG_KEY);
+				return imgReg.get(AdapterHelper.SOURCE_TYPE_IMG_KEY);
 			}
 			if( elemType.equals(AdapterElementType.DESTINATION_TYPE))
 			{
-				return imgReg.get(AdapterHelper.TO_TYPE_IMG_KEY);
+				return imgReg.get(AdapterHelper.DESTINATION_TYPE_IMG_KEY);
 			}	
 		}
 		return super.getImage(element);
