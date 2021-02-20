@@ -60,8 +60,8 @@ public class AdapterSpyPart {
 
 	private AdapterContentProvider adapterContentProvider;
 
-	private static final String NAMED_UPDATE_TREE_SOURCE_TO_TYPE = "udpateTreeSourceToType";
-	private static final String NAMED_UPDATE_TREE_TYPE_TO_SOURCE = "udpateTreeTypeToSource";
+	private static final String NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION = "updateTreeSourceToDestination";
+	private static final String NAMED_UPDATE_TREE_DESTINATION_TO_SOURCE = "updateTreeDestinationToSource";
 
 	@Inject
 	UISynchronize uisync;
@@ -125,7 +125,7 @@ public class AdapterSpyPart {
 		adapterFactoryClassTvc.setLabelProvider(adapterContentProvider);
 
 		// update treeViewer
-		context.set(NAMED_UPDATE_TREE_SOURCE_TO_TYPE, extp);
+		context.set(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION, extp);
 
 	}
 
@@ -173,13 +173,13 @@ public class AdapterSpyPart {
 			public void widgetSelected(SelectionEvent e) {
 				FilterData fdata = getFilterData();
 				if(sourceToDestination) {
-					context.set(NAMED_UPDATE_TREE_SOURCE_TO_TYPE, null);
+					context.set(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION, null);
 					adapterRepo.clear();
-					context.set(NAMED_UPDATE_TREE_SOURCE_TO_TYPE, adapterRepo.getAdapters());
+					context.set(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION, adapterRepo.getAdapters());
 					context.set(AdapterFilter.UPDATE_CTX_FILTER, fdata);
 				}else {
 					
-					context.set(NAMED_UPDATE_TREE_TYPE_TO_SOURCE,adapterRepo.revertSourceToType());
+					context.set(NAMED_UPDATE_TREE_DESTINATION_TO_SOURCE,adapterRepo.revertSourceToType());
 					context.set(AdapterFilter.UPDATE_CTX_FILTER, fdata);
 				}
 				adapterTreeViewer.refresh(true);
@@ -207,10 +207,10 @@ public class AdapterSpyPart {
 					
 					if(sourceToDestination) {
 						sourceOrDestinationTvc.getColumn().setText("Source Type");
-						context.set(NAMED_UPDATE_TREE_SOURCE_TO_TYPE, adapterRepo.getAdapters());
+						context.set(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION, adapterRepo.getAdapters());
 					}else {
 						sourceOrDestinationTvc.getColumn().setText("Destination Type");
-						context.set(NAMED_UPDATE_TREE_TYPE_TO_SOURCE,adapterRepo.revertSourceToType());	
+						context.set(NAMED_UPDATE_TREE_DESTINATION_TO_SOURCE,adapterRepo.revertSourceToType());	
 					}
 					fdata.setSourceToDestination(sourceToDestination);
 					context.set(AdapterFilter.UPDATE_CTX_FILTER, fdata);
@@ -231,7 +231,7 @@ public class AdapterSpyPart {
 
 	@Inject
 	@Optional
-	private void updateAdapterTreeViewerSourceToType(@Named(NAMED_UPDATE_TREE_SOURCE_TO_TYPE) IConfigurationElement[] configElement, Adapter adapter) {
+	private void updateAdapterTreeViewerSourceToType(@Named(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION) IConfigurationElement[] configElement, Adapter adapter) {
 		if (configElement == null) {
 			return;
 		}
@@ -242,15 +242,15 @@ public class AdapterSpyPart {
 		}
 		// reduce source Type
 		List<AdapterData> reduceresult = reduceType(result);
-		refreshAdapterTree(NAMED_UPDATE_TREE_SOURCE_TO_TYPE, reduceresult);
+		refreshAdapterTree(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION, reduceresult);
 	}
 
 	
 	@Inject
 	@Optional
-	private void udpateAdapterTreeViewTypeToSource(@Named(NAMED_UPDATE_TREE_TYPE_TO_SOURCE) List<AdapterData> adapaters) {
+	private void udpateAdapterTreeViewTypeToSource(@Named(NAMED_UPDATE_TREE_DESTINATION_TO_SOURCE) List<AdapterData> adapaters) {
 		List<AdapterData> result=reduceType(adapaters);
-		refreshAdapterTree(NAMED_UPDATE_TREE_SOURCE_TO_TYPE, result);
+		refreshAdapterTree(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION, result);
 	}
 	
 	
