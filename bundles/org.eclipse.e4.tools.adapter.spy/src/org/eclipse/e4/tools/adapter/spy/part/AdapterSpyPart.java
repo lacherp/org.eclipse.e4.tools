@@ -33,6 +33,7 @@ import org.eclipse.e4.tools.adapter.spy.model.AdapterData;
 import org.eclipse.e4.tools.adapter.spy.model.AdapterRepository;
 import org.eclipse.e4.tools.adapter.spy.tools.AdapterHelper;
 import org.eclipse.e4.tools.adapter.spy.viewer.AdapterContentProvider;
+import org.eclipse.e4.tools.adapter.spy.viewer.AdapterDataComparator;
 import org.eclipse.e4.tools.adapter.spy.viewer.AdapterFilter;
 import org.eclipse.e4.tools.adapter.spy.viewer.FilterData;
 import org.eclipse.e4.ui.di.UISynchronize;
@@ -80,6 +81,7 @@ public class AdapterSpyPart {
 
 	private TreeViewerColumn sourceOrDestinationTvc;
 
+	private AdapterDataComparator comparator;
 	@Inject
 	public AdapterSpyPart(IEclipseContext context) {
 		// wrap eclipse adapter
@@ -108,6 +110,10 @@ public class AdapterSpyPart {
 		adapterTreeViewer.setLabelProvider(adapterContentProvider);
 		adapterTreeViewer.setFilters(adapterFilter);
 
+		// add comparator
+				comparator = new AdapterDataComparator(0);
+				adapterTreeViewer.setComparator(comparator);
+			
 		// define columns
 		final Tree cTree = adapterTreeViewer.getTree();
 		cTree.setHeaderVisible(true);
@@ -118,13 +124,22 @@ public class AdapterSpyPart {
 		sourceOrDestinationTvc.getColumn().setText("Source Type");
 		sourceOrDestinationTvc.getColumn().setWidth(500);
 		sourceOrDestinationTvc.setLabelProvider(adapterContentProvider);
+		sourceOrDestinationTvc.getColumn().addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				comparator.setColumn(0);
+				adapterTreeViewer.getTree().setSortDirection(comparator.getDirection());
+				adapterTreeViewer.refresh();
+				
+			}
+		});
 
 		TreeViewerColumn adapterFactoryClassTvc = new TreeViewerColumn(adapterTreeViewer, SWT.NONE);
 		adapterFactoryClassTvc.getColumn().setText("AdapterFactory");
 		adapterFactoryClassTvc.getColumn().setWidth(700);
 		adapterFactoryClassTvc.setLabelProvider(adapterContentProvider);
 
-		// update treeViewer
+			// update treeViewer
 		context.set(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION, extp);
 
 	}

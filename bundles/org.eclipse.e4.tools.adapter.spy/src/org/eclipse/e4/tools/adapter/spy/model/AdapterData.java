@@ -29,7 +29,7 @@ import org.eclipse.e4.tools.adapter.spy.tools.AdapterHelper;
  * @author pascal
  *
  */
-public class AdapterData {
+public class AdapterData implements Comparable<AdapterData> {
 
 	IConfigurationElement configElem;
 
@@ -240,6 +240,11 @@ public class AdapterData {
 			return value;
 		}
 		return value.substring(value.lastIndexOf(".")+1, value.length());
+	}
+
+	@Override
+	public int compareTo(AdapterData o) {
+		return this.getText(0).compareTo(o.getText(0));
 	}
 
 	
