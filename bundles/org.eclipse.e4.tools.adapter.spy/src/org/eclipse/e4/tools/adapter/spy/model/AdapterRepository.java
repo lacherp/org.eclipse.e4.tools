@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -56,13 +57,11 @@ public class AdapterRepository {
 		if(source.getChildrenList().isEmpty())
 		{
 			for (IConfigurationElement target : destinationTypes) {
-				String destType = target.getAttribute(AdapterHelper.EXT_POINT_ATTR_TYPE);
 				AdapterData adapterData = null;
 				adapterData = new AdapterData(target, AdapterElementType.DESTINATION_TYPE);
 				adapterData.setParent(source);
 				destinationTypeToAdapterDataMap.put(adapterData.destinationType(), adapterData);
 				checkTargetIsSource(adapterData);
-				
 				source.getChildrenList().add(adapterData);
 			}	
 		}
@@ -87,6 +86,11 @@ public class AdapterRepository {
 		
 	}
 	
+	
+	public List<AdapterData> revertSourceToType(){
+		return sourceTypeToAdapterDataMap.values().stream().flatMap(AdapterData::sourceToType)
+			.collect(Collectors.toList());
+	}
 	
 	
 	

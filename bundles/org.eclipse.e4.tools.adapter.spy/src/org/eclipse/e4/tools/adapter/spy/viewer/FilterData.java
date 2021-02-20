@@ -9,12 +9,13 @@ public class FilterData {
 
 	String txtSeachFilter;
 	Boolean showPackage;
-	
+	Boolean sourceToDestination;
 	/**
 	 * Ctor
 	 */
 	public FilterData() {
 		showPackage = Boolean.TRUE;
+		sourceToDestination = Boolean.TRUE;
 	}
 
 	/**
@@ -25,6 +26,7 @@ public class FilterData {
 	{
 		this.txtSeachFilter = fdata.txtSeachFilter;
 		this.showPackage = fdata.showPackage;
+		this.sourceToDestination = fdata.sourceToDestination;
 	}
 	/**
 	 * @return the txtSeachFilter
@@ -55,4 +57,19 @@ public class FilterData {
 		this.showPackage = showPackage;
 	}
 
+	/**
+	 * @return the sourceToDestination
+	 */
+	public Boolean getSourceToDestination() {
+		return sourceToDestination;
+	}
+
+	/**
+	 * @param sourceToDestination the sourceToDestination to set
+	 */
+	public void setSourceToDestination(Boolean sourceToDestination) {
+		this.sourceToDestination = sourceToDestination;
+	}
+
+	
 }

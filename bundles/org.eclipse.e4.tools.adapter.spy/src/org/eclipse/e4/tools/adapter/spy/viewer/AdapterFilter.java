@@ -22,6 +22,8 @@ public class AdapterFilter extends ViewerFilter {
 	
 	private String  txtSeachFilter;
 	private Boolean showPackageFilter = Boolean.TRUE;
+	private Boolean sourceToDestination = Boolean.TRUE;
+	
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		
@@ -50,18 +52,26 @@ public class AdapterFilter extends ViewerFilter {
 		}
 		this.txtSeachFilter = filterData.getTxtSeachFilter();
 		this.showPackageFilter= filterData.getShowPackage();
+		this.sourceToDestination = filterData.getSourceToDestination();
 	}
 
 	
 	private void doFilter(AdapterData adapterData)
 	{
-		if( adapterData.getAdapterElementType().equals(AdapterElementType.SOURCE_TYPE))
+		if( Boolean.TRUE.equals(sourceToDestination) && adapterData.getAdapterElementType().equals(AdapterElementType.SOURCE_TYPE))
 		{
-			AtomicBoolean bfound = new AtomicBoolean(false);
-			adapterData.textSearch(txtSeachFilter, bfound);
-			adapterData.setVisibilityFilter(bfound.get());
-			adapterData.propagateVisibility();
+			doVisibility(adapterData);
+		}
+		if( Boolean.FALSE.equals(sourceToDestination) && adapterData.getAdapterElementType().equals(AdapterElementType.DESTINATION_TYPE))
+		{
+			doVisibility(adapterData);
 		}
 	}
 	
+	private void doVisibility(AdapterData adapterData) {
+		AtomicBoolean bfound = new AtomicBoolean(false);
+		adapterData.textSearch(txtSeachFilter, bfound);
+		adapterData.setVisibilityFilter(bfound.get());
+		adapterData.propagateVisibility();
+	}
 }

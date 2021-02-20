@@ -1,6 +1,6 @@
 package org.eclipse.e4.tools.adapter.spy.viewer;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -26,7 +26,6 @@ public class AdapterContentProvider extends ColumnLabelProvider implements ITree
 	
 	private int columnIndex;
 	
-
 	@Override
 	public void update(ViewerCell cell) {
 		columnIndex = cell.getColumnIndex();
@@ -36,8 +35,8 @@ public class AdapterContentProvider extends ColumnLabelProvider implements ITree
 	@Override
 	public Object[] getElements(Object inputElement) {
 		
-		if(inputElement instanceof LinkedList<?>) {
-			return ((LinkedList<?>) inputElement).toArray();
+		if(inputElement instanceof ArrayList<?>) {
+			return ((ArrayList<?>) inputElement).toArray();
 		}
 		return (Object[]) inputElement;
 	}

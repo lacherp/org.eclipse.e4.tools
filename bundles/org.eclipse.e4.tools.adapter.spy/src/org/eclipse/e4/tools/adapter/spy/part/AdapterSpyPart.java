@@ -1,6 +1,6 @@
 package org.eclipse.e4.tools.adapter.spy.part;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -63,7 +63,9 @@ public class AdapterSpyPart {
 
 	private Button reduceType;
 	
-	boolean sourceToType = true;
+	boolean sourceToDestination = true;
+
+	private TreeViewerColumn sourceOrDestinationTvc;
 
 	@Inject
 	public AdapterSpyPart(IEclipseContext context) {
@@ -99,10 +101,10 @@ public class AdapterSpyPart {
 		cTree.setLinesVisible(true);
 		cTree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		TreeViewerColumn typeTvc = new TreeViewerColumn(adapterTreeViewer, SWT.NONE);
-		typeTvc.getColumn().setText("Source Type");
-		typeTvc.getColumn().setWidth(500);
-		typeTvc.setLabelProvider(adapterContentProvider);
+		sourceOrDestinationTvc = new TreeViewerColumn(adapterTreeViewer, SWT.NONE);
+		sourceOrDestinationTvc.getColumn().setText("Source Type");
+		sourceOrDestinationTvc.getColumn().setWidth(500);
+		sourceOrDestinationTvc.setLabelProvider(adapterContentProvider);
 
 		TreeViewerColumn adapterFactoryClassTvc = new TreeViewerColumn(adapterTreeViewer, SWT.NONE);
 		adapterFactoryClassTvc.getColumn().setText("AdapterFactory");
@@ -121,7 +123,7 @@ public class AdapterSpyPart {
 		Text filterText = new Text(comp, SWT.SEARCH | SWT.ICON_SEARCH | SWT.ICON_CANCEL);
 		GridDataFactory.fillDefaults().hint(250, SWT.DEFAULT).applyTo(filterText);
 		filterText.setMessage("Search data");
-		filterText.setToolTipText("Find contributor name with plugin id");
+		filterText.setToolTipText("Find any element in tree");
 
 		filterText.addModifyListener(e -> {
 			FilterData fdata = getFilterData();
@@ -156,12 +158,19 @@ public class AdapterSpyPart {
 		reduceType.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				context.set(NAMED_UPDATE_TREE_SOURCE_TO_TYPE, null);
-				adapterRepo.clear();
-				context.set(NAMED_UPDATE_TREE_SOURCE_TO_TYPE, adapterRepo.getAdapters());
 				FilterData fdata = getFilterData();
-				context.set(AdapterFilter.UPDATE_CTX_FILTER, fdata);
+				if(sourceToDestination) {
+					context.set(NAMED_UPDATE_TREE_SOURCE_TO_TYPE, null);
+					adapterRepo.clear();
+					context.set(NAMED_UPDATE_TREE_SOURCE_TO_TYPE, adapterRepo.getAdapters());
+					context.set(AdapterFilter.UPDATE_CTX_FILTER, fdata);
+				}else {
+					
+					context.set(NAMED_UPDATE_TREE_TYPE_TO_SOURCE,adapterRepo.revertSourceToType());
+					context.set(AdapterFilter.UPDATE_CTX_FILTER, fdata);
+				}
 				adapterTreeViewer.refresh(true);
+			
 			}
 		});
 	
@@ -175,11 +184,22 @@ public class AdapterSpyPart {
 			public void widgetSelected(SelectionEvent event) {
 				Object source = event.getSource();
 				if (source instanceof ToolItem) {
-					sourceToType = !sourceToType;
-					String tooltiptext = sourceToType ? "Toggle to destination type" : "Toggle to source type";
-					String imageKey = sourceToType ? AdapterHelper.FROM_TYPE_IMG_KEY:AdapterHelper.TO_TYPE_IMG_KEY;
+					FilterData fdata = getFilterData();
+					sourceToDestination = !sourceToDestination;
+					String tooltiptext = sourceToDestination ? "Toggle to destination type" : "Toggle to source type";
+					String imageKey = sourceToDestination ? AdapterHelper.FROM_TYPE_IMG_KEY:AdapterHelper.TO_TYPE_IMG_KEY;
 					toolItem.setToolTipText(tooltiptext);
 					toolItem.setImage(imgr.get(imageKey));
+					
+					if(sourceToDestination) {
+						sourceOrDestinationTvc.getColumn().setText("Source Type");
+						context.set(NAMED_UPDATE_TREE_SOURCE_TO_TYPE, adapterRepo.getAdapters());
+					}else {
+						sourceOrDestinationTvc.getColumn().setText("Destination Type");
+						context.set(NAMED_UPDATE_TREE_TYPE_TO_SOURCE,adapterRepo.revertSourceToType());	
+					}
+					fdata.setSourceToDestination(sourceToDestination);
+					context.set(AdapterFilter.UPDATE_CTX_FILTER, fdata);
 				}
 				
 			}
@@ -201,17 +221,31 @@ public class AdapterSpyPart {
 		if (configElement == null) {
 			return;
 		}
-		List<AdapterData> result = new LinkedList<>();
+		List<AdapterData> result = new ArrayList<>();
 		for (IConfigurationElement elem : configElement) {
 			AdapterData adata = adapter.adapt(elem, AdapterData.class);
 			result.add(adata);
 		}
 		// reduce source Type
-		List<AdapterData> reduceresult = result;
+		List<AdapterData> reduceresult = reduceType(result);
+		refreshAdapterTree(NAMED_UPDATE_TREE_SOURCE_TO_TYPE, reduceresult);
+	}
+
+	
+	@Inject
+	@Optional
+	private void udpateAdapterTreeViewTypeToSource(@Named(NAMED_UPDATE_TREE_TYPE_TO_SOURCE) List<AdapterData> adapaters) {
+		List<AdapterData> result=reduceType(adapaters);
+		refreshAdapterTree(NAMED_UPDATE_TREE_SOURCE_TO_TYPE, result);
+	}
+	
+	
+	private List<AdapterData> reduceType(List<AdapterData> originalList){
+		List<AdapterData> reduceresult = originalList;
 		if (reduceType.getSelection()) {
 
-			Map<String, List<AdapterData>> resultmap = result.stream()
-					.collect(Collectors.groupingBy(AdapterData::sourceType));
+			Map<String, List<AdapterData>> resultmap = groupBy(originalList);
+			
 			reduceresult.clear();
 			resultmap.forEach((k, v) -> {
 				AdapterData firstElem = v.get(0);
@@ -221,11 +255,22 @@ public class AdapterSpyPart {
 				}
 			});
 		}
-		refreshAdapterTree(NAMED_UPDATE_TREE_SOURCE_TO_TYPE, reduceresult);
+		
+		
+		return reduceresult;
 	}
-
 	
-	
+	private Map<String, List<AdapterData>> groupBy(List<AdapterData> originalList) {
+		Map<String, List<AdapterData>> result=null;
+		if( sourceToDestination) {
+			result = originalList.stream()
+					.collect(Collectors.groupingBy(AdapterData::sourceType));
+		}else {
+			result = originalList.stream()
+					.collect(Collectors.groupingBy(AdapterData::destinationType));
+		}
+		return result;
+	}
 	
 	@PreDestroy
 	public void dispose() {
