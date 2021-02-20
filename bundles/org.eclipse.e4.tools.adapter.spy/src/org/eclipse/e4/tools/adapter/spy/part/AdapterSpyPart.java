@@ -125,6 +125,7 @@ public class AdapterSpyPart {
 		sourceOrDestinationTvc.getColumn().setText("Source Type");
 		sourceOrDestinationTvc.getColumn().setWidth(500);
 		sourceOrDestinationTvc.setLabelProvider(adapterContentProvider);
+		cTree.setSortColumn(sourceOrDestinationTvc.getColumn());
 		sourceOrDestinationTvc.getColumn().addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
