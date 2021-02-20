@@ -2,6 +2,8 @@ package org.eclipse.e4.tools.adapter.spy.part;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -54,6 +56,8 @@ public class AdapterSpyPart {
 	AdapterRepository adapterRepo;
 	
 	AdapterFilter adapterFilter;
+
+	private Button reduceSourceType;
 	
 	
 	@Inject
@@ -110,7 +114,7 @@ public class AdapterSpyPart {
 		final Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayout(new GridLayout(3, false));
 		Text filterText = new Text(comp, SWT.SEARCH | SWT.ICON_SEARCH | SWT.ICON_CANCEL);
-		GridDataFactory.fillDefaults().hint(200, SWT.DEFAULT).applyTo(filterText);
+		GridDataFactory.fillDefaults().hint(250, SWT.DEFAULT).applyTo(filterText);
 		filterText.setMessage("Search data");
 		filterText.setToolTipText("Find contributor name with plugin id");
 		
@@ -129,7 +133,7 @@ public class AdapterSpyPart {
 	
 		showPackageFilter.setText("Show package");
 		
-		showPackageFilter.setToolTipText("Show only the filtered items in the table view");
+		showPackageFilter.setToolTipText("Show source type with packages name");
 		showPackageFilter.setEnabled(true);
 		showPackageFilter.setSelection(true);
 		showPackageFilter.addSelectionListener(new SelectionAdapter() {
@@ -141,13 +145,26 @@ public class AdapterSpyPart {
 				adapterTreeViewer.refresh(true);
 			}
 		});
+		
+		reduceSourceType = new Button(comp, SWT.CHECK);
+		reduceSourceType.setText("Reduce source type");
+		reduceSourceType.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				context.set(NAMED_UPDATE_TREE,null);
+				adapterRepo.clear();
+				context.set(NAMED_UPDATE_TREE,adapterRepo.getAdapters());
+				FilterData fdata = getFilterData();
+				context.set(AdapterFilter.UPDATE_CTX_FILTER,fdata);
+				adapterTreeViewer.refresh(true);
+			}
+		});
 	}
 
 	private FilterData getFilterData() {
 		if(context.get(AdapterFilter.UPDATE_CTX_FILTER) == null) {
 			return new FilterData();
 		}
-		
 		return new FilterData((FilterData) context.get(AdapterFilter.UPDATE_CTX_FILTER)) ;
 	}
 	
@@ -165,10 +182,25 @@ public class AdapterSpyPart {
 			AdapterData adata = adapter.adapt(elem, AdapterData.class);
 			result.add(adata);
 		}
+		// reduce source Type
+		List<AdapterData> reduceresult = result;
+		if( reduceSourceType.getSelection()) {
+			
+			Map<String, List<AdapterData>> resultmap = result.stream().collect(Collectors.groupingBy(AdapterData::sourceType));
+			reduceresult.clear();
+			resultmap.forEach((k,v)->{
+				AdapterData firstElem = v.get(0);
+				reduceresult.add(firstElem);
+				for(int idx=1;idx<v.size();idx++) {
+					firstElem.getChildrenList().addAll(v.get(idx).getChildrenList());
+				}
+			});
+		}
+		
 		uisync.syncExec(()->{
 			if( adapterTreeViewer != null)
 			{
-				adapterTreeViewer.setInput(result);
+				adapterTreeViewer.setInput(reduceresult);
 				context.set(NAMED_UPDATE_TREE,null);
 			}
 		});
