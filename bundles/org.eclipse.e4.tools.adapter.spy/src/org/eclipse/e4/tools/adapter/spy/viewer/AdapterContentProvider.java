@@ -2,16 +2,16 @@ package org.eclipse.e4.tools.adapter.spy.viewer;
 
 import java.util.LinkedList;
 
+import javax.inject.Inject;
+
 import org.eclipse.e4.tools.adapter.spy.model.AdapterData;
 import org.eclipse.e4.tools.adapter.spy.model.AdapterElementType;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.e4.tools.adapter.spy.tools.AdapterHelper;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.graphics.Image;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
 
 /**
  * This provider is used to display available plugins
@@ -21,22 +21,11 @@ import org.osgi.framework.FrameworkUtil;
  */
 public class AdapterContentProvider extends ColumnLabelProvider implements ITreeContentProvider {
 
-	// Image keys constants
-	private static  final String BUNDLE_IMG_KEY ="icons/osgi.png";
-	private static  final String FROM_TYPE_IMG_KEY ="icons/from_type.png";
-	private static  final String TO_TYPE_IMG_KEY ="icons/to_type.png";
-	
+	@Inject
 	private ImageRegistry imgReg;
 	
 	private int columnIndex;
 	
-	private boolean displayPackage;
-	/**
-	 * Ctor
-	 */
-	public AdapterContentProvider(){
-		initImageRegistry();
-	}
 
 	@Override
 	public void update(ViewerCell cell) {
@@ -98,24 +87,14 @@ public class AdapterContentProvider extends ColumnLabelProvider implements ITree
 			AdapterElementType elemType = ((AdapterData)element).getAdapterElementType();
 			if( elemType.equals(AdapterElementType.SOURCE_TYPE))
 			{
-				return imgReg.get(FROM_TYPE_IMG_KEY);
+				return imgReg.get(AdapterHelper.FROM_TYPE_IMG_KEY);
 			}
 			if( elemType.equals(AdapterElementType.DESTINATION_TYPE))
 			{
-				return imgReg.get(TO_TYPE_IMG_KEY);
+				return imgReg.get(AdapterHelper.TO_TYPE_IMG_KEY);
 			}	
 		}
 		return super.getImage(element);
 	}
-	
-	private void initImageRegistry() {
-		Bundle b = FrameworkUtil.getBundle(this.getClass());
-		imgReg = new ImageRegistry();
-		imgReg.put(BUNDLE_IMG_KEY, ImageDescriptor.createFromURL(b.getEntry(BUNDLE_IMG_KEY)));
-		imgReg.put(FROM_TYPE_IMG_KEY, ImageDescriptor.createFromURL(b.getEntry(FROM_TYPE_IMG_KEY)));
-		imgReg.put(TO_TYPE_IMG_KEY, ImageDescriptor.createFromURL(b.getEntry(TO_TYPE_IMG_KEY)));
-	}
-
-	
 	
 }
