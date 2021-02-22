@@ -61,6 +61,7 @@
     <module>./bundles/org.eclipse.e4.tools.bundle.spy</module>
     <module>./bundles/org.eclipse.e4.tools.preference.spy</module>
     <module>./bundles/org.eclipse.e4.tools.event.spy</module>
+    <module>./bundles/org.eclipse.e4.tools.adapter.spy</module>
 
     <module>./features/org.eclipse.e4.tools.css.spy.feature</module>
     <module>./features/org.eclipse.e4.tools.context.spy.feature</module>
@@ -69,6 +70,7 @@
     <module>./features/org.eclipse.e4.tools.event.spy.feature</module>
     <module>./build/org.eclipse.e4.core.tools.update/</module>
     <module>./features/org.eclipse.e4.tools.model.spy.feature</module>
+    <module>./features/org.eclipse.e4.tools.adapter.spy.feature</module>
     <module>./features/org.eclipse.e4.tools.spies.feature</module> 
   </modules>
 
