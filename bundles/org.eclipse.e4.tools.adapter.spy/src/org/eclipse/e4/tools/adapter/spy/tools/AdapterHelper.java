@@ -24,6 +24,7 @@ import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 /**
  * Helper class
@@ -47,6 +48,8 @@ public final class AdapterHelper {
 	
 	private static EclipseAdapter originalEclipseAdpater;
 
+	private static BundleContext bcontext;
+	
 	private AdapterHelper() {
 		// do nothing
 	}
@@ -76,11 +79,12 @@ public final class AdapterHelper {
 	}
 
 	public static IEclipseContext getServicesContext() {
-		return EclipseContextFactory.getServiceContext(Activator.getDefault().getContext());
+		return EclipseContextFactory.getServiceContext(bcontext);
 	}
 
 	public static ImageRegistry getImageRegistry(Object instance) {
 		Bundle b = FrameworkUtil.getBundle(instance.getClass());
+		bcontext = b.getBundleContext();
 		ImageRegistry imgReg = new ImageRegistry();
 		imgReg.put(BUNDLE_IMG_KEY, ImageDescriptor.createFromURL(b.getEntry(BUNDLE_IMG_KEY)));
 		imgReg.put(SOURCE_TYPE_IMG_KEY, ImageDescriptor.createFromURL(b.getEntry(SOURCE_TYPE_IMG_KEY)));
