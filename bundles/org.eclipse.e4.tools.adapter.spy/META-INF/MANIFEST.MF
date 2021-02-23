@@ -3,21 +3,21 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Adapter Spy
 Bundle-SymbolicName: org.eclipse.e4.tools.adapter.spy;singleton:=true
 Bundle-Version: 0.1.0.qualifier
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
+Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.swt,
  org.eclipse.e4.tools.spy,
  org.eclipse.e4.core.contexts,
  org.eclipse.e4.core.di,
- javax.inject;bundle-version="1.0.0",
  org.eclipse.e4.core.services,
  org.eclipse.e4.ui.di,
  org.eclipse.e4.ui.workbench,
  org.eclipse.emf.ecore,
- javax.annotation
+ org.eclipse.jface
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8,
  JavaSE-11,
  JavaSE-14
 Automatic-Module-Name: org.eclipse.e4.tools.adapter.spy
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Eclipse.org
+Import-Package: javax.annotation,
+ javax.inject
