@@ -14,6 +14,7 @@
 package org.eclipse.e4.tools.adapter.spy.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
@@ -116,6 +117,7 @@ public class AdapterData implements Comparable<AdapterData> {
 
 	public AdapterData[] getChildren() {
 		if (!children.isEmpty()) {
+			Collections.sort(children);
 			return children.toArray(new AdapterData[0]);
 		}
 		return new AdapterData[0];
