@@ -63,7 +63,9 @@ public class AdapterSpyPart {
 
 	private static final String NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION = "updateTreeSourceToDestination";
 	private static final String NAMED_UPDATE_TREE_DESTINATION_TO_SOURCE = "updateTreeDestinationToSource";
-
+	private static final String SWITCH_TO_SOURCE = "switch to Source Type first";
+	private static final String SWITCH_TO_DESTINATION = "switch to Destination Type first";
+	
 	@Inject
 	UISynchronize uisync;
 
@@ -204,11 +206,12 @@ public class AdapterSpyPart {
 		});
 
 		ToolBar toolBar = new ToolBar(comp, SWT.NONE);
-		ToolItem toolItem = new ToolItem(toolBar, SWT.CHECK);
-		toolItem.setImage(imgr.get(AdapterHelper.DESTINATION_TYPE_IMG_KEY));
-		toolItem.setToolTipText("Toggle to destination type");
+		ToolItem switchButton = new ToolItem(toolBar, SWT.CHECK);
+		switchButton.setImage(imgr.get(AdapterHelper.DESTINATION_TYPE_IMG_KEY));
+		switchButton.setToolTipText(SWITCH_TO_DESTINATION);
+		
 		// sourceToType event
-		toolItem.addSelectionListener(new SelectionAdapter() {
+		switchButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent event) {
@@ -216,11 +219,11 @@ public class AdapterSpyPart {
 				if (source instanceof ToolItem) {
 					FilterData fdata = getFilterData();
 					sourceToDestination = !sourceToDestination;
-					String tooltiptext = sourceToDestination ? "Toggle to destination type" : "Toggle to source type";
+					String tooltiptext = sourceToDestination ? SWITCH_TO_DESTINATION :SWITCH_TO_SOURCE;
 					String imageKey = sourceToDestination ? AdapterHelper.DESTINATION_TYPE_IMG_KEY
 							: AdapterHelper.SOURCE_TYPE_IMG_KEY;
-					toolItem.setToolTipText(tooltiptext);
-					toolItem.setImage(imgr.get(imageKey));
+					switchButton.setToolTipText(tooltiptext);
+					switchButton.setImage(imgr.get(imageKey));
 
 					if (sourceToDestination) {
 						sourceOrDestinationTvc.getColumn().setText("Source Type");
