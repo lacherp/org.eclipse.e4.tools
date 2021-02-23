@@ -234,6 +234,7 @@ public class AdapterSpyPart {
 					}
 					fdata.setSourceToDestination(sourceToDestination);
 					context.set(AdapterFilter.UPDATE_CTX_FILTER, fdata);
+					adapterTreeViewer.refresh(true);
 				}
 
 			}
