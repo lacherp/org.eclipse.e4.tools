@@ -69,22 +69,22 @@ public class AdapterFilter extends ViewerFilter {
 	}
 
 	
-	private void doFilter(AdapterData adapterData)
+	private void doFilter(AdapterData AdapterData2)
 	{
-		if( Boolean.TRUE.equals(sourceToDestination) && adapterData.getAdapterElementType().equals(AdapterElementType.SOURCE_TYPE))
+		if( Boolean.TRUE.equals(sourceToDestination) && AdapterData2.getAdapterElementType().equals(AdapterElementType.SOURCE_TYPE))
 		{
-			doVisibility(adapterData);
+			doVisibility(AdapterData2);
 		}
-		if( Boolean.FALSE.equals(sourceToDestination) && adapterData.getAdapterElementType().equals(AdapterElementType.DESTINATION_TYPE))
+		if( Boolean.FALSE.equals(sourceToDestination) && AdapterData2.getAdapterElementType().equals(AdapterElementType.DESTINATION_TYPE))
 		{
-			doVisibility(adapterData);
+			doVisibility(AdapterData2);
 		}
 	}
 	
-	private void doVisibility(AdapterData adapterData) {
+	private void doVisibility(AdapterData AdapterData2) {
 		AtomicBoolean bfound = new AtomicBoolean(false);
-		adapterData.textSearch(txtSeachFilter, bfound);
-		adapterData.setVisibilityFilter(bfound.get());
-		adapterData.propagateVisibility();
+		AdapterData2.textSearch(txtSeachFilter, bfound);
+		AdapterData2.setVisibilityFilter(bfound.get());
+		AdapterData2.propagateVisibility();
 	}
 }

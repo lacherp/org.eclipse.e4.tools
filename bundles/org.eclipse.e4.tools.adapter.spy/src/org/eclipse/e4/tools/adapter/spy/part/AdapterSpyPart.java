@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.e4.tools.adapter.spy.part;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,12 +23,10 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.core.services.adapter.Adapter;
 import org.eclipse.e4.tools.adapter.spy.model.AdapterData;
 import org.eclipse.e4.tools.adapter.spy.model.AdapterRepository;
 import org.eclipse.e4.tools.adapter.spy.tools.AdapterHelper;
@@ -72,12 +70,11 @@ public class AdapterSpyPart {
 	@Inject
 	IEclipseContext context;
 
+
 	@Inject
 	AdapterRepository adapterRepo;
 
 	AdapterFilter adapterFilter;
-
-	private Button reduceType;
 
 	boolean sourceToDestination = true;
 
@@ -104,8 +101,8 @@ public class AdapterSpyPart {
 
 		AdapterHelper.getServicesContext().set(AdapterRepository.class, adapterRepo);
 		adapterRepo.clear();
-		IConfigurationElement[] extp = adapterRepo.getAdapters();
-
+		Collection<AdapterData> adapterDatalist = adapterRepo.getAdapters();
+		
 		// Adapter TreeViewer
 		adapterTreeViewer = new TreeViewer(sashForm);
 		adapterContentProvider = ContextInjectionFactory.make(AdapterContentProvider.class, context);
@@ -143,7 +140,7 @@ public class AdapterSpyPart {
 		adapterFactoryClassTvc.getColumn().setWidth(700);
 		adapterFactoryClassTvc.setLabelProvider(adapterContentProvider);
 
-		context.set(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION, extp);
+		context.set(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION, adapterDatalist);
 
 	}
 
@@ -184,26 +181,6 @@ public class AdapterSpyPart {
 			}
 		});
 
-		reduceType = new Button(comp, SWT.CHECK);
-		reduceType.setText("Reduce type");
-		reduceType.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				FilterData fdata = getFilterData();
-				if (sourceToDestination) {
-					context.set(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION, null);
-					adapterRepo.clear();
-					context.set(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION, adapterRepo.getAdapters());
-					context.set(AdapterFilter.UPDATE_CTX_FILTER, fdata);
-				} else {
-
-					context.set(NAMED_UPDATE_TREE_DESTINATION_TO_SOURCE, adapterRepo.revertSourceToType());
-					context.set(AdapterFilter.UPDATE_CTX_FILTER, fdata);
-				}
-				adapterTreeViewer.refresh(true);
-
-			}
-		});
 
 		ToolBar toolBar = new ToolBar(comp, SWT.NONE);
 		ToolItem switchButton = new ToolItem(toolBar, SWT.CHECK);
@@ -253,34 +230,29 @@ public class AdapterSpyPart {
 	@Inject
 	@Optional
 	private void updateAdapterTreeViewerSourceToType(
-			@Named(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION) IConfigurationElement[] configElement, Adapter adapter) {
-		if (configElement == null) {
+			@Named(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION) Collection<AdapterData> adapaters) {
+		if (adapaters == null) {
 			return;
 		}
-		List<AdapterData> result = new ArrayList<>();
-		for (IConfigurationElement elem : configElement) {
-			AdapterData adata = adapter.adapt(elem, AdapterData.class);
-			result.add(adata);
-		}
-		// reduce source Type
-		List<AdapterData> reduceresult = reduceType(result);
-		refreshAdapterTree(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION, reduceresult);
+		refreshAdapterTree(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION, adapaters);
 	}
 
 	@Inject
 	@Optional
 	private void udpateAdapterTreeViewTypeToSource(
-			@Named(NAMED_UPDATE_TREE_DESTINATION_TO_SOURCE) List<AdapterData> adapaters) {
-		List<AdapterData> result = reduceType(adapaters);
-		refreshAdapterTree(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION, result);
+			@Named(NAMED_UPDATE_TREE_DESTINATION_TO_SOURCE) Collection<AdapterData> adapaters) {
+		if (adapaters == null) {
+			return;
+		}
+		// reduce source Type
+		Collection<AdapterData> reduceresult = reduceType(adapaters);
+		refreshAdapterTree(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION, reduceresult);
 	}
 
-	private List<AdapterData> reduceType(List<AdapterData> originalList) {
-		List<AdapterData> reduceresult = originalList;
-		if (reduceType.getSelection()) {
+	private Collection<AdapterData> reduceType(Collection<AdapterData> originalList) {
+		Collection<AdapterData> reduceresult = originalList;
 
 			Map<String, List<AdapterData>> resultmap = groupBy(originalList);
-
 			reduceresult.clear();
 			resultmap.forEach((k, v) -> {
 				AdapterData firstElem = v.get(0);
@@ -289,19 +261,12 @@ public class AdapterSpyPart {
 					firstElem.getChildrenList().addAll(v.get(idx).getChildrenList());
 				}
 			});
-		}
 
 		return reduceresult;
 	}
 
-	private Map<String, List<AdapterData>> groupBy(List<AdapterData> originalList) {
-		Map<String, List<AdapterData>> result = null;
-		if (sourceToDestination) {
-			result = originalList.stream().collect(Collectors.groupingBy(AdapterData::sourceType));
-		} else {
-			result = originalList.stream().collect(Collectors.groupingBy(AdapterData::destinationType));
-		}
-		return result;
+	private Map<String, List<AdapterData>> groupBy(Collection<AdapterData> originalList) {
+		return originalList.stream().collect(Collectors.groupingBy(AdapterData::getDestinationType));
 	}
 
 	@PreDestroy
@@ -318,7 +283,7 @@ public class AdapterSpyPart {
 		adapterRepo.clear();
 	}
 
-	private void refreshAdapterTree(String namedContext, List<AdapterData> result) {
+	private void refreshAdapterTree(String namedContext, Collection<AdapterData> result) {
 		uisync.syncExec(() -> {
 			if (adapterTreeViewer != null) {
 				adapterTreeViewer.setInput(result);

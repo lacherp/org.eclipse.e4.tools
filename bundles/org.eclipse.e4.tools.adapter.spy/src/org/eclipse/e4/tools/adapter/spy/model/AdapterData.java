@@ -19,10 +19,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.e4.tools.adapter.spy.tools.AdapterHelper;
-
-
 /**
  * Adapter data model Object This class is used to store ConfigarationElement
  * elements which use an adapter
@@ -32,40 +28,34 @@ import org.eclipse.e4.tools.adapter.spy.tools.AdapterHelper;
  */
 public class AdapterData implements Comparable<AdapterData> {
 
-	IConfigurationElement configElem;
+	String sourceType;
+	String destinationType;
+	String adapterClassName;
+	boolean isInterface = false;
 
-	AdapterData parent ;
+	AdapterData parent;
 	List<AdapterData> children = new ArrayList<>();
 	AdapterElementType elemType;
 	boolean visibilityFilter = true;
-	Boolean showPackage ;
+	Boolean showPackage;
 	AdapterData hasSourceType;
 
 	/**
 	 * Ctor
-	 * @param elem
-	 * 	configuration element from extension
 	 * @param elemType
-	 * 	type of the AdapterData
 	 */
-	public AdapterData(IConfigurationElement elem, AdapterElementType elemType) {
+	public AdapterData(AdapterElementType elemType) {
 		this.elemType = elemType;
-		configElem = elem;
 		showPackage = Boolean.TRUE;
 	}
 	
-	/**
-	 * Copy constructor
-	 * @param adapterData
-	 */
 	public AdapterData(AdapterData adapterData) {
 		this.elemType = adapterData.getAdapterElementType();
-		configElem = adapterData.getConfigurationElement();
-		showPackage = adapterData.showPackage;
-		hasSourceType = adapterData.isHasSourceType();
-		this.visibilityFilter = adapterData.isVisibilityFilter();
+		this.showPackage = Boolean.TRUE;
+		this.destinationType = adapterData.getDestinationType();
+		this.adapterClassName = adapterData.getAdapterClassName();
+		this.sourceType = adapterData.getSourceType();
 	}
-	
 	/**
 	 * propagate visibility to children
 	 */
@@ -77,7 +67,7 @@ public class AdapterData implements Comparable<AdapterData> {
 	}
 
 	public void textSearch(String txtSearch, AtomicBoolean bfound) {
-		
+
 		if (bfound.get()) {
 			return;
 		}
@@ -90,21 +80,46 @@ public class AdapterData implements Comparable<AdapterData> {
 
 	}
 
-	public String getPluginName() {
-		return checkNull(configElem.getContributor().getName());
+	/**
+	 * @return the sourceType
+	 */
+	public String getSourceType() {
+		return sourceType;
 	}
 
-	public String sourceType() {
-		return checkNull(configElem.getAttribute(AdapterHelper.EXT_POINT_ATTR_ADAPTABLE_TYPE));
+	/**
+	 * @param sourceType the sourceType to set
+	 */
+	public void setSourceType(String sourceType) {
+		this.sourceType = sourceType;
 	}
 
-	public String getAdaterClass() {
-
-		return checkNull(configElem.getAttribute(AdapterHelper.EXT_POINT_ATTR_CLASS));
+	/**
+	 * @return the destinationType
+	 */
+	public String getDestinationType() {
+		return destinationType;
 	}
 
-	public String destinationType() {
-		return checkNull(configElem.getAttribute(AdapterHelper.EXT_POINT_ATTR_TYPE));
+	/**
+	 * @param destinationType the destinationType to set
+	 */
+	public void setDestinationType(String destinationType) {
+		this.destinationType = destinationType;
+	}
+
+	/**
+	 * @return the adapterClassName
+	 */
+	public String getAdapterClassName() {
+		return adapterClassName;
+	}
+
+	/**
+	 * @param adapterClassName the adapterClassName to set
+	 */
+	public void setAdapterClassName(String adapterClassName) {
+		this.adapterClassName = adapterClassName;
 	}
 
 	public boolean hasChildren() {
@@ -118,7 +133,8 @@ public class AdapterData implements Comparable<AdapterData> {
 	public AdapterData[] getChildren() {
 		if (!children.isEmpty()) {
 			Collections.sort(children);
-			return children.toArray(new AdapterData[0]);
+			List<AdapterData> reduceresult = children;
+			return reduceresult.toArray(new AdapterData[0]);
 		}
 		return new AdapterData[0];
 	}
@@ -135,10 +151,6 @@ public class AdapterData implements Comparable<AdapterData> {
 		return this.elemType;
 	}
 
-	public IConfigurationElement getConfigurationElement() {
-		return this.configElem;
-	}
-
 	/**
 	 * @return the hasSourceType
 	 */
@@ -153,7 +165,20 @@ public class AdapterData implements Comparable<AdapterData> {
 		this.hasSourceType = hasSourceType;
 	}
 
-	
+	/**
+	 * @return the isInterface
+	 */
+	public boolean isInterface() {
+		return isInterface;
+	}
+
+	/**
+	 * @param isInterface the isInterface to set
+	 */
+	public void setInterface(boolean isInterface) {
+		this.isInterface = isInterface;
+	}
+
 	/**
 	 * @return the showPackage
 	 */
@@ -173,31 +198,23 @@ public class AdapterData implements Comparable<AdapterData> {
 			String result = "";
 			switch (elemType) {
 			case SOURCE_TYPE:
-				result = displayPackage(sourceType());
+				result = displayPackage(getSourceType());
 				break;
 			case DESTINATION_TYPE:
-				result = displayPackage(destinationType());
+				result = displayPackage(getDestinationType());
 				break;
 			default:
 				result = "";
 			}
 			return result;
 		}
-		
-		if(colIndex == 1) {
-			if( elemType.equals(AdapterElementType.SOURCE_TYPE )&& !getChildrenList().isEmpty()) {
-				return "";
-			}else if(elemType.equals(AdapterElementType.SOURCE_TYPE )&& getChildrenList().isEmpty()) {
-				return getAdaterClass();
+
+		if (colIndex == 1) {
+
+			if (elemType.equals(AdapterElementType.DESTINATION_TYPE)) {
+				return getAdapterClassName();
 			}
-			
-			if( parent == null && elemType.equals(AdapterElementType.DESTINATION_TYPE)) {
-			 return	"";
-			}
-			if(parent == null) {
-				return "";
-			}
-			return parent.getAdaterClass();
+			return "";
 		}
 		return "";
 	}
@@ -216,32 +233,33 @@ public class AdapterData implements Comparable<AdapterData> {
 		this.visibilityFilter = visibilityFilter;
 	}
 
-	public Stream<AdapterData> sourceToType() {
+	public Stream<AdapterData> convertSourceToType() {
 		final ArrayList<AdapterData> result=new ArrayList<>();
 		this.getChildrenList().forEach( child -> {
 			AdapterData newAdapterData = new AdapterData(child);
-			newAdapterData.getChildrenList().add(new AdapterData(this));
+			AdapterData soon = new AdapterData(this);
+			soon.setParent(child);
+			newAdapterData.getChildrenList().add(soon);
+		
 			result.add(newAdapterData);
 		});
 		return result.stream();
 	}
-
-	
 	
 	@Override
 	public String toString() {
-		return getPluginName() + "@" + sourceType() + "@" + destinationType() + getAdaterClass();
+		return getSourceType() + "@" + getDestinationType() + getAdapterClassName();
 	}
 
 	private String checkNull(String val) {
 		return (val == null) ? "" : val;
 	}
-	
+
 	private String displayPackage(String value) {
-		if(Boolean.TRUE.equals(showPackage)) {
+		if (Boolean.TRUE.equals(showPackage)) {
 			return value;
 		}
-		return value.substring(value.lastIndexOf(".")+1, value.length());
+		return value.substring(value.lastIndexOf(".") + 1, value.length());
 	}
 
 	@Override
@@ -249,5 +267,18 @@ public class AdapterData implements Comparable<AdapterData> {
 		return this.getText(0).compareTo(o.getText(0));
 	}
 
+//		try {
+//		Bundle bundle = OSGIUtils.getDefault().getBundle(getPluginName());
+//		Class<?> clsss = bundle.loadClass(configElem.getAttribute(AdapterHelper.EXT_POINT_ATTR_ADAPTABLE_TYPE));
+//		Class<?> clazz = Class.forName(configElem.getAttribute(AdapterHelper.EXT_POINT_ATTR_ADAPTABLE_TYPE)
+////				,false,bundle.loadClass(name)getBundleContext().getClass().getClassLoader());
+//		System.out.println("class is inteface :" + clsss.isInterface());
+//	} catch (ClassNotFoundException e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//	} catch (InvalidRegistryObjectException e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//	}
 	
 }

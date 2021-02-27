@@ -12,7 +12,7 @@
  *     Lacherp - initial API and implementation
  *******************************************************************************/
 package org.eclipse.e4.tools.adapter.spy.viewer;
-import java.util.ArrayList;
+import java.util.Collection;
 
 import javax.inject.Inject;
 
@@ -47,8 +47,8 @@ public class AdapterContentProvider extends ColumnLabelProvider implements ITree
 	@Override
 	public Object[] getElements(Object inputElement) {
 		
-		if(inputElement instanceof ArrayList<?>) {
-			return ((ArrayList<?>) inputElement).toArray();
+		if(inputElement instanceof Collection<?>) {
+			return ((Collection<?>) inputElement).toArray();
 		}
 		return (Object[]) inputElement;
 	}
@@ -60,7 +60,7 @@ public class AdapterContentProvider extends ColumnLabelProvider implements ITree
 			return ((AdapterData)parentElement).getChildren();
 		}
 	
-		return null;
+		return new Object[0];
 	}
 
 	@Override

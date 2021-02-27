@@ -1,118 +1,120 @@
-/*******************************************************************************
- * Copyright (c)  Lacherp.
- *
- * This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License 2.0
- * which accompanies this distribution, and is available at
- * https://www.eclipse.org/legal/epl-2.0/
- *
- * SPDX-License-Identifier: EPL-2.0
- *
- * Contributors:
- *     Lacherp - initial API and implementation
- *******************************************************************************/
 package org.eclipse.e4.tools.adapter.spy.model;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.eclipse.core.internal.runtime.AdapterManager;
+import org.eclipse.core.internal.runtime.IAdapterFactoryExt;
+import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.tools.adapter.spy.tools.AdapterHelper;
-/**
- * Repository adpater class is used to store AdapaterData model object
- * during transformation From IConfigurationElement and AdapterData 
- * @author pascal
- *
- */
+
+
+@SuppressWarnings("restriction")
 @Creatable
 @Singleton
 public class AdapterRepository {
 
 	@Inject
 	IExtensionRegistry extensionRegistry;
-
+	
 	Map<String, AdapterData> sourceTypeToAdapterDataMap = new HashMap<>();
-
 	Map<String, AdapterData> destinationTypeToAdapterDataMap = new HashMap<>();
-
+	private List<IConfigurationElement> configEleme;
 	
-	
-	public IConfigurationElement[] getAdapters() {
-		return extensionRegistry.getConfigurationElementsFor(AdapterHelper.EXT_POINT_ID);
-	}
-
-	public Optional<IConfigurationElement> findIfTargetIsSourceType(IConfigurationElement target) {
-		final String targetType = target.getAttribute(AdapterHelper.EXT_POINT_ATTR_TYPE);
-		List<IConfigurationElement> adaptersList = Arrays.asList(getAdapters());
-		return adaptersList.stream()
-				.filter(conf -> conf.getAttribute(AdapterHelper.EXT_POINT_ATTR_ADAPTABLE_TYPE).equals(targetType))
-				.findAny();
-	}
-
-	public AdapterData getSourceType(IConfigurationElement element) {
-		String sourceType = element.getAttribute(AdapterHelper.EXT_POINT_ATTR_ADAPTABLE_TYPE);
+	public Collection<AdapterData> getAdapters() {
 		
-		AdapterData adapterData = new AdapterData(element, AdapterElementType.SOURCE_TYPE);
-		sourceTypeToAdapterDataMap.put(sourceType, adapterData);
-		buildDestinationType(adapterData);
-		return adapterData;
-	}
-
-	public void buildDestinationType(AdapterData source) {
-		IConfigurationElement[] destinationTypes = source.getConfigurationElement()
-				.getChildren(AdapterHelper.EXT_POINT_ATTR_ADAPTER);
-		// check if target element is build
-		if(source.getChildrenList().isEmpty())
-		{
-			for (IConfigurationElement target : destinationTypes) {
-				AdapterData adapterData = null;
-				adapterData = new AdapterData(target, AdapterElementType.DESTINATION_TYPE);
-				adapterData.setParent(source);
-				destinationTypeToAdapterDataMap.put(adapterData.destinationType(), adapterData);
-				checkTargetIsSource(adapterData);
-				source.getChildrenList().add(adapterData);
-			}	
+		if(!sourceTypeToAdapterDataMap.isEmpty()) {
+			return sourceTypeToAdapterDataMap.values();
 		}
-	}
-
-	public void checkTargetIsSource(AdapterData destinationAdapterData) {
-		Optional<IConfigurationElement> config = findIfTargetIsSourceType(destinationAdapterData.getConfigurationElement());
-		if( config.isPresent())
-		{
-			AdapterData source = getSourceType(config.get());
-			destinationAdapterData.setHasSourceType(source);
-			if(source.getChildrenList().isEmpty())
+		
+		HashMap<String, List<IAdapterFactory>> factories = AdapterManager.getDefault().getFactories();
+		AtomicReference<AdapterData> refAdapterData= new AtomicReference<>();
+		factories.forEach( (k,v) -> {
+			if (!sourceTypeToAdapterDataMap.containsKey(k))
 			{
-				buildDestinationType(source);
-			}
-			source.getChildrenList().forEach( ad ->{
-				if (!destinationAdapterData.getChildrenList().contains(ad)){
-					destinationAdapterData.getChildrenList().add(ad);
+				AdapterData adapData = new AdapterData(AdapterElementType.SOURCE_TYPE);
+				adapData.setSourceType(k);
+				sourceTypeToAdapterDataMap.put(k, adapData);
+			}	
+			refAdapterData.set(sourceTypeToAdapterDataMap.get(k));
+			final List<IConfigurationElement> configsForSourceType = getAdapterFactoryClassFromExtension(k);
+			v.forEach(l -> {
+				if( l instanceof IAdapterFactoryExt) {
+					IAdapterFactoryExt adapfext = (IAdapterFactoryExt) l;
+					AtomicReference<String> refClassName = new AtomicReference<>();
+					for( String targetType :adapfext.getAdapterNames()) {
+						AdapterData adapData = new AdapterData(AdapterElementType.DESTINATION_TYPE);
+						adapData.setParent(refAdapterData.get());
+						adapData.setDestinationType(targetType);
+						destinationTypeToAdapterDataMap.put(targetType, adapData);
+						refClassName.set("");
+						configsForSourceType.forEach( config -> {
+							for ( IConfigurationElement child :config.getChildren()) {
+								String type = child.getAttribute(AdapterHelper.EXT_POINT_ATTR_TYPE);
+								if( type.equals(targetType))
+								{
+									refClassName.set(config.getAttribute(AdapterHelper.EXT_POINT_ATTR_CLASS));
+								}
+							}
+						});
+						adapData.setAdapterClassName(refClassName.get());
+//						Optional<Class<?>> clsfound = adapterList.stream().filter(cls -> cls.getCanonicalName().equals(targetType)).findAny();
+//						if(clsfound.isPresent()) {
+//							adapData.setInterface(clsfound.get().isInterface());
+//						}
+						refAdapterData.get().getChildrenList().add(adapData);
+					}
 				}
 			});
-		}
-		
+			
+		});
+		destinationTypeToAdapterDataMap.values().forEach( ad -> {
+			String destType = ad.getDestinationType();
+			Optional<AdapterData> found = sourceTypeToAdapterDataMap.values().stream().filter( ads -> ads.getSourceType().equals(destType)).findAny();
+			if(found.isPresent()) {
+				found.get().getChildrenList().forEach( adchild -> {
+					if (((AdapterData)ad.getParent()).getSourceType().equals(adchild.getDestinationType())) {
+						AdapterData adpd=new AdapterData(adchild);
+						ad.getChildrenList().add(adpd);
+						return;
+					}
+					ad.getChildrenList().add(adchild);	
+				});
+			}
+		});
+		return sourceTypeToAdapterDataMap.values();
 	}
 	
 	
 	public List<AdapterData> revertSourceToType(){
-		return sourceTypeToAdapterDataMap.values().stream().flatMap(AdapterData::sourceToType)
+		return sourceTypeToAdapterDataMap.values().stream().flatMap(AdapterData::convertSourceToType)
 			.collect(Collectors.toList());
 	}
-	
 	
 	
 	public void clear() {
 		sourceTypeToAdapterDataMap.clear();
 		destinationTypeToAdapterDataMap.clear();
+	}
+	
+	
+	private List<IConfigurationElement>  getAdapterFactoryClassFromExtension(String sourceType) {
+		if( configEleme ==null) {
+			configEleme = Arrays.asList(extensionRegistry.getConfigurationElementsFor(AdapterHelper.EXT_POINT_ID));
+		}
+		return configEleme.stream().filter( config-> config.getAttribute(AdapterHelper.EXT_POINT_ATTR_ADAPTABLE_TYPE).equals(sourceType)).collect(Collectors.toList());
+		
 	}
 }

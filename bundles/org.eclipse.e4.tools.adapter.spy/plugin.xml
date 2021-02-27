@@ -11,15 +11,5 @@
             shortcut="M2+M3+F7">
       </spyPart>
    </extension>
-   <extension
-         point="org.eclipse.core.runtime.adapters">
-      <factory
-            adaptableType="org.eclipse.core.internal.registry.ConfigurationElementHandle"
-            class="org.eclipse.e4.tools.adapter.spy.adapterfactory.AdapterDataFactory">
-         <adapter
-               type="org.eclipse.e4.tools.adapter.spy.model.AdapterData">
-         </adapter>
-      </factory>
-   </extension>
 
 </plugin>

@@ -12,7 +12,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.e4.ui.di,
  org.eclipse.e4.ui.workbench,
  org.eclipse.emf.ecore,
- org.eclipse.jface
+ org.eclipse.jface,
+ org.eclipse.equinox.common
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Automatic-Module-Name: org.eclipse.e4.tools.adapter.spy
 Bundle-ActivationPolicy: lazy
