@@ -20,12 +20,9 @@ import javax.inject.Named;
 
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.tools.adapter.spy.model.AdapterData;
-import org.eclipse.e4.tools.adapter.spy.model.AdapterElementType;
-import org.eclipse.e4.tools.adapter.spy.tools.AdapterHelper;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 
@@ -45,12 +42,6 @@ public class AdapterContentProvider extends ColumnLabelProvider implements ITree
 
 	private Boolean sourceToDestination = true;
 
-//	@Override
-//	public void update(ViewerCell cell) {
-//		System.out.println("col ind" + cell.getColumnIndex());
-//		columnIndex = cell.getColumnIndex();
-//		super.update(cell);
-//	}
 
 	@Override
 	public Object[] getElements(Object inputElement) {
@@ -64,7 +55,7 @@ public class AdapterContentProvider extends ColumnLabelProvider implements ITree
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof AdapterData) {
-			return ((AdapterData) parentElement).getChildren();
+			return (Object[]) ((AdapterData) parentElement).getChildren(sourceToDestination);
 		}
 
 		return new Object[0];
@@ -99,13 +90,11 @@ public class AdapterContentProvider extends ColumnLabelProvider implements ITree
 	@Override
 	public Image getImage(Object element) {
 		if (columnIndex == 0) {
-			AdapterElementType elemType = ((AdapterData) element).getAdapterElementType();
-			if (elemType.equals(AdapterElementType.SOURCE_TYPE)) {
-				return imgReg.get(AdapterHelper.SOURCE_TYPE_IMG_KEY);
+			if ( element instanceof AdapterData) {
+				String imgname = ((AdapterData)element).getImageName(); 
+				return imgname == null ? super.getImage(element): imgReg.get(imgname);
 			}
-			if (elemType.equals(AdapterElementType.DESTINATION_TYPE)) {
-				return imgReg.get(AdapterHelper.DESTINATION_TYPE_IMG_KEY);
-			}
+			
 		}
 		return super.getImage(element);
 	}

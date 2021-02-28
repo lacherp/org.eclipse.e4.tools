@@ -15,14 +15,20 @@ package org.eclipse.e4.tools.adapter.spy.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.e4.tools.adapter.spy.messages.Messages;
+import org.eclipse.e4.tools.adapter.spy.tools.AdapterHelper;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.graphics.Image;
+import org.osgi.framework.Bundle;
 
 /**
  * Adapter data model Object This class is used to store ConfigarationElement
@@ -37,14 +43,15 @@ public class AdapterData implements Comparable<AdapterData> {
 	String destinationType;
 	String adapterClassName;
 	boolean isInterface = false;
-
+	boolean checkInterfaceClass = false;
 	AdapterData parent;
 	List<AdapterData> children = new ArrayList<>();
 	AdapterElementType elemType;
 	boolean visibilityFilter = true;
 	Boolean showPackage;
-	AdapterData hasSourceType;
+
 	int selectedColumn;
+
 	/**
 	 * @return the selectedColumn
 	 */
@@ -151,11 +158,20 @@ public class AdapterData implements Comparable<AdapterData> {
 		return this.children;
 	}
 
-	public AdapterData[] getChildren() {
+	public Object getChildren(boolean sourceToDestination) {
 		if (!children.isEmpty()) {
 			Collections.sort(children);
-			List<AdapterData> reduceresult = children;
-			return reduceresult.toArray(new AdapterData[0]);
+			if( sourceToDestination) {
+				Map<String, List<AdapterData>> childs = children.stream().collect(Collectors.groupingBy(AdapterData::getDestinationType));
+				children.clear();
+				childs.values().forEach(ls-> children.add(ls.get(0)));
+				return  children.toArray();
+			}else {
+				Map<String, List<AdapterData>> childs = children.stream().collect(Collectors.groupingBy(AdapterData::getSourceType));
+				children.clear();
+				childs.values().forEach(ls-> children.add(ls.get(0)));
+				return  children.toArray();
+			}
 		}
 		return new AdapterData[0];
 	}
@@ -163,29 +179,17 @@ public class AdapterData implements Comparable<AdapterData> {
 	public Object getParent() {
 		return this.parent;
 	}
+
 	public AdapterData getAdapterDataParent() {
 		return (AdapterData) this.parent;
 	}
+
 	public void setParent(AdapterData parent) {
 		this.parent = parent;
 	}
 
 	public AdapterElementType getAdapterElementType() {
 		return this.elemType;
-	}
-
-	/**
-	 * @return the hasSourceType
-	 */
-	public AdapterData isHasSourceType() {
-		return hasSourceType;
-	}
-
-	/**
-	 * @param hasSourceType the hasSourceType to set
-	 */
-	public void setHasSourceType(AdapterData hasSourceType) {
-		this.hasSourceType = hasSourceType;
 	}
 
 	/**
@@ -229,6 +233,35 @@ public class AdapterData implements Comparable<AdapterData> {
 		return "";
 	}
 
+	public String getImageName() {
+		String className = elemType.equals(AdapterElementType.SOURCE_TYPE) ? getSourceType():getDestinationType();
+		if (elemType.equals(AdapterElementType.DESTINATION_TYPE)) {
+			return AdapterHelper.DESTINATION_TYPE_IMG_KEY;
+		}
+		if(!checkInterfaceClass) {
+			Bundle bundle = AdapterHelper.getBundleForClassName(className);
+			if (bundle != null)
+				setInterface(AdapterHelper.isInterfaceTypeClass(bundle, className));
+			else {
+				// may be it's an interface
+				if (subStringPackage(className).startsWith("I")) {
+					return AdapterHelper.INTERFACE_IMG_KEY;
+				}
+				return AdapterHelper.SOURCE_TYPE_IMG_KEY;
+			}
+			checkInterfaceClass = true;
+		}
+		if (elemType.equals(AdapterElementType.SOURCE_TYPE)) {
+			if( isInterface()) {
+				return AdapterHelper.INTERFACE_IMG_KEY;
+			}
+			return AdapterHelper.SOURCE_TYPE_IMG_KEY;
+		}
+		
+		return null;
+		
+	}
+
 	/**
 	 * @return the visibilityFilter
 	 */
@@ -261,6 +294,7 @@ public class AdapterData implements Comparable<AdapterData> {
 		return getSourceType() + "@" + getDestinationType() + getAdapterClassName();
 	}
 
+	
 	private String checkNull(String val) {
 		return (val == null) ? "" : val;
 	}
@@ -334,19 +368,5 @@ public class AdapterData implements Comparable<AdapterData> {
 		else
 			return "";
 	}
-
-//		try {
-//		Bundle bundle = OSGIUtils.getDefault().getBundle(getPluginName());
-//		Class<?> clsss = bundle.loadClass(configElem.getAttribute(AdapterHelper.EXT_POINT_ATTR_ADAPTABLE_TYPE));
-//		Class<?> clazz = Class.forName(configElem.getAttribute(AdapterHelper.EXT_POINT_ATTR_ADAPTABLE_TYPE)
-////				,false,bundle.loadClass(name)getBundleContext().getClass().getClassLoader());
-//		System.out.println("class is inteface :" + clsss.isInterface());
-//	} catch (ClassNotFoundException e) {
-//		// TODO Auto-generated catch block
-//		e.printStackTrace();
-//	} catch (InvalidRegistryObjectException e) {
-//		// TODO Auto-generated catch block
-//		e.printStackTrace();
-//	}
 
 }

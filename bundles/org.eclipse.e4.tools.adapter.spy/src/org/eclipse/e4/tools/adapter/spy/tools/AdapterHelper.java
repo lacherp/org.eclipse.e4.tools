@@ -13,12 +13,19 @@
  *******************************************************************************/
 package org.eclipse.e4.tools.adapter.spy.tools;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.internal.services.EclipseAdapter;
 import org.eclipse.e4.core.services.adapter.Adapter;
 import org.eclipse.e4.tools.adapter.spy.hook.EclipseAdapterHook;
+import org.eclipse.e4.tools.adapter.spy.model.AdapterRepository;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -40,6 +47,7 @@ public final class AdapterHelper {
 	public static final String BUNDLE_IMG_KEY = "icons/osgi.png";
 	public static final String SOURCE_TYPE_IMG_KEY = "icons/from_type.png";
 	public static final String DESTINATION_TYPE_IMG_KEY = "icons/to_type.png";
+	public static final String INTERFACE_IMG_KEY = "icons/innerinterface_public_obj.png";
 	
 	// extension constant string 
 	public static final String EXT_POINT_ID = "org.eclipse.core.runtime.adapters";
@@ -48,6 +56,10 @@ public final class AdapterHelper {
 	public static final String EXT_POINT_ATTR_ADAPTER = "adapter";
 	public static final String EXT_POINT_ATTR_TYPE = "type";
 	
+	private static final Map<String, Bundle> classNameToBundleMap =new HashMap<>();
+	private static List<Bundle> bundlesList =  new ArrayList<>();
+	private static final BundleContext bc = FrameworkUtil.getBundle(AdapterRepository.class).getBundleContext();
+
 	private static EclipseAdapter originalEclipseAdpater;
 
 	private static BundleContext bcontext;
@@ -91,7 +103,32 @@ public final class AdapterHelper {
 		imgReg.put(BUNDLE_IMG_KEY, ImageDescriptor.createFromURL(b.getEntry(BUNDLE_IMG_KEY)));
 		imgReg.put(SOURCE_TYPE_IMG_KEY, ImageDescriptor.createFromURL(b.getEntry(SOURCE_TYPE_IMG_KEY)));
 		imgReg.put(DESTINATION_TYPE_IMG_KEY, ImageDescriptor.createFromURL(b.getEntry(DESTINATION_TYPE_IMG_KEY)));
+		imgReg.put(INTERFACE_IMG_KEY, ImageDescriptor.createFromURL(b.getEntry(INTERFACE_IMG_KEY)));
 		return imgReg;
 	}
 
+	public static boolean isInterfaceTypeClass(Bundle bundle,String className){
+		
+		try {
+			Class<?> clazz = bundle.loadClass(className);
+			return  clazz.isInterface();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public static Bundle getBundleForClassName(String className) {
+		if (bundlesList.isEmpty())
+		{
+			bundlesList = Arrays.asList(bc.getBundles());
+		}
+		if (!classNameToBundleMap.containsKey(className))
+		{
+			final String classpath = "/"+className.replace(".", "/") +".class"; 
+			Bundle bundlefound = bundlesList.parallelStream().filter( b -> b.getEntry( classpath)!= null).findFirst().orElse(null);
+			classNameToBundleMap.put(className, bundlefound);
+		}
+		return classNameToBundleMap.get(className);
+	}
 }

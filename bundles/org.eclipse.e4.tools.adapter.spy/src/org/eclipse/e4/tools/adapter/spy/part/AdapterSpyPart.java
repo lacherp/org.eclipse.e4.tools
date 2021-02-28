@@ -117,6 +117,7 @@ public class AdapterSpyPart {
 
 		AdapterHelper.getServicesContext().set(AdapterRepository.class, adapterRepo);
 		adapterRepo.clear();
+		
 		Collection<AdapterData> adapterDatalist = adapterRepo.getAdapters();
 		
 		// Adapter TreeViewer

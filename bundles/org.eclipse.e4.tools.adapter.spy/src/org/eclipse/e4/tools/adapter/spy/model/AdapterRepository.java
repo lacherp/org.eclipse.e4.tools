@@ -2,6 +2,7 @@ package org.eclipse.e4.tools.adapter.spy.model;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,17 +32,18 @@ public class AdapterRepository {
 	
 	Map<String, AdapterData> sourceTypeToAdapterDataMap = new HashMap<>();
 	Map<String, AdapterData> destinationTypeToAdapterDataMap = new HashMap<>();
-	private List<IConfigurationElement> configEleme;
-	
+	List<IConfigurationElement> configEleme;
+
 	public Collection<AdapterData> getAdapters() {
 		
 		if(!sourceTypeToAdapterDataMap.isEmpty()) {
 			return sourceTypeToAdapterDataMap.values();
 		}
 		
-		HashMap<String, List<IAdapterFactory>> factories = AdapterManager.getDefault().getFactories();
+		Map<String, List<IAdapterFactory>> factories = Collections.synchronizedMap(AdapterManager.getDefault().getFactories());
 		AtomicReference<AdapterData> refAdapterData= new AtomicReference<>();
 		factories.forEach( (k,v) -> {
+	
 			if (!sourceTypeToAdapterDataMap.containsKey(k))
 			{
 				AdapterData adapData = new AdapterData(AdapterElementType.SOURCE_TYPE);
@@ -52,6 +54,7 @@ public class AdapterRepository {
 			final List<IConfigurationElement> configsForSourceType = getAdapterFactoryClassFromExtension(k);
 			v.forEach(l -> {
 				if( l instanceof IAdapterFactoryExt) {
+					
 					IAdapterFactoryExt adapfext = (IAdapterFactoryExt) l;
 					AtomicReference<String> refClassName = new AtomicReference<>();
 					for( String targetType :adapfext.getAdapterNames()) {
@@ -70,10 +73,6 @@ public class AdapterRepository {
 							}
 						});
 						adapData.setAdapterClassName(refClassName.get());
-//						Optional<Class<?>> clsfound = adapterList.stream().filter(cls -> cls.getCanonicalName().equals(targetType)).findAny();
-//						if(clsfound.isPresent()) {
-//							adapData.setInterface(clsfound.get().isInterface());
-//						}
 						refAdapterData.get().getChildrenList().add(adapData);
 					}
 				}
@@ -117,4 +116,5 @@ public class AdapterRepository {
 		return configEleme.stream().filter( config-> config.getAttribute(AdapterHelper.EXT_POINT_ATTR_ADAPTABLE_TYPE).equals(sourceType)).collect(Collectors.toList());
 		
 	}
+
 }
