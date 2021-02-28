@@ -44,6 +44,20 @@ public class AdapterData implements Comparable<AdapterData> {
 	boolean visibilityFilter = true;
 	Boolean showPackage;
 	AdapterData hasSourceType;
+	int selectedColumn;
+	/**
+	 * @return the selectedColumn
+	 */
+	public int getSelectedColumn() {
+		return selectedColumn;
+	}
+
+	/**
+	 * @param selectedColumn the selectedColumn to set
+	 */
+	public void setSelectedColumn(int selectedColumn) {
+		this.selectedColumn = selectedColumn;
+	}
 
 	/**
 	 * Ctor
@@ -149,7 +163,9 @@ public class AdapterData implements Comparable<AdapterData> {
 	public Object getParent() {
 		return this.parent;
 	}
-
+	public AdapterData getAdapterDataParent() {
+		return (AdapterData) this.parent;
+	}
 	public void setParent(AdapterData parent) {
 		this.parent = parent;
 	}

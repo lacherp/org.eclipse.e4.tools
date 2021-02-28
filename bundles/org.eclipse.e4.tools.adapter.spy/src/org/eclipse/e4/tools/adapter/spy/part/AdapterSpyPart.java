@@ -35,13 +35,20 @@ import org.eclipse.e4.tools.adapter.spy.viewer.AdapterDataComparator;
 import org.eclipse.e4.tools.adapter.spy.viewer.AdapterFilter;
 import org.eclipse.e4.tools.adapter.spy.viewer.FilterData;
 import org.eclipse.e4.ui.di.UISynchronize;
+import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
+import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -53,7 +60,12 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 
-@SuppressWarnings("restriction")
+
+/**
+ * Adapter Spy part 
+ * @author pascal
+ *
+ */
 public class AdapterSpyPart {
 
 	private TreeViewer adapterTreeViewer;
@@ -75,6 +87,9 @@ public class AdapterSpyPart {
 	@Inject
 	AdapterRepository adapterRepo;
 
+	@Inject
+	ESelectionService selectService;
+	
 	AdapterFilter adapterFilter;
 
 	boolean sourceToDestination = true;
@@ -111,7 +126,7 @@ public class AdapterSpyPart {
 		adapterTreeViewer.setContentProvider(adapterContentProvider);
 		adapterTreeViewer.setLabelProvider(adapterContentProvider);
 		adapterTreeViewer.setFilters(adapterFilter);
-
+		
 		// add comparator
 		comparator = new AdapterDataComparator(0);
 		adapterTreeViewer.setComparator(comparator);
@@ -133,21 +148,139 @@ public class AdapterSpyPart {
 				comparator.setColumn(0);
 				adapterTreeViewer.getTree().setSortDirection(comparator.getDirection());
 				adapterTreeViewer.refresh();
-
 			}
 		});
-
+		sourceOrDestinationTvc.setEditingSupport(new EditingSupport(adapterTreeViewer) {
+			
+			@Override
+			protected void setValue(Object element, Object value) {
+			}
+			
+			@Override
+			protected Object getValue(Object element) {
+				return null;
+			}
+			
+			@Override
+			protected CellEditor getCellEditor(Object element) {
+				return null;
+			}
+			@Override
+			protected boolean canEdit(Object element) {
+				if(element instanceof AdapterData)
+				{
+					((AdapterData)element).setSelectedColumn(0);
+					selectService.setSelection(element);
+				}
+				return false;
+			}
+		});
+		
+		
 		TreeViewerColumn adapterFactoryClassTvc = new TreeViewerColumn(adapterTreeViewer, SWT.NONE);
 		adapterFactoryClassTvc.getColumn().setText("AdapterFactory");
 		adapterFactoryClassTvc.getColumn().setWidth(700);
 		AdapterContentProvider adapterContentProvider2 = ContextInjectionFactory.make(AdapterContentProvider.class, context);
 		adapterContentProvider2.setColumnIndex(1);
 		adapterFactoryClassTvc.setLabelProvider(adapterContentProvider2);
+		adapterFactoryClassTvc.setEditingSupport(new EditingSupport(adapterTreeViewer) {
+			
+			@Override
+			protected void setValue(Object element, Object value) {
+			}
+			@Override
+			protected Object getValue(Object element) {
+				return null;
+			}
+			@Override
+			protected CellEditor getCellEditor(Object element) {
+				return null;
+			}
+			
+			@Override
+			protected boolean canEdit(Object element) {
+				if(element instanceof AdapterData)
+				{
+					((AdapterData)element).setSelectedColumn(1);
+					selectService.setSelection(element);
+				}
+				return false;
+			}
+		});
+		
+		
 		ColumnViewerToolTipSupport.enableFor(adapterTreeViewer);
 		context.set(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION, adapterDatalist);
 
 	}
 
+	@Inject
+	@Optional
+	private void updateAdapterTreeViewerSourceToType(
+			@Named(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION) Collection<AdapterData> adapaters) {
+		if (adapaters == null) {
+			return;
+		}
+		refreshAdapterTree(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION, adapaters);
+	}
+
+	@Inject
+	@Optional
+	private void udpateAdapterTreeViewTypeToSource(
+			@Named(NAMED_UPDATE_TREE_DESTINATION_TO_SOURCE) Collection<AdapterData> adapaters) {
+		if (adapaters == null) {
+			return;
+		}
+		// reduce source Type
+		Collection<AdapterData> reduceresult = reduceType(adapaters);
+		refreshAdapterTree(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION, reduceresult);
+	}
+	
+	@PreDestroy
+	public void dispose() {
+		adapterTreeViewer = null;
+		if (adapterContentProvider != null) {
+			ContextInjectionFactory.uninject(adapterContentProvider, context);
+		}
+		if (adapterFilter != null) {
+			ContextInjectionFactory.uninject(adapterFilter, context);
+		}
+		AdapterHelper.restoreOriginalEclipseAdapter();
+		context.set(AdapterFilter.UPDATE_CTX_FILTER, null);
+		adapterRepo.clear();
+	}
+
+	@Inject
+	@Optional
+	public void handleSelection(@Named(IServiceConstants.ACTIVE_SELECTION) AdapterData adapterDataSelected) {
+		if (adapterDataSelected == null) {
+			return;
+		}
+		String toCopy ="";
+		if( adapterDataSelected.getSelectedColumn() == 0 && adapterDataSelected.getParent() == null ) {
+			toCopy = ((sourceToDestination)? adapterDataSelected.getSourceType():adapterDataSelected.getDestinationType());
+		}
+		if( adapterDataSelected.getSelectedColumn() == 0 && adapterDataSelected.getParent() != null ) {
+			toCopy = ((sourceToDestination)? adapterDataSelected.getDestinationType():adapterDataSelected.getSourceType());
+		}
+		if( adapterDataSelected.getSelectedColumn() == 1 ) {
+			if (!sourceToDestination)
+				toCopy = adapterDataSelected.getAdapterDataParent().getAdapterClassName();
+			else
+				toCopy = adapterDataSelected.getAdapterClassName();
+		}
+		Clipboard clipboard = new Clipboard(null);
+		try {
+			TextTransfer textTransfer = TextTransfer.getInstance();
+			Transfer[] transfers = new Transfer[] { textTransfer };
+			Object[] data = new Object[] { toCopy };
+			clipboard.setContents(data, transfers);
+		} finally {
+			clipboard.dispose();
+		}
+
+	}
+	
 	private void createToolBarZone(Composite parent, ImageRegistry imgr) {
 		final Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayout(new GridLayout(4, false));
@@ -231,27 +364,7 @@ public class AdapterSpyPart {
 		return new FilterData((FilterData) context.get(AdapterFilter.UPDATE_CTX_FILTER));
 	}
 
-	@Inject
-	@Optional
-	private void updateAdapterTreeViewerSourceToType(
-			@Named(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION) Collection<AdapterData> adapaters) {
-		if (adapaters == null) {
-			return;
-		}
-		refreshAdapterTree(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION, adapaters);
-	}
-
-	@Inject
-	@Optional
-	private void udpateAdapterTreeViewTypeToSource(
-			@Named(NAMED_UPDATE_TREE_DESTINATION_TO_SOURCE) Collection<AdapterData> adapaters) {
-		if (adapaters == null) {
-			return;
-		}
-		// reduce source Type
-		Collection<AdapterData> reduceresult = reduceType(adapaters);
-		refreshAdapterTree(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION, reduceresult);
-	}
+	
 
 	private Collection<AdapterData> reduceType(Collection<AdapterData> originalList) {
 		Collection<AdapterData> reduceresult = originalList;
@@ -273,20 +386,7 @@ public class AdapterSpyPart {
 		return originalList.stream().collect(Collectors.groupingBy(AdapterData::getDestinationType));
 	}
 
-	@PreDestroy
-	public void dispose() {
-		adapterTreeViewer = null;
-		if (adapterContentProvider != null) {
-			ContextInjectionFactory.uninject(adapterContentProvider, context);
-		}
-		if (adapterFilter != null) {
-			ContextInjectionFactory.uninject(adapterFilter, context);
-		}
-		AdapterHelper.restoreOriginalEclipseAdapter();
-		context.set(AdapterFilter.UPDATE_CTX_FILTER, null);
-		adapterRepo.clear();
-	}
-
+	
 	private void refreshAdapterTree(String namedContext, Collection<AdapterData> result) {
 		uisync.syncExec(() -> {
 			if (adapterTreeViewer != null) {
