@@ -14,10 +14,15 @@
 package org.eclipse.e4.tools.adapter.spy.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.eclipse.e4.tools.adapter.spy.messages.Messages;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Adapter data model Object This class is used to store ConfigarationElement
@@ -42,13 +47,14 @@ public class AdapterData implements Comparable<AdapterData> {
 
 	/**
 	 * Ctor
+	 * 
 	 * @param elemType
 	 */
 	public AdapterData(AdapterElementType elemType) {
 		this.elemType = elemType;
 		showPackage = Boolean.TRUE;
 	}
-	
+
 	public AdapterData(AdapterData adapterData) {
 		this.elemType = adapterData.getAdapterElementType();
 		this.showPackage = Boolean.TRUE;
@@ -56,6 +62,7 @@ public class AdapterData implements Comparable<AdapterData> {
 		this.adapterClassName = adapterData.getAdapterClassName();
 		this.sourceType = adapterData.getSourceType();
 	}
+
 	/**
 	 * propagate visibility to children
 	 */
@@ -84,7 +91,7 @@ public class AdapterData implements Comparable<AdapterData> {
 	 * @return the sourceType
 	 */
 	public String getSourceType() {
-		return sourceType;
+		return checkNull(sourceType);
 	}
 
 	/**
@@ -98,7 +105,7 @@ public class AdapterData implements Comparable<AdapterData> {
 	 * @return the destinationType
 	 */
 	public String getDestinationType() {
-		return destinationType;
+		return checkNull(destinationType);
 	}
 
 	/**
@@ -112,7 +119,7 @@ public class AdapterData implements Comparable<AdapterData> {
 	 * @return the adapterClassName
 	 */
 	public String getAdapterClassName() {
-		return adapterClassName;
+		return checkNull(adapterClassName);
 	}
 
 	/**
@@ -193,28 +200,15 @@ public class AdapterData implements Comparable<AdapterData> {
 		this.showPackage = showPackage;
 	}
 
-	public String getText(int colIndex) {
-		if (colIndex == 0) {
-			String result = "";
-			switch (elemType) {
-			case SOURCE_TYPE:
-				result = displayPackage(getSourceType());
-				break;
-			case DESTINATION_TYPE:
-				result = displayPackage(getDestinationType());
-				break;
-			default:
-				result = "";
-			}
-			return result;
+	public String getText(int columnIndex) {
+		if (columnIndex == 0) {
+			return elemType.equals(AdapterElementType.SOURCE_TYPE) ? displayPackage(getSourceType())
+					: displayPackage(getDestinationType());
 		}
+		if (columnIndex == 1 && getParent() != null) {
 
-		if (colIndex == 1) {
-
-			if (elemType.equals(AdapterElementType.DESTINATION_TYPE)) {
-				return getAdapterClassName();
-			}
-			return "";
+			return elemType.equals(AdapterElementType.DESTINATION_TYPE) ? displayPackage(getAdapterClassName())
+					: displayPackage(((AdapterData) getParent()).getAdapterClassName());
 		}
 		return "";
 	}
@@ -234,18 +228,18 @@ public class AdapterData implements Comparable<AdapterData> {
 	}
 
 	public Stream<AdapterData> convertSourceToType() {
-		final ArrayList<AdapterData> result=new ArrayList<>();
-		this.getChildrenList().forEach( child -> {
+		final ArrayList<AdapterData> result = new ArrayList<>();
+		this.getChildrenList().forEach(child -> {
 			AdapterData newAdapterData = new AdapterData(child);
 			AdapterData soon = new AdapterData(this);
 			soon.setParent(child);
 			newAdapterData.getChildrenList().add(soon);
-		
+
 			result.add(newAdapterData);
 		});
 		return result.stream();
 	}
-	
+
 	@Override
 	public String toString() {
 		return getSourceType() + "@" + getDestinationType() + getAdapterClassName();
@@ -259,12 +253,70 @@ public class AdapterData implements Comparable<AdapterData> {
 		if (Boolean.TRUE.equals(showPackage)) {
 			return value;
 		}
-		return value.substring(value.lastIndexOf(".") + 1, value.length());
+		return subStringPackage(value);
 	}
 
 	@Override
 	public int compareTo(AdapterData o) {
 		return this.getText(0).compareTo(o.getText(0));
+	}
+
+	public String getToolTipText(boolean sourceToDestination, int columnIndex) {
+
+		if (columnIndex == 1) {
+			return getAdapterClassName().isEmpty() ? null : getAdapterFactorySourceTooltip();
+		}
+		// column 0
+		if (sourceToDestination && getParent() == null) {
+			return getRootSourceTypeTooltip();
+		}
+		if (!sourceToDestination && getParent() == null) {
+			return getRootDesinationTypeTooltip();
+		}
+		if (sourceToDestination && getParent() != null) {
+			return getChildSourceTypeToolTip();
+		}
+		return getChildDestinationTypeToolTip();
+
+	}
+
+	private String getRootSourceTypeTooltip() {
+		return NLS.bind(Messages.rootSourceTypeTooltip, subStringPackage(getSourceType()));
+	}
+
+	private String getRootDesinationTypeTooltip() {
+		return NLS.bind(Messages.rootDestinationTypeToolTip, subStringPackage(getDestinationType()));
+	}
+
+	private String getAdapterFactorySourceTooltip() {
+		List<String> bindings = Arrays.asList(subStringPackage(getAdapterClassName()),
+				subStringPackage(((AdapterData) getParent()).getSourceType()), concatChildren(true));
+		return NLS.bind(Messages.adapterFactory, bindings.toArray());
+	}
+
+	private String getChildDestinationTypeToolTip() {
+		List<String> bindings = Arrays.asList(subStringPackage(getSourceType()),
+				subStringPackage(((AdapterData) getParent()).getDestinationType()),
+				subStringPackage(((AdapterData) getParent()).getAdapterClassName()));
+		return NLS.bind(Messages.childDestinationTypeToolTip, bindings.toArray());
+	}
+
+	private String getChildSourceTypeToolTip() {
+		List<String> bindings = Arrays.asList(subStringPackage(((AdapterData) getParent()).getSourceType()),
+				subStringPackage(getDestinationType()), subStringPackage(getAdapterClassName()));
+		return NLS.bind(Messages.childSourceTypeToolTip, bindings.toArray());
+	}
+
+	private String subStringPackage(String value) {
+		return value.substring(value.lastIndexOf(".") + 1, value.length());
+	}
+
+	private String concatChildren(boolean sourceToDestination) {
+		if (sourceToDestination)
+			return ((AdapterData) getParent()).children.stream().map((a) -> a.subStringPackage(a.getDestinationType()))
+					.collect(Collectors.joining(", "));
+		else
+			return "";
 	}
 
 //		try {
@@ -280,5 +332,5 @@ public class AdapterData implements Comparable<AdapterData> {
 //		// TODO Auto-generated catch block
 //		e.printStackTrace();
 //	}
-	
+
 }

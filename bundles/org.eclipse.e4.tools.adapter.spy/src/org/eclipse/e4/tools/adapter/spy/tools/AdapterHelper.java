@@ -33,6 +33,9 @@ import org.osgi.framework.FrameworkUtil;
 @SuppressWarnings("restriction")
 public final class AdapterHelper {
 
+	// Bundle ID
+	public static final String BUNDLE_ID ="org.eclipse.e4.tools.adapter.spy";
+	
 	// Image keys constants
 	public static final String BUNDLE_IMG_KEY = "icons/osgi.png";
 	public static final String SOURCE_TYPE_IMG_KEY = "icons/from_type.png";

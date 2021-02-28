@@ -37,6 +37,7 @@ import org.eclipse.e4.tools.adapter.spy.viewer.FilterData;
 import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.swt.SWT;
@@ -106,6 +107,7 @@ public class AdapterSpyPart {
 		// Adapter TreeViewer
 		adapterTreeViewer = new TreeViewer(sashForm);
 		adapterContentProvider = ContextInjectionFactory.make(AdapterContentProvider.class, context);
+		adapterContentProvider.setColumnIndex(0);
 		adapterTreeViewer.setContentProvider(adapterContentProvider);
 		adapterTreeViewer.setLabelProvider(adapterContentProvider);
 		adapterTreeViewer.setFilters(adapterFilter);
@@ -113,7 +115,7 @@ public class AdapterSpyPart {
 		// add comparator
 		comparator = new AdapterDataComparator(0);
 		adapterTreeViewer.setComparator(comparator);
-
+		
 		// define columns
 		final Tree cTree = adapterTreeViewer.getTree();
 		cTree.setHeaderVisible(true);
@@ -138,8 +140,10 @@ public class AdapterSpyPart {
 		TreeViewerColumn adapterFactoryClassTvc = new TreeViewerColumn(adapterTreeViewer, SWT.NONE);
 		adapterFactoryClassTvc.getColumn().setText("AdapterFactory");
 		adapterFactoryClassTvc.getColumn().setWidth(700);
-		adapterFactoryClassTvc.setLabelProvider(adapterContentProvider);
-
+		AdapterContentProvider adapterContentProvider2 = ContextInjectionFactory.make(AdapterContentProvider.class, context);
+		adapterContentProvider2.setColumnIndex(1);
+		adapterFactoryClassTvc.setLabelProvider(adapterContentProvider2);
+		ColumnViewerToolTipSupport.enableFor(adapterTreeViewer);
 		context.set(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION, adapterDatalist);
 
 	}
