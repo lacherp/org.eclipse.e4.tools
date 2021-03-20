@@ -43,4 +43,8 @@
          id="org.eclipse.e4.tools.preference.spy.feature"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.e4.tools.adapter.spy.feature"
+         version="0.0.0"/>
+
 </feature>

@@ -21,6 +21,9 @@
    <feature url="features/org.eclipse.e4.tools.model.spy.feature_0.1.100.qualifier.jar" id="org.eclipse.e4.tools.model.spy.feature" version="0.1.100.qualifier">
       <category name="org.eclipse.e4.tools.model.spy"/>
    </feature>
+   <feature url="features/org.eclipse.e4.tools.adapter.spy.feature_0.1.0.qualifier.jar" id="org.eclipse.e4.tools.adapter.spy.feature" version="0.1.0.qualifier">
+      <category name="org.eclipse.e4.tools.adapter.spy"/>
+   </feature>
    <category-def name="org.eclipse.e4.tools.css.spy" label="Eclipse 4 - CSS Spy"/>
    <category-def name="org.eclipse.e4.tools.event.spy" label="Eclipse 4 - Event Spy"/>
    <category-def name="org.eclipse.e4.tools.context.spy" label="Eclipse 4 - Context Spy"/>
@@ -44,4 +47,5 @@
          A spy to display recently changed or even all the preferences of the running application. You can see the notepaths, keys, new and old values of these preferences. See http://blog.vogella.com/2014/12/28/preferences-spy-for-eclipse-ide-and-rcp/
       </description>
    </category-def>
+   <category-def name="org.eclipse.e4.tools.adapter.spy" label="Eclipse 4 - Adapter Spy"/>
 </site>
