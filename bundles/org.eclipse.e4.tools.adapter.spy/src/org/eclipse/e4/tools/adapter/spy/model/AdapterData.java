@@ -15,19 +15,19 @@ package org.eclipse.e4.tools.adapter.spy.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.e4.tools.adapter.spy.messages.Messages;
 import org.eclipse.e4.tools.adapter.spy.tools.AdapterHelper;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.Bundle;
 
 /**
@@ -294,17 +294,6 @@ public class AdapterData implements Comparable<AdapterData> {
 		return getSourceType() + "@" + getDestinationType() + getAdapterClassName();
 	}
 
-	
-	private String checkNull(String val) {
-		return (val == null) ? "" : val;
-	}
-
-	private String displayPackage(String value) {
-		if (Boolean.TRUE.equals(showPackage)) {
-			return value;
-		}
-		return subStringPackage(value);
-	}
 
 	@Override
 	public int compareTo(AdapterData o) {
@@ -314,7 +303,7 @@ public class AdapterData implements Comparable<AdapterData> {
 	public String getToolTipText(boolean sourceToDestination, int columnIndex) {
 
 		if (columnIndex == 1) {
-			return getAdapterClassName().isEmpty() ? null : getAdapterFactorySourceTooltip();
+			return getAdapterClassName().isEmpty() ? "" : getAdapterFactorySourceTooltip();
 		}
 		// column 0
 		if (sourceToDestination && getParent() == null) {
@@ -328,6 +317,24 @@ public class AdapterData implements Comparable<AdapterData> {
 		}
 		return getChildDestinationTypeToolTip();
 
+	}
+	
+	public StyleRange[] getToolTipStyleRanges(Boolean sourceToDestination, int columnIndex) {
+		if (columnIndex == 1) {
+			return getAdapterClassName().isEmpty() ? null : getAdapterFactorySourceTooltipStyleRanges();
+		}
+		// column 0
+		if (sourceToDestination && getParent() == null) {
+			return getRootSourceTypeTooltipStyleRanges();
+		}
+		if (!sourceToDestination && getParent() == null) {
+			return getRootDesinationTypeTooltipStyleRanges();
+		}
+		if (sourceToDestination && getParent() != null) {
+			return getChildSourceTypeToolTipStyleRanges();
+		}
+		return getChildDestinationTypeToolTipStyleRanges();
+		
 	}
 
 	private String getRootSourceTypeTooltip() {
@@ -356,6 +363,91 @@ public class AdapterData implements Comparable<AdapterData> {
 				subStringPackage(getDestinationType()), subStringPackage(getAdapterClassName()));
 		return NLS.bind(Messages.childSourceTypeToolTip, bindings.toArray());
 	}
+	
+	private StyleRange[] getAdapterFactorySourceTooltipStyleRanges() {
+		int length0 = subStringPackage(getAdapterClassName()).length();
+		int length1 =subStringPackage(((AdapterData) getParent()).getSourceType()).length();
+		int length2 = 	concatChildren(true).length();	
+	
+		StyleRange [] styleRanges = new  StyleRange[4];
+		styleRanges[0] = getBoldStyle(0, length0);
+		styleRanges[1] = getStandard(length0+1, 30);
+		styleRanges[2] = getBoldStyle(length0+31, length1);
+		styleRanges[3] = getBoldStyle(length0+35+length1, length2);
+	
+		return styleRanges;
+	}
+
+	private StyleRange[] getRootSourceTypeTooltipStyleRanges() {
+		StyleRange [] styleRanges = new  StyleRange[2];
+		styleRanges[0] = getStandard(0, 43);
+		styleRanges[1] = getBoldStyle(44, subStringPackage(getSourceType()).length());
+		return styleRanges;
+	}
+
+	private StyleRange[] getRootDesinationTypeTooltipStyleRanges() {
+		StyleRange [] styleRanges = new  StyleRange[2];
+		styleRanges[0] = getStandard(0, 57);
+		styleRanges[1] = getBoldStyle(58, subStringPackage(getDestinationType()).length());
+		return styleRanges;
+	}
+
+	private StyleRange[] getChildSourceTypeToolTipStyleRanges() {
+		
+		int length0 = subStringPackage(((AdapterData) getParent()).getSourceType()).length();
+		int length1 = subStringPackage(getDestinationType()).length();
+		int length2 = subStringPackage(getAdapterClassName()).length();
+		StyleRange [] styleRanges = new  StyleRange[4];
+		styleRanges[0] = getBoldStyle(0, length0);
+		styleRanges[1] = getStandard(length0+1, 18);
+		styleRanges[2] = getBoldStyle(length0+19, length1);
+		styleRanges[3] = getBoldStyle(length0+28+length1, length2);
+		return styleRanges;
+	}
+
+	private StyleRange[] getChildDestinationTypeToolTipStyleRanges() {
+		
+		int length0 = subStringPackage(getSourceType()).length();
+		int length1 = subStringPackage(((AdapterData) getParent()).getDestinationType()).length();
+		int length2 = subStringPackage(((AdapterData) getParent()).getAdapterClassName()).length();
+		StyleRange [] styleRanges = new  StyleRange[4];
+		styleRanges[0] = getBoldStyle(0, length0);
+		styleRanges[1] = getStandard(length0+1, 20);
+		styleRanges[2] = getBoldStyle(length0+22, length1);
+		styleRanges[3] = getBoldStyle(length0+28+length1, length2);
+		return styleRanges;
+	}
+
+	private StyleRange getStandard(int start,int length) {
+		StyleRange styleRange = new StyleRange();
+		styleRange.start = start;
+		styleRange.length = length;
+		styleRange.fontStyle = SWT.NORMAL;
+		styleRange.foreground = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
+		return styleRange;
+	}
+	
+	private StyleRange getBoldStyle(int start,int length) {
+		StyleRange styleRange = new StyleRange();
+		styleRange.start = start;
+		styleRange.length = length;
+		styleRange.fontStyle = SWT.BOLD;
+		styleRange.foreground = Display.getDefault().getSystemColor(SWT.COLOR_BLUE);
+		return styleRange;
+	}
+	
+	private String checkNull(String val) {
+		return (val == null) ? "" : val;
+	}
+
+	private String displayPackage(String value) {
+		if (Boolean.TRUE.equals(showPackage)) {
+			return value;
+		}
+		return subStringPackage(value);
+	}
+	
+	
 
 	private String subStringPackage(String value) {
 		return value.substring(value.lastIndexOf(".") + 1, value.length());

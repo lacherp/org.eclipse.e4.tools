@@ -20,11 +20,14 @@ import javax.inject.Named;
 
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.tools.adapter.spy.model.AdapterData;
+import org.eclipse.e4.tools.adapter.spy.tools.AdapterHelper;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * This provider is used to display available plugins which contribute to
@@ -33,7 +36,7 @@ import org.eclipse.swt.graphics.Image;
  * @author pascal
  *
  */
-public class AdapterContentProvider extends ColumnLabelProvider implements ITreeContentProvider {
+public class AdapterContentProvider extends ColumnLabelProviderCustom implements ITreeContentProvider {
 
 	@Inject
 	private ImageRegistry imgReg;
@@ -41,7 +44,6 @@ public class AdapterContentProvider extends ColumnLabelProvider implements ITree
 	private int columnIndex;
 
 	private Boolean sourceToDestination = true;
-
 
 	@Override
 	public Object[] getElements(Object inputElement) {
@@ -90,11 +92,11 @@ public class AdapterContentProvider extends ColumnLabelProvider implements ITree
 	@Override
 	public Image getImage(Object element) {
 		if (columnIndex == 0) {
-			if ( element instanceof AdapterData) {
-				String imgname = ((AdapterData)element).getImageName(); 
-				return imgname == null ? super.getImage(element): imgReg.get(imgname);
+			if (element instanceof AdapterData) {
+				String imgname = ((AdapterData) element).getImageName();
+				return imgname == null ? super.getImage(element) : imgReg.get(imgname);
 			}
-			
+
 		}
 		return super.getImage(element);
 	}
@@ -105,12 +107,25 @@ public class AdapterContentProvider extends ColumnLabelProvider implements ITree
 	}
 
 	@Override
-	public String getToolTipText(Object element) {
-		if ( element instanceof AdapterData)
-		{
-			return ((AdapterData) element).getToolTipText(sourceToDestination, columnIndex);
+	public Color getToolTipBackgroundColor(Object object) {
+		return AdapterHelper.getColor(Display.getDefault(),"TOOLTIP_BACKGROUND");
+
+	}
+
+	@Override
+	protected StyleRange[] getToolTipStyleRanges(Object element) {
+		if (element instanceof AdapterData) {
+			return ((AdapterData) element).getToolTipStyleRanges(sourceToDestination, columnIndex);
 		}
-		return "" ;
+		return null;
+	}
+
+	@Override
+	public String getToolTipText(Object element) {
+		if (element instanceof AdapterData && ((AdapterData) element).getToolTipText(sourceToDestination, columnIndex) != null) {
+			return ((AdapterData) element).getToolTipText(sourceToDestination, columnIndex).replaceAll("\"","");
+		}
+		return "";
 	}
 
 	@Inject
@@ -124,6 +139,6 @@ public class AdapterContentProvider extends ColumnLabelProvider implements ITree
 
 	public void setColumnIndex(int columnIndex) {
 		this.columnIndex = columnIndex;
-		
+
 	}
 }

@@ -33,6 +33,7 @@ import org.eclipse.e4.tools.adapter.spy.tools.AdapterHelper;
 import org.eclipse.e4.tools.adapter.spy.viewer.AdapterContentProvider;
 import org.eclipse.e4.tools.adapter.spy.viewer.AdapterDataComparator;
 import org.eclipse.e4.tools.adapter.spy.viewer.AdapterFilter;
+import org.eclipse.e4.tools.adapter.spy.viewer.ColumnViewerToolTipSupportCustom;
 import org.eclipse.e4.tools.adapter.spy.viewer.FilterData;
 import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.services.IServiceConstants;
@@ -40,7 +41,9 @@ import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
@@ -210,7 +213,7 @@ public class AdapterSpyPart {
 		});
 		
 		
-		ColumnViewerToolTipSupport.enableFor(adapterTreeViewer);
+		ColumnViewerToolTipSupportCustom.enableFor(adapterTreeViewer);
 		context.set(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION, adapterDatalist);
 
 	}
@@ -249,6 +252,7 @@ public class AdapterSpyPart {
 		AdapterHelper.restoreOriginalEclipseAdapter();
 		context.set(AdapterFilter.UPDATE_CTX_FILTER, null);
 		adapterRepo.clear();
+		
 	}
 
 	@Inject

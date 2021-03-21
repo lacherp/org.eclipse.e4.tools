@@ -29,6 +29,9 @@ import org.eclipse.e4.tools.adapter.spy.model.AdapterRepository;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -64,6 +67,8 @@ public final class AdapterHelper {
 
 	private static BundleContext bcontext;
 	
+	private static Color TOOLTIP_BACKGROUND;
+
 	private AdapterHelper() {
 		// do nothing
 	}
@@ -131,4 +136,14 @@ public final class AdapterHelper {
 		}
 		return classNameToBundleMap.get(className);
 	}
+	
+	public static Color getColor(Display display,String colorName) {
+		if( colorName != null && "TOOLTIP_BACKGROUND".equals(colorName)) {
+			 return TOOLTIP_BACKGROUND == null ? (TOOLTIP_BACKGROUND = new Color(display, new RGB(245, 245, 220))): TOOLTIP_BACKGROUND;
+		}
+		return null;
+		
+	}
+	
+	
 }
